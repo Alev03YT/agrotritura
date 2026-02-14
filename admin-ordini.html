@@ -35,14 +35,102 @@
     .err{background:#fde8e8;border-color:#f5b5b5;color:#8a1313}
     .hint{margin-top:10px;color:var(--muted);font-size:15px}
     @media (max-width:820px){.grid2{grid-template-columns:1fr}}
+
+    /* ===== LOGIN OVERLAY (PRO) ===== */
+    .gate{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:radial-gradient(1200px 700px at 20% 10%, rgba(245,154,0,.12), transparent 55%),
+                 radial-gradient(900px 600px at 80% 20%, rgba(21,76,59,.18), transparent 55%),
+                 rgba(10,10,10,.55);
+      backdrop-filter: blur(6px);
+      padding:18px;
+    }
+    .gateCard{
+      width:min(560px, 100%);
+      background:#fff;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:0 20px 80px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .gateHead{
+      background:linear-gradient(90deg, var(--green), var(--green2));
+      color:#fff;
+      padding:18px 18px;
+    }
+    .gateHead .t{font-size:24px;font-weight:900}
+    .gateHead .s{opacity:.95;margin-top:6px}
+    .gateBody{padding:18px}
+    .gateRow{display:grid;grid-template-columns:1fr; gap:12px; margin-top:12px}
+    .gateBody input{
+      font-size:18px; padding:14px 14px; border-radius:14px; border:2px solid #d6d6d6; width:100%;
+    }
+    .gateBtns{display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap; margin-top:14px}
+    .gateBtns button{min-width:180px}
+    .mini{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.35}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px; background:#f3f4f6; border:1px solid #e5e7eb;
+      font-weight:800; font-size:13px;
+    }
+    .topActions{
+      display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .topActions .btnMini{
+      border:2px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.1);
+      color:#fff;
+      font-weight:900;
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+    }
+    .topActions .btnMini:hover{filter:brightness(1.06)}
   </style>
 </head>
 
 <body>
+
+  <!-- ===== LOGIN GATE (PRO) ===== -->
+  <div class="gate" id="gate" aria-hidden="true" style="display:none">
+    <div class="gateCard" role="dialog" aria-modal="true" aria-label="Login amministratore">
+      <div class="gateHead">
+        <div class="t">Accesso Amministratore</div>
+        <div class="s">AgroTritura • Portale Ordini (Admin)</div>
+      </div>
+      <div class="gateBody">
+        <div class="pill">🔒 Area riservata</div>
+        <div class="gateRow">
+          <div>
+            <label for="gatePass">Password</label>
+            <input id="gatePass" type="password" placeholder="Inserisci la password admin" autocomplete="current-password">
+          </div>
+        </div>
+        <div class="gateBtns">
+          <button class="btn gray" type="button" id="gateClear">Svuota</button>
+          <button class="btn orange" type="button" id="gateLogin">Entra</button>
+        </div>
+        <div class="mini">
+          ✅ Dopo l’accesso, la sessione resta attiva finché non fai logout o non scade per inattività.<br>
+          ⏱ Auto-lock inattività: <strong id="idleLabel">10</strong> minuti.
+        </div>
+        <div id="gateMsg" class="statusBox" style="margin-top:12px">⬜ Inserisci la password per continuare…</div>
+      </div>
+    </div>
+  </div>
+
   <div class="topbar">
     <div class="wrap">
       <div class="brand">AgroTritura <small>• Portale Ordini (Admin)</small></div>
       <div class="subtitle">Crea un ordine e aggiorna lo stato con pochi tocchi</div>
+
+      <div class="topActions">
+        <span class="pill" id="sessPill">🔓 Sessione attiva</span>
+        <button class="btnMini" type="button" id="btnLock">🔒 Blocca</button>
+        <button class="btnMini" type="button" id="btnLogout">⎋ Logout</button>
+      </div>
     </div>
   </div>
 
@@ -53,8 +141,8 @@
 
       <div class="grid2">
         <div>
-          <label for="token">Token admin</label>
-          <input id="token" type="password" placeholder="Token admin">
+          <label for="token">Token admin (API)</label>
+          <input id="token" type="password" placeholder="Token admin per aggiornare il foglio">
         </div>
         <div>
           <label for="order_id">Codice ordine</label>
@@ -166,8 +254,136 @@
   </div>
 
   <script>
-    const API_BASE = "https://script.google.com/macros/s/AKfycbyJHMPbUphMhfoYuYZRuFnImHTq0lJjTGOPA0sFl2RYXHs3kMWOzPm5kFhuLkk5pCYV/exec";
+    /* ===============================
+       CONFIG SICUREZZA (PRO)
+    =============================== */
 
+    // 1) Hash SHA-256 della password (non mettere la password in chiaro)
+    // ESEMPIO placeholder: cambialo con il tuo hash (vedi istruzioni sotto)
+    const ADMIN_PASSWORD_HASH = "CHANGE_ME_WITH_SHA256_HASH";
+
+    // 2) Auto-lock inattività (minuti)
+    const IDLE_MINUTES = 10;
+    document.getElementById("idleLabel").textContent = String(IDLE_MINUTES);
+
+    // 3) Session storage keys
+    const SKEY = "AT_ADMIN_UNLOCKED";
+    const TKEY = "AT_ADMIN_LAST_ACTIVITY";
+
+    // 4) Il tuo endpoint Apps Script
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwc4756t9CrfPXRJmo-h5gQ614Zp7WZWG499cvvc_OJI1SqPmBYIv_gSVf9KR9xrtu6/exec";
+
+    /* ===============================
+       UTILS
+    =============================== */
+
+    function nowMs(){ return Date.now(); }
+    function setLastActivity(){ sessionStorage.setItem(TKEY, String(nowMs())); }
+    function getLastActivity(){ return Number(sessionStorage.getItem(TKEY) || "0"); }
+    function isUnlocked(){ return sessionStorage.getItem(SKEY) === "1"; }
+    function lock(){
+      sessionStorage.removeItem(SKEY);
+      sessionStorage.removeItem(TKEY);
+      showGate(true);
+    }
+    function unlock(){
+      sessionStorage.setItem(SKEY,"1");
+      setLastActivity();
+      showGate(false);
+    }
+
+    function showGate(show){
+      const gate = document.getElementById("gate");
+      gate.style.display = show ? "flex" : "none";
+      gate.setAttribute("aria-hidden", show ? "false" : "true");
+
+      // UI pill
+      const pill = document.getElementById("sessPill");
+      pill.textContent = show ? "🔒 Bloccato" : "🔓 Sessione attiva";
+    }
+
+    async function sha256Hex(str){
+      const enc = new TextEncoder().encode(str);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      const arr = Array.from(new Uint8Array(buf));
+      return arr.map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    function setGateMsg(kind, text){
+      const el = document.getElementById("gateMsg");
+      el.className = "statusBox " + (kind === "ok" ? "ok" : kind === "err" ? "err" : "");
+      el.textContent = text;
+    }
+
+    /* ===============================
+       LOGIN FLOW
+    =============================== */
+    async function tryLogin(){
+      const pass = document.getElementById("gatePass").value || "";
+      if(!pass.trim()){
+        setGateMsg("err","❌ Inserisci la password.");
+        return;
+      }
+
+      setGateMsg("", "⏳ Verifica in corso…");
+
+      try{
+        const hex = await sha256Hex(pass.trim());
+        if(hex !== ADMIN_PASSWORD_HASH){
+          setGateMsg("err","❌ Password errata.");
+          return;
+        }
+        setGateMsg("ok","✅ Accesso consentito.");
+        unlock();
+        document.getElementById("gatePass").value = "";
+      }catch(e){
+        setGateMsg("err","❌ Errore verifica.");
+      }
+    }
+
+    document.getElementById("gateLogin").addEventListener("click", tryLogin);
+    document.getElementById("gateClear").addEventListener("click", ()=>{
+      document.getElementById("gatePass").value = "";
+      setGateMsg("", "⬜ Inserisci la password per continuare…");
+    });
+    document.getElementById("gatePass").addEventListener("keydown",(e)=>{
+      if(e.key === "Enter") tryLogin();
+    });
+
+    // Lock/Logout buttons
+    document.getElementById("btnLock").addEventListener("click", lock);
+    document.getElementById("btnLogout").addEventListener("click", ()=>{
+      // logout = lock + pulizia extra
+      lock();
+      // (opzionale) svuota anche campi
+      // document.querySelectorAll("input,textarea").forEach(x=>x.value="");
+    });
+
+    // Auto-lock per inattività
+    function idleCheck(){
+      if(!isUnlocked()) return;
+      const last = getLastActivity();
+      if(!last) return;
+      const idleMs = nowMs() - last;
+      if(idleMs > IDLE_MINUTES * 60 * 1000){
+        lock();
+      }
+    }
+    setInterval(idleCheck, 3000);
+
+    // Aggiorna activity su input/click/touch/scroll
+    ["click","keydown","mousemove","touchstart","scroll"].forEach(evt=>{
+      window.addEventListener(evt, ()=>{
+        if(isUnlocked()) setLastActivity();
+      }, {passive:true});
+    });
+
+    // Avvio: se non sbloccato => mostra gate
+    showGate(!isUnlocked());
+
+    /* ===============================
+       PANNELLO ORDINI (tuo)
+    =============================== */
     function genId(){
       const rand = Math.random().toString(36).slice(2,8).toUpperCase();
       const d = new Date();
@@ -177,45 +393,28 @@
       return `AT-${y}-${m}-${day}-${rand}`;
     }
 
-    // ✅ FIX: sempre res.text() + JSON.parse protetto (niente più "Unexpected token...")
-async function post(payload, msgEl){
-  msgEl.className = "statusBox";
-  msgEl.textContent = "⏳ Salvataggio…";
+    async function post(payload, msgEl){
+      msgEl.className = "statusBox";
+      msgEl.textContent = "⏳ Salvataggio…";
+      try{
+        const res = await fetch(API_BASE, { method:"POST", body:new URLSearchParams(payload) });
+        const text = await res.text();
+        let json;
+        try{ json = JSON.parse(text); }catch{ throw new Error("Risposta non JSON dal server: " + text.slice(0,200)); }
+        if(!json.ok) throw new Error(json.error || "Errore");
 
-  // 1) invia POST (anche se la risposta è bloccata, l’ordine viene salvato)
-  try{
-    await fetch(API_BASE, {
-      method:"POST",
-      mode:"no-cors",              // ✅ evita errore “Failed to fetch” quando Google blocca la risposta
-      body: new URLSearchParams(payload)
-    });
-  }catch(e){
-    // se anche qui fallisce, allora non arriva proprio al server (ma nel tuo caso salva, quindi raro)
-    msgEl.className = "statusBox err";
-    msgEl.textContent = "❌ Errore invio: " + e.message;
-    return false;
-  }
-
-  // 2) conferma leggendo l’ordine via GET (se GET è ok, hai conferma a schermo)
-  try{
-    const orderId = payload.order_id;
-    const res2 = await fetch(`${API_BASE}?order_id=${encodeURIComponent(orderId)}`, { cache:"no-store" });
-    const text2 = await res2.text();
-    const json2 = JSON.parse(text2);
-
-    if(!json2.ok) throw new Error(json2.error || "Salvato ma non verificabile");
-    msgEl.className = "statusBox ok";
-    msgEl.textContent = `✅ Salvato! (confermato) • Aggiornato: ${json2.order.updated_at || ""}`;
-    return true;
-  }catch(e){
-    // Se GET è bloccato da CORS, almeno non rompi tutto: hai già salvato.
-    msgEl.className = "statusBox ok";
-    msgEl.textContent = "✅ Salvato! (ma conferma non disponibile dal browser)";
-    return true;
-  }
-}
+        msgEl.className = "statusBox ok";
+        msgEl.textContent = `✅ Salvato: ${json.action}. Aggiornato: ${json.order.updated_at}`;
+        return true;
+      }catch(e){
+        msgEl.className = "statusBox err";
+        msgEl.textContent = `❌ Errore: ${e.message}`;
+        return false;
+      }
+    }
 
     document.getElementById("gen").addEventListener("click", ()=>{
+      if(!isUnlocked()){ showGate(true); return; }
       const id = genId();
       document.getElementById("order_id").value = id;
       document.getElementById("order_id_2").value = id;
@@ -223,6 +422,7 @@ async function post(payload, msgEl){
     });
 
     document.getElementById("saveMain").addEventListener("click", ()=>{
+      if(!isUnlocked()){ showGate(true); return; }
       const payload = {
         token: document.getElementById("token").value.trim(),
         order_id: document.getElementById("order_id").value.trim(),
@@ -243,6 +443,7 @@ async function post(payload, msgEl){
     });
 
     document.getElementById("saveNote").addEventListener("click", ()=>{
+      if(!isUnlocked()){ showGate(true); return; }
       const payload = {
         token: document.getElementById("token").value.trim(),
         order_id: document.getElementById("order_id_2").value.trim(),
@@ -253,6 +454,7 @@ async function post(payload, msgEl){
     });
 
     document.getElementById("saveTracking").addEventListener("click", ()=>{
+      if(!isUnlocked()){ showGate(true); return; }
       const payload = {
         token: document.getElementById("token").value.trim(),
         order_id: document.getElementById("order_id_3").value.trim(),
@@ -262,15 +464,19 @@ async function post(payload, msgEl){
       post(payload, document.getElementById("msgTrack"));
     });
   </script>
+
+  <!-- TOOL per generare hash (solo per te, puoi lasciarlo o rimuoverlo dopo) -->
+  <script>
+    // Apri la console e lancia: await makeHash("LaTuaPasswordQui")
+    async function makeHash(p){
+      const enc = new TextEncoder().encode(p);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      const arr = Array.from(new Uint8Array(buf));
+      const hex = arr.map(b=>b.toString(16).padStart(2,"0")).join("");
+      console.log("SHA-256:", hex);
+      return hex;
+    }
+  </script>
+
 </body>
-<script>
-const ADMIN_PASSWORD = "AgroTritura2026!"; // scegli tu la password
-
-const entered = prompt("Inserisci la password admin:");
-
-if(entered !== ADMIN_PASSWORD){
-  document.body.innerHTML = "<h1 style='font-family:Arial;text-align:center;margin-top:60px'>Accesso negato</h1>";
-  throw new Error("Accesso bloccato");
-}
-</script>
 </html>
