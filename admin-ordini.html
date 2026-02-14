@@ -481,6 +481,52 @@
       console.log("SHA-256:", hex);
       return hex;
     }
+    function normalizePhone(p){
+  return (p || "").replace(/\D/g,""); // solo numeri
+}
+
+function openWhatsApp(phone, text){
+  const p = normalizePhone(phone);
+  if(!p){
+    alert("Manca il telefono cliente (WhatsApp). Inseriscilo nel campo 'Telefono cliente'.");
+    return;
+  }
+  const url = "https://wa.me/" + p + "?text=" + encodeURIComponent(text);
+  window.open(url, "_blank");
+}
+
+// 👉 metti il link RECENSIONE vero quando lo hai
+const GOOGLE_REVIEW_LINK = "INCOLLA_QUI_IL_TUO_LINK_RECENSIONE_GOOGLE";
+
+// link pagina tracking ordine (il tuo)
+const TRACK_PAGE = "https://agrotritura.it/ordine.html";
+
+function buildMessage(status, order){
+  const id = order.order_id || "";
+  const prod = order.product || "";
+  const qty = order.quantity || "";
+  const note = (order.note || "").trim();
+  const tracking = (order.tracking_url || "").trim();
+
+  if(status === "Ricevuto"){
+    return `Ciao! ✅ Abbiamo ricevuto il tuo ordine AgroTritura.\n\n📦 Codice ordine: ${id}\n🧾 Prodotto: ${prod || "-"}\n⚖️ Quantità: ${qty || "-"}\n\nTi aggiorniamo a breve sullo stato. Puoi tracciare l’ordine qui:\n${TRACK_PAGE}\n\nGrazie!`;
+  }
+
+  if(status === "In lavorazione"){
+    return `Ciao! 🔧 Il tuo ordine AgroTritura è in lavorazione.\n\n📦 Codice ordine: ${id}\n🧾 ${prod || "-"} • ${qty || "-"}\n${note ? `\n📝 Nota: ${note}\n` : "\n"}Puoi controllare lo stato quando vuoi:\n${TRACK_PAGE}\n\nA presto!`;
+  }
+
+  if(status === "Pronto"){
+    return `Ciao! ✅ Il tuo ordine AgroTritura è pronto.\n\n📦 Codice ordine: ${id}\n🧾 ${prod || "-"} • ${qty || "-"}\n${note ? `\n📝 Nota: ${note}\n` : "\n"}Confermiamo a breve orario di consegna/ritiro.\n\nStato ordine:\n${TRACK_PAGE}`;
+  }
+
+  if(status === "Spedito"){
+    return `Ciao! 🚚 Il tuo ordine AgroTritura è stato spedito.\n\n📦 Codice ordine: ${id}\n🧾 ${prod || "-"} • ${qty || "-"}\n${note ? `\n📝 Nota: ${note}\n` : "\n"}${tracking ? `🔎 Tracking: ${tracking}\n\n` : ""}Puoi controllare lo stato qui:\n${TRACK_PAGE}\n\nGrazie!`;
+  }
+
+  // CONSEGNATO = include richiesta recensione (C)
+  return `Ciao! ✅ Ordine consegnato.\n\n📦 Codice ordine: ${id}\n🧾 ${prod || "-"} • ${qty || "-"}\n${note ? `\n📝 Nota: ${note}\n` : "\n"}Grazie per aver scelto AgroTritura 🙏\n\nSe ti sei trovato bene, ci aiuta tantissimo una recensione su Google (30 secondi):\n${GOOGLE_REVIEW_LINK}\n\nA presto!`;
+}
   </script>
 
 </body>
