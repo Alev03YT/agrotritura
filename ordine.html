@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AgroTritura • Traccia Ordine (Cliente)</title>
+  <style>
+    :root{
+      --green:#154c3b;--green2:#0f3b2e;--orange:#f59a00;--bg:#f4f6f7;--card:#fff;--border:#e6e6e6;
+      --text:#1d1d1f;--muted:#6b7280;--radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .topbar{background:var(--green);color:#fff;padding:22px 16px 16px;border-bottom:6px solid var(--green2);}
+    .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+    .brand{font-size:34px;font-weight:900;letter-spacing:.2px}
+    .brand small{font-weight:700;opacity:.95}
+    .subtitle{margin-top:6px;opacity:.95}
+    .panel{margin:18px auto 30px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
+    .sectionTitle{font-size:22px;font-weight:800;color:var(--green);margin:0 0 14px 0;}
+    .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    input{flex:1;min-width:260px;padding:16px 14px;border:2px solid #d6d6d6;border-radius:14px;font-size:20px;outline:none;}
+    input:focus{border-color:#b9c6bf;box-shadow:0 0 0 4px rgba(21,76,59,.08)}
+    button{border:none;cursor:pointer;padding:14px 22px;border-radius:14px;font-size:20px;font-weight:900;background:var(--orange);color:#fff;min-width:160px;box-shadow:0 6px 18px rgba(245,154,0,.25);}
+    button:hover{filter:brightness(.97)}
+    .btnSecondary{background:#e8e8e8!important;color:#222!important;border:2px solid #d4d4d4!important;box-shadow:none!important;}
+    .cardInner{margin-top:16px;border:1px solid var(--border);border-radius:16px;padding:16px;background:#fff;}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef;font-weight:900}
+    .muted{color:var(--muted)}
+    .err{color:#b00020;font-weight:900}
+    .track{margin-top:18px;padding:16px;border-radius:16px;border:1px solid var(--border);background:#fff;}
+    .bar{position:relative;height:6px;background:#d1d5db;border-radius:99px;margin:18px 10px 10px;}
+    .barFill{position:absolute;left:0;top:0;bottom:0;background:var(--green);border-radius:99px;width:0%;}
+    .steps{display:flex;justify-content:space-between;gap:6px;margin:0 2px;}
+    .step{text-align:center;width:20%;font-size:14px;color:#111;}
+    .dot{width:18px;height:18px;border-radius:50%;margin:0 auto 6px;background:#d1d5db;border:3px solid #d1d5db;}
+    .done .dot{background:var(--green);border-color:var(--green)}
+    .current .dot{background:#fff;border-color:var(--green)}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    a{color:inherit;text-decoration:none}
+    .finalNote{margin-top:14px;padding:14px;border-radius:14px;background:#fff7df;border:1px solid #f1d28a;font-weight:900;color:#5a460e;}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand">AgroTritura <small>• Traccia Ordine (Cliente)</small></div>
+      <div class="subtitle">Il cliente inserisce il codice e vede lo stato in autonomia</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <h2 class="sectionTitle">5) Il cliente cerca il suo ordine</h2>
+
+      <div class="row">
+        <input id="orderId" placeholder="Codice ordine (es. AT-2026-02-13-8K4PZ2)">
+        <button id="btn" type="button">Cerca</button>
+      </div>
+
+      <div id="out" class="cardInner" style="display:none"></div>
+    </div>
+
+    <div class="panel" id="step6" style="display:none">
+      <h2 class="sectionTitle">6) Stato finale + assistenza</h2>
+      <div id="out6" class="cardInner"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwXbg8A8KU7722ixiVAnhHUJ1Ka9NCvSvdxFDhMRtfepvBF1yuMbMPHjtrZwe6rkvLM/exec";
+    const statusSteps = ["Ricevuto","In lavorazione","Pronto","Spedito","Consegnato"];
+
+    function esc(s){
+      return String(s||"").replace(/[&<>\"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    function normalizeStatus(raw){
+      const s = String(raw || "").trim().toLowerCase();
+      if (!s) return "Ricevuto";
+      if (s.includes("ricev")) return "Ricevuto";
+      if (s.includes("lavor")) return "In lavorazione";
+      if (s.includes("prep") || s.includes("pront") || s.includes("ritir") || s.includes("imball")) return "Pronto";
+      if (s.includes("sped") || s.includes("corrier") || s.includes("in trans") || s.includes("partit")) return "Spedito";
+      if (s.includes("consegn") || s.includes("arrivat") || s.includes("complet")) return "Consegnato";
+      const cap = s.charAt(0).toUpperCase() + s.slice(1);
+      if (statusSteps.includes(cap)) return cap;
+      return "Ricevuto";
+    }
+
+    function progressIndex(st){
+      const idx = statusSteps.indexOf(st);
+      return idx === -1 ? 0 : idx;
+    }
+
+    function renderProgress(st){
+      const idx = progressIndex(st);
+      const pct = (idx/(statusSteps.length-1))*100;
+
+      const dots = statusSteps.map((label,i)=>{
+        const cls = i < idx ? "done" : (i === idx ? "current" : "");
+        return `<div class="step ${cls}">
+                  <div class="dot"></div>
+                  <div>${esc(label)}</div>
+                </div>`;
+      }).join("");
+
+      return `
+        <div class="track">
+          <div class="bar"><div class="barFill" style="width:${pct}%"></div></div>
+          <div class="steps">${dots}</div>
+        </div>
+      `;
+    }
+
+    function renderStep5(order){
+      const st = normalizeStatus(order.status);
+      const updated = order.updated_at || "";
+
+      const trackingBtn = order.tracking_url
+        ? `<div class="actions">
+             <a href="${esc(order.tracking_url)}" target="_blank" rel="noopener">
+               <button type="button">Traccia spedizione</button>
+             </a>
+           </div>`
+        : "";
+
+      // ✅ NEW: mostra la nota anche durante lavorazione/spedizione ecc.
+      const noteBox = (order.note && String(order.note).trim())
+        ? `<div class="finalNote">Nota: ${esc(String(order.note).trim())}</div>`
+        : "";
+
+      return `
+        <h2>Ordine: <span class="badge">${esc(order.order_id)}</span></h2>
+        <p>Stato: <strong>${esc(st)}</strong> <span class="muted">• Aggiornato: ${esc(updated)}</span></p>
+        ${renderProgress(st)}
+        ${trackingBtn}
+        ${noteBox}
+      `;
+    }
+
+    function renderStep6(order){
+      const updated = order.updated_at || "";
+	  const noteText = (order.note !== undefined && order.note !== null && String(order.note).trim() !== "")
+      ? String(order.note).trim()
+      : "Grazie! Se hai bisogno di un nuovo ordine, scrivici su WhatsApp.";
+
+      return `
+        <h2>Ordine: <span class="badge">${esc(order.order_id)}</span></h2>
+        <p>Stato: <strong>Consegnato</strong> <span class="muted">• Aggiornato: ${esc(updated)}</span></p>
+        ${renderProgress("Consegnato")}
+        <div class="finalNote">Nota: ${esc(noteText)}</div>
+        <div class="actions" style="margin-top:16px">
+          <a href="https://wa.me/393341067510" target="_blank" rel="noopener">
+            <button type="button">Apri WhatsApp</button>
+          </a>
+          <a href="index.html#preventivo">
+            <button type="button" class="btnSecondary">Nuovo preventivo</button>
+          </a>
+        </div>
+      `;
+    }
+
+    // --- JSONP ---
+    let _jsonpScript = null;
+    let _jsonpTimer = null;
+
+    function jsonpRequest(url, callbackName, timeoutMs=8000){
+      return new Promise((resolve, reject) => {
+        if (_jsonpScript) { _jsonpScript.remove(); _jsonpScript = null; }
+        if (_jsonpTimer) { clearTimeout(_jsonpTimer); _jsonpTimer = null; }
+
+        window[callbackName] = (data) => {
+          cleanup();
+          resolve(data);
+        };
+
+        function cleanup(){
+          try { delete window[callbackName]; } catch(e){ window[callbackName] = undefined; }
+          if (_jsonpScript) { _jsonpScript.remove(); _jsonpScript = null; }
+          if (_jsonpTimer) { clearTimeout(_jsonpTimer); _jsonpTimer = null; }
+        }
+
+        _jsonpTimer = setTimeout(() => {
+          cleanup();
+          reject(new Error("Timeout richiesta"));
+        }, timeoutMs);
+
+        _jsonpScript = document.createElement("script");
+        _jsonpScript.src = url;
+        _jsonpScript.onerror = () => {
+          cleanup();
+          reject(new Error("Errore caricamento JSONP"));
+        };
+        document.body.appendChild(_jsonpScript);
+      });
+    }
+
+    async function fetchOrder(){
+      const id = document.getElementById("orderId").value.trim();
+      const out = document.getElementById("out");
+      const step6 = document.getElementById("step6");
+      const out6 = document.getElementById("out6");
+
+      out.style.display = "block";
+      out.innerHTML = "Caricamento…";
+      step6.style.display = "none";
+      out6.innerHTML = "";
+
+      if(!id){
+        out.innerHTML = `<p class="err">Inserisci un codice ordine.</p>`;
+        return;
+      }
+
+      const cb = "__jsonp_cb_" + Math.random().toString(36).slice(2);
+      const url = `${API_BASE}?order_id=${encodeURIComponent(id)}&callback=${encodeURIComponent(cb)}&t=${Date.now()}`;
+
+      try{
+        const json = await jsonpRequest(url, cb);
+        if(!json || !json.ok) throw new Error((json && json.error) ? json.error : "Ordine non trovato");
+
+        const order = json.order || {};
+        const st = normalizeStatus(order.status);
+
+        out.innerHTML = renderStep5(order);
+
+    // ✅ Step 6 anche se lo stato arriva "consegnato/CONSEGNATO/Consegnata..."
+    const isDelivered = normalizeStatus(order.status) === "Consegnato" ||
+    String(order.status || "").toLowerCase().includes("consegn");
+
+    if(isDelivered){
+    step6.style.display = "block";
+    out6.innerHTML = renderStep6(order);
+    }
+      }catch(e){
+        out.innerHTML = `<p class="err">❌ ${esc(e.message)}</p>`;
+      }
+    }
+
+    document.getElementById("btn").addEventListener("click", fetchOrder);
+    document.getElementById("orderId").addEventListener("keydown",(e)=>{ if(e.key==="Enter") fetchOrder(); });
+  </script>
+</body>
+</html>
