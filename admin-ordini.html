@@ -409,6 +409,15 @@
 
         msgEl.className = "statusBox ok";
         msgEl.textContent = `✅ Salvato: ${json.action}. Aggiornato: ${json.order.updated_at}`;
+// ✅ WhatsApp precompilato (1 tap invio)
+try{
+  const st = (payload.status || json.order.status || "").trim();
+  const phone = payload.phone || json.order.phone || document.getElementById("phone")?.value || "";
+  const message = buildMessage(st, json.order);
+  openWhatsApp(phone, message);
+}catch(e){
+  console.warn("WhatsApp non aperto:", e.message);
+}
         return true;
       }catch(e){
         msgEl.className = "statusBox err";
