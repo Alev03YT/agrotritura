@@ -225,7 +225,21 @@
         const order = json.order || {};
         const st = normalizeStatus(order.status);
 
-        out.innerHTML = renderStep5(order);
+        if(st === "Consegnato"){
+  // mostra SOLO step 6
+  out.style.display = "none";
+  out.innerHTML = "";
+
+  step6.style.display = "block";
+  out6.innerHTML = renderStep6(order);
+} else {
+  // mostra step 5 normale
+  out.style.display = "block";
+  out.innerHTML = renderStep5(order);
+
+  step6.style.display = "none";
+  out6.innerHTML = "";
+}
 
     // ✅ Step 6 anche se lo stato arriva "consegnato/CONSEGNATO/Consegnata..."
     const isDelivered = normalizeStatus(order.status) === "Consegnato" ||
