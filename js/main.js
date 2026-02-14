@@ -1,3 +1,6 @@
+// ============================
+// MENU MOBILE
+// ============================
 const hamb = document.querySelector('[data-hamb]');
 const panel = document.querySelector('[data-mobile-panel]');
 
@@ -8,7 +11,14 @@ if (hamb && panel) {
   });
 }
 
-// === CAMPI DINAMICI PER PRODOTTO + CONSEGNA ===
+// ============================
+// CONFIG: URL APPS SCRIPT (LEADS + ORDINI)
+// ============================
+const LEAD_API = "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
+
+// ============================
+// CAMPI DINAMICI: PRODOTTO + CONSEGNA
+// ============================
 const selectProdotto = document.querySelector('#cereale');
 const campoExtra = document.querySelector('#campoExtraDinamico');
 
@@ -103,79 +113,128 @@ if (selectProdotto) {
   selectProdotto.addEventListener('change', (e) => {
     creaCampoExtra(e.target.value);
   });
-
   if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
 }
 
-// === WHATSAPP (TESTO PULITO, SENZA EMOJI) ===
+// ============================
+// JSONP helper (per GitHub Pages / CORS)
+// ============================
+function jsonp(url, timeoutMs = 12000){
+  return new Promise((resolve, reject)=>{
+    const cb = "__lead_cb_" + Math.random().toString(36).slice(2);
+    const s = document.createElement("script");
+    let t = setTimeout(()=>{
+      cleanup();
+      reject(new Error("Timeout richiesta"));
+    }, timeoutMs);
+
+    function cleanup(){
+      clearTimeout(t);
+      try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+      if(s && s.parentNode) s.parentNode.removeChild(s);
+    }
+
+    window[cb] = (data)=>{
+      cleanup();
+      resolve(data);
+    };
+
+    s.onerror = ()=>{
+      cleanup();
+      reject(new Error("Errore JSONP"));
+    };
+
+    const full = url + (url.includes("?") ? "&" : "?")
+      + "callback=" + encodeURIComponent(cb)
+      + "&t=" + Date.now();
+
+    s.src = full;
+    document.body.appendChild(s);
+  });
+}
+
+// ============================
+// COLLECT EXTRA (leggibile)
+// ============================
+function collectExtrasReadable(){
+  if (!campoExtra) return "";
+
+  const nodes = campoExtra.querySelectorAll("select, input, textarea");
+  const parts = [];
+
+  nodes.forEach(el=>{
+    const val = (el.value || "").trim();
+    if (!val) return;
+
+    const wrap = el.closest("div");
+    const label = wrap ? (wrap.querySelector("label")?.textContent || "").trim() : "";
+    if (label) parts.push(`${label}: ${val}`);
+    else parts.push(val);
+  });
+
+  return parts.join(" | ");
+}
+
+// ============================
+// SUBMIT PREVENTIVO: salva lead + apre WhatsApp
+// ============================
 const form = document.querySelector('#preventivoForm');
 
-function safeValue(selector) {
+function safe(selector){
   const el = form?.querySelector(selector);
   return (el?.value || "").trim();
 }
 
-function dettagliSpecificiPer(prodotto) {
-  // valori dai campi dinamici
-  const gran = safeValue('[name="extra_granulometria"]');
-  const anim = safeValue('[name="extra_animali"]');
-  const fmt = safeValue('[name="extra_formato_grana"]');
-  const granaGran = safeValue('[name="extra_granulometria_grana"]');
-  const mix = safeValue('[name="extra_mix"]');
-  const altro = safeValue('[name="extra_altro"]');
-
-  if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
-    return `Granulometria: ${gran || "-"}`;
-  }
-  if (prodotto === "Frumento") {
-    return `Animali: ${anim || "-"}`;
-  }
-  if (prodotto === "Grana verde") {
-    let s = `Formato: ${fmt || "-"}`;
-    if (fmt === "Tritato") s += `\nGranulometria: ${granaGran || "-"}`;
-    return s;
-  }
-  if (prodotto === "Mix personalizzato") {
-    return `Composizione mix: ${mix || "-"}`;
-  }
-  if (prodotto === "Altro / da definire") {
-    return `Richiesta: ${altro || "-"}`;
-  }
-  return "-";
-}
-
 if (form) {
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const nome = safeValue('[name="nome"]');
-    const prodotto = safeValue('[name="cereale"]');
-    const qty = safeValue('[name="quantita"]');
-    const comune = safeValue('[name="comune"]');
-    const telefono = safeValue('[name="telefono"]');
-    const note = safeValue('[name="note"]');
-    const consegna = safeValue('[name="tipo_consegna"]');
+    const nome = safe('#nome');
+    const telefono = safe('#telefono');
+    const prodotto = safe('#cereale');
+    const quantita = safe('#quantita');
+    const comune = safe('#comune');
+    const note = safe('#note');
 
-    const dettagliSpecifici = dettagliSpecificiPer(prodotto);
+    const extra = collectExtrasReadable();
 
+    // 1) Salva lead su Google Sheet (non blocca WhatsApp se fallisce)
+    const leadUrl =
+      LEAD_API +
+      "?action=lead" +
+      "&nome=" + encodeURIComponent(nome) +
+      "&telefono=" + encodeURIComponent(telefono) +
+      "&cereale=" + encodeURIComponent(prodotto) +
+      "&extra=" + encodeURIComponent(extra) +
+      "&quantita=" + encodeURIComponent(quantita) +
+      "&comune=" + encodeURIComponent(comune) +
+      "&note=" + encodeURIComponent(note) +
+      "&pagina=" + encodeURIComponent(location.href);
+
+    try{
+      await jsonp(leadUrl);
+    }catch(err){
+      console.warn("Lead non salvato:", err.message);
+      // continuiamo comunque
+    }
+
+    // 2) Messaggio WhatsApp PRO
     const msg =
-`Ciao AgroTritura,
-sono ${nome || "un cliente"} e vorrei ricevere un preventivo per mangime su misura.
+`Ciao AgroTritura!
+Vorrei un preventivo per mangime su misura.
 
-DETTAGLI ORDINE
-Prodotto: ${prodotto || "-"}
-Quantità: ${qty || "-"}
-Comune: ${comune || "-"}
-Consegna: ${consegna || "-"}`
-+ (telefono ? `\nTelefono: ${telefono}` : "") +
+📌 Dettagli ordine:
+- Prodotto: ${prodotto || "-"}
+- Quantità: ${quantita || "-"}
+- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${nome ? `\n- Nome: ${nome}` : ""}
 
-`\n\nDETTAGLI SPECIFICI
-${dettagliSpecifici}
+🔧 Dettagli specifici:
+- ${extra || "-"}
 
-NOTE
+📝 Note:
 ${note || "-"}
 
-Grazie, attendo gentile riscontro.`;
+Grazie!`;
 
     const url = "https://wa.me/393341067510?text=" + encodeURIComponent(msg);
     window.open(url, "_blank");
