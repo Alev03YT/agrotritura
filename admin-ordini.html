@@ -263,4 +263,14 @@ async function post(payload, msgEl){
     });
   </script>
 </body>
+<script>
+const ADMIN_PASSWORD = "AgroTritura2026!"; // scegli tu la password
+
+const entered = prompt("Inserisci la password admin:");
+
+if(entered !== ADMIN_PASSWORD){
+  document.body.innerHTML = "<h1 style='font-family:Arial;text-align:center;margin-top:60px'>Accesso negato</h1>";
+  throw new Error("Accesso bloccato");
+}
+</script>
 </html>
