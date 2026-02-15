@@ -259,4 +259,80 @@ Grazie!`;
     const url = "https://wa.me/393341067510?text=" + encodeURIComponent(msg);
     window.open(url, "_blank");
   });
+// ============================
+// GALLERIA PRO: bottoni + pallini
+// ============================
+(function initGalleryPro(){
+  const wrap = document.querySelector("[data-gallery]");
+  if(!wrap) return;
+
+  const track = wrap.querySelector("[data-gallery-track]");
+  const btnPrev = wrap.querySelector("[data-gallery-prev]");
+  const btnNext = wrap.querySelector("[data-gallery-next]");
+  const dotsWrap = document.querySelector("[data-gallery-dots]");
+  const items = Array.from(track.querySelectorAll(".g-item"));
+
+  if(!track || items.length === 0) return;
+
+  // crea pallini
+  if(dotsWrap){
+    dotsWrap.innerHTML = items.map((_, i)=> `<button class="galleryDot" type="button" aria-label="Vai alla foto ${i+1}" data-dot="${i}"></button>`).join("");
+  }
+  const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll(".galleryDot")) : [];
+
+  function cardStep(){
+    // quanto “scorrere” per ogni click (larghezza di una card + gap)
+    const first = items[0];
+    const rect = first.getBoundingClientRect();
+    const style = getComputedStyle(track);
+    const gap = parseFloat(style.columnGap || style.gap || 0) || 14;
+    return rect.width + gap;
+  }
+
+  function setActiveDot(index){
+    dots.forEach((d,i)=> d.classList.toggle("active", i===index));
+  }
+
+  function currentIndex(){
+    const left = track.scrollLeft;
+    const step = cardStep();
+    return Math.round(left / step);
+  }
+
+  function scrollToIndex(i){
+    const step = cardStep();
+    track.scrollTo({ left: i * step, behavior: "smooth" });
+    setActiveDot(i);
+  }
+
+  // bottoni
+  btnPrev?.addEventListener("click", ()=>{
+    const i = Math.max(0, currentIndex() - 1);
+    scrollToIndex(i);
+  });
+
+  btnNext?.addEventListener("click", ()=>{
+    const i = Math.min(items.length - 1, currentIndex() + 1);
+    scrollToIndex(i);
+  });
+
+  // click pallini
+  dotsWrap?.addEventListener("click", (e)=>{
+    const b = e.target.closest("[data-dot]");
+    if(!b) return;
+    scrollToIndex(parseInt(b.dataset.dot, 10));
+  });
+
+  // aggiorna pallino durante swipe
+  let t;
+  track.addEventListener("scroll", ()=>{
+    clearTimeout(t);
+    t = setTimeout(()=>{
+      setActiveDot(currentIndex());
+    }, 60);
+  }, { passive: true });
+
+  // init
+  setActiveDot(0);
+})();
 }
