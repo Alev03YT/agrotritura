@@ -260,4 +260,42 @@ details p{color:var(--muted); margin:10px 0 0}
   .menu{display:none}
   .hamb{display:inline-flex}
   .mobilePanel.show{display:block}
+/* ===== FIX MOBILE GLOBALI ===== */
+@media (max-width: 768px){
+
+  /* margini laterali uniformi */
+  .container{
+    padding-left:16px;
+    padding-right:16px;
+  }
+
+  /* footer non tagliato */
+  .footer{
+    padding-left:20px;
+    padding-right:20px;
+  }
+
+  /* form preventivo centrato */
+  .form{
+    width:100%;
+  }
+
+  /* tabella prezzi scrollabile */
+  .table{
+    display:block;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+
+  /* spazio per bottone WhatsApp flottante */
+  body{
+    padding-bottom:90px;
+  }
+
+  /* bottone WhatsApp più elegante su mobile */
+  .whatsappFloat{
+    bottom:18px;
+    right:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.25);
+  }
 }
