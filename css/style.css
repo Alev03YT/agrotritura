@@ -296,8 +296,40 @@ details p{color:var(--muted); margin:10px 0 0}
   .hero .wrap{padding:52px 0 26px;}
   .hero .badges{margin-top:18px; margin-bottom:8px;}
 
-  .section{padding:56px 0;}
-  #servizio.section{padding-top:34px;}
+  /* sezioni più compatte su telefono */
+  .section{padding:42px 0;}
+  #servizio.section{padding-top:26px;}
+
+  /* card un po' più compatte */
+  .card .pad{padding:16px;}
+  .card .img{height:145px;}
+  .g-item img{height:180px;}
+
+  /* ===== Griglie “a scorrimento” (meno scroll verticale) ===== */
+  .gridScroll{
+    grid-template-columns:unset;
+    grid-auto-flow:column;
+    grid-auto-columns:86%;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:6px;
+  }
+  .gridScroll > *{scroll-snap-align:start;}
+  .gridScroll .feature{grid-column:auto;}
+
+  .galleryScroll{
+    grid-template-columns:unset;
+    grid-auto-flow:column;
+    grid-auto-columns:86%;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:6px;
+  }
+  .galleryScroll > *{scroll-snap-align:start;}
 
   /* tabella prezzi scrollabile */
   .table{
