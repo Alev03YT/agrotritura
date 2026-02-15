@@ -8,32 +8,21 @@ if (hamb && panel) {
   hamb.addEventListener('click', () => {
     const isOpen = panel.classList.toggle('show');
     hamb.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-
     // Nasconde il bottone WhatsApp quando il menu è aperto
     document.body.classList.toggle('menu-open', isOpen);
-  });
-
-  // Chiudi menu quando clicchi un link (mobile)
-  panel.addEventListener("click", (e) => {
-    const a = e.target.closest("a");
-    if (!a) return;
-    panel.classList.remove("show");
-    hamb.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("menu-open");
   });
 }
 
 // ============================
 // CONFIG: URL APPS SCRIPT
 // ============================
-const LEAD_API =
-  "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
+const LEAD_API = "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
 
 // ============================
 // CAMPI DINAMICI: PRODOTTO + CONSEGNA
 // ============================
-const selectProdotto = document.querySelector("#cereale");
-const campoExtra = document.querySelector("#campoExtraDinamico");
+const selectProdotto = document.querySelector('#cereale');
+const campoExtra = document.querySelector('#campoExtraDinamico');
 
 function renderSelect(label, name, options) {
   return `
@@ -41,7 +30,7 @@ function renderSelect(label, name, options) {
       <label>${label}</label>
       <select name="${name}">
         <option value="">Seleziona…</option>
-        ${options.map((o) => `<option value="${o}">${o}</option>`).join("")}
+        ${options.map(o => `<option value="${o}">${o}</option>`).join("")}
       </select>
     </div>
   `;
@@ -63,43 +52,24 @@ function creaCampoExtra(prodotto) {
 
   // ----- CAMPI SPECIFICI PRODOTTO -----
   if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
-    campoExtra.innerHTML += renderSelect("Granulometria desiderata", "extra_granulometria", [
-      "Grossa",
-      "Media",
-      "Fine",
-    ]);
+    campoExtra.innerHTML += renderSelect("Granulometria desiderata", "extra_granulometria", ["Grossa", "Media", "Fine"]);
   } else if (prodotto === "Frumento") {
-    campoExtra.innerHTML += renderSelect("Animali destinatari", "extra_animali", [
-      "Bovini",
-      "Suini",
-      "Pollame",
-      "Ovini",
-      "Altro",
-    ]);
+    campoExtra.innerHTML += renderSelect("Animali destinatari", "extra_animali", ["Bovini", "Suini", "Pollame", "Ovini", "Altro"]);
   } else if (prodotto === "Grana verde") {
-    campoExtra.innerHTML += renderSelect("Formato grana verde", "extra_formato_grana", [
-      "Intero",
-      "Tritato",
-    ]);
-
+    campoExtra.innerHTML += renderSelect("Formato grana verde", "extra_formato_grana", ["Intero", "Tritato"]);
     campoExtra.innerHTML += `<div id="wrapGranaGranulo"></div>`;
 
     const formatoSel = campoExtra.querySelector('[name="extra_formato_grana"]');
-    const wrap = campoExtra.querySelector("#wrapGranaGranulo");
+    const wrap = campoExtra.querySelector('#wrapGranaGranulo');
 
     if (formatoSel && wrap) {
       const update = () => {
         if (formatoSel.value === "Tritato") {
-          wrap.innerHTML = renderSelect("Granulometria", "extra_granulometria_grana", [
-            "Grossa",
-            "Media",
-            "Fine",
-          ]);
+          wrap.innerHTML = renderSelect("Granulometria", "extra_granulometria_grana", ["Grossa", "Media", "Fine"]);
         } else {
           wrap.innerHTML = "";
         }
       };
-
       formatoSel.addEventListener("change", update);
       update();
     }
@@ -114,10 +84,7 @@ function creaCampoExtra(prodotto) {
 }
 
 if (selectProdotto) {
-  selectProdotto.addEventListener("change", (e) => {
-    creaCampoExtra(e.target.value);
-  });
-
+  selectProdotto.addEventListener('change', (e) => creaCampoExtra(e.target.value));
   if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
 }
 
@@ -129,38 +96,24 @@ function jsonp(url, timeoutMs = 12000) {
     const cb = "__lead_cb_" + Math.random().toString(36).slice(2);
     const s = document.createElement("script");
 
-    let t = setTimeout(() => {
+    const t = setTimeout(() => {
       cleanup();
       reject(new Error("Timeout richiesta"));
     }, timeoutMs);
 
     function cleanup() {
       clearTimeout(t);
-      try {
-        delete window[cb];
-      } catch (e) {
-        window[cb] = undefined;
-      }
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
       if (s && s.parentNode) s.parentNode.removeChild(s);
     }
 
-    window[cb] = (data) => {
-      cleanup();
-      resolve(data);
-    };
+    window[cb] = (data) => { cleanup(); resolve(data); };
 
-    s.onerror = () => {
-      cleanup();
-      reject(new Error("Errore JSONP"));
-    };
+    s.onerror = () => { cleanup(); reject(new Error("Errore JSONP")); };
 
-    const full =
-      url +
-      (url.includes("?") ? "&" : "?") +
-      "callback=" +
-      encodeURIComponent(cb) +
-      "&t=" +
-      Date.now();
+    const full = url + (url.includes("?") ? "&" : "?")
+      + "callback=" + encodeURIComponent(cb)
+      + "&t=" + Date.now();
 
     s.src = full;
     document.body.appendChild(s);
@@ -172,19 +125,16 @@ function jsonp(url, timeoutMs = 12000) {
 // ============================
 function collectExtrasReadable() {
   if (!campoExtra) return "";
-
   const nodes = campoExtra.querySelectorAll("select, input, textarea");
   const parts = [];
 
-  nodes.forEach((el) => {
+  nodes.forEach(el => {
     const val = (el.value || "").trim();
     if (!val) return;
 
     const wrap = el.closest("div");
     const label = wrap ? (wrap.querySelector("label")?.textContent || "").trim() : "";
-
-    if (label) parts.push(`${label}: ${val}`);
-    else parts.push(val);
+    parts.push(label ? `${label}: ${val}` : val);
   });
 
   return parts.join(" | ");
@@ -193,7 +143,7 @@ function collectExtrasReadable() {
 // ============================
 // SUBMIT PREVENTIVO
 // ============================
-const form = document.querySelector("#preventivoForm");
+const form = document.querySelector('#preventivoForm');
 
 function safe(selector) {
   const el = form?.querySelector(selector);
@@ -201,55 +151,42 @@ function safe(selector) {
 }
 
 if (form) {
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const nome = safe("#nome");
-    const telefono = safe("#telefono");
-    const prodotto = safe("#cereale");
-    const quantita = safe("#quantita");
-    const comune = safe("#comune");
-    const note = safe("#note");
-
+    const nome = safe('#nome');
+    const telefono = safe('#telefono');
+    const prodotto = safe('#cereale');
+    const quantita = safe('#quantita');
+    const comune = safe('#comune');
+    const note = safe('#note');
     const extra = collectExtrasReadable();
 
-    // ----- 1) SALVA LEAD SU GOOGLE SHEETS -----
+    // 1) salva lead (se fallisce non blocca WhatsApp)
     const leadUrl =
       LEAD_API +
       "?action=lead" +
-      "&nome=" +
-      encodeURIComponent(nome) +
-      "&telefono=" +
-      encodeURIComponent(telefono) +
-      "&cereale=" +
-      encodeURIComponent(prodotto) +
-      "&extra=" +
-      encodeURIComponent(extra) +
-      "&quantita=" +
-      encodeURIComponent(quantita) +
-      "&comune=" +
-      encodeURIComponent(comune) +
-      "&note=" +
-      encodeURIComponent(note) +
-      "&pagina=" +
-      encodeURIComponent(location.href);
+      "&nome=" + encodeURIComponent(nome) +
+      "&telefono=" + encodeURIComponent(telefono) +
+      "&cereale=" + encodeURIComponent(prodotto) +
+      "&extra=" + encodeURIComponent(extra) +
+      "&quantita=" + encodeURIComponent(quantita) +
+      "&comune=" + encodeURIComponent(comune) +
+      "&note=" + encodeURIComponent(note) +
+      "&pagina=" + encodeURIComponent(location.href);
 
-    try {
-      await jsonp(leadUrl);
-    } catch (err) {
-      console.warn("Lead non salvato:", err.message);
-    }
+    try { await jsonp(leadUrl); }
+    catch (err) { console.warn("Lead non salvato:", err.message); }
 
-    // ----- 2) MESSAGGIO WHATSAPP PROFESSIONALE -----
-    const msg = `Ciao AgroTritura!
+    // 2) WhatsApp message
+    const msg =
+`Ciao AgroTritura!
 Vorrei un preventivo per mangime su misura.
 
 📌 Dettagli ordine:
 - Prodotto: ${prodotto || "-"}
 - Quantità: ${quantita || "-"}
-- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${
-      nome ? `\n- Nome: ${nome}` : ""
-    }
+- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${nome ? `\n- Nome: ${nome}` : ""}
 
 🔧 Dettagli specifici:
 - ${extra || "-"}
@@ -259,86 +196,124 @@ ${note || "-"}
 
 Grazie!`;
 
-    const url = "https://wa.me/393341067510?text=" + encodeURIComponent(msg);
-    window.open(url, "_blank");
+    window.open("https://wa.me/393341067510?text=" + encodeURIComponent(msg), "_blank");
   });
 }
 
-// ============================
-// GALLERIA PRO: bottoni + pallini (richiede i data-attributes nell'HTML)
-// ============================
-(function initGalleryPro() {
-  const wrap = document.querySelector("[data-gallery]");
-  if (!wrap) return;
+// =====================================================
+// SLIDER PRO PER TUTTE LE SEZIONI A SCORRIMENTO
+// (gridScroll + galleryScroll) -> frecce + pallini
+// =====================================================
+(function initAllSlidersPro() {
+  const tracks = Array.from(document.querySelectorAll(".gridScroll, .galleryScroll"));
+  if (!tracks.length) return;
 
-  const track = wrap.querySelector("[data-gallery-track]");
-  const btnPrev = wrap.querySelector("[data-gallery-prev]");
-  const btnNext = wrap.querySelector("[data-gallery-next]");
-  const dotsWrap = wrap.parentElement?.querySelector("[data-gallery-dots]");
-  const items = track ? Array.from(track.querySelectorAll(".g-item")) : [];
+  tracks.forEach((track, idx) => {
+    const items = Array.from(track.children).filter(el => el.nodeType === 1);
+    if (items.length <= 1) return;
 
-  if (!track || items.length === 0) return;
+    // wrapper
+    const wrap = document.createElement("div");
+    wrap.className = "sliderWrap";
+    wrap.setAttribute("data-slider-wrap", String(idx));
 
-  // crea pallini
-  if (dotsWrap) {
-    dotsWrap.innerHTML = items
-      .map(
-        (_, i) =>
-          `<button class="galleryDot" type="button" aria-label="Vai alla foto ${i + 1}" data-dot="${i}"></button>`
-      )
-      .join("");
-  }
-  const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll(".galleryDot")) : [];
+    track.parentNode.insertBefore(wrap, track);
+    wrap.appendChild(track);
 
-  function getGap() {
-    const style = getComputedStyle(track);
-    return parseFloat(style.gap || 0) || 14;
-  }
+    // UI
+    const prev = document.createElement("button");
+    prev.type = "button";
+    prev.className = "sliderBtn prev";
+    prev.setAttribute("aria-label", "Precedente");
+    prev.innerHTML = "‹";
 
-  function cardStep() {
-    const first = items[0];
-    const rect = first.getBoundingClientRect();
-    return rect.width + getGap();
-  }
+    const next = document.createElement("button");
+    next.type = "button";
+    next.className = "sliderBtn next";
+    next.setAttribute("aria-label", "Successiva");
+    next.innerHTML = "›";
 
-  function setActiveDot(index) {
-    dots.forEach((d, i) => d.classList.toggle("active", i === index));
-  }
+    const dots = document.createElement("div");
+    dots.className = "sliderDots";
+    dots.setAttribute("aria-label", "Indicatori");
 
-  function currentIndex() {
-    const step = cardStep();
-    return step ? Math.round(track.scrollLeft / step) : 0;
-  }
+    dots.innerHTML = items.map((_, i) =>
+      `<button class="sliderDot" type="button" aria-label="Vai alla slide ${i + 1}" data-dot="${i}"></button>`
+    ).join("");
 
-  function scrollToIndex(i) {
-    const step = cardStep();
-    track.scrollTo({ left: i * step, behavior: "smooth" });
-    setActiveDot(i);
-  }
+    wrap.appendChild(prev);
+    wrap.appendChild(next);
+    wrap.appendChild(dots);
 
-  btnPrev?.addEventListener("click", () => {
-    scrollToIndex(Math.max(0, currentIndex() - 1));
-  });
+    const dotBtns = Array.from(dots.querySelectorAll(".sliderDot"));
 
-  btnNext?.addEventListener("click", () => {
-    scrollToIndex(Math.min(items.length - 1, currentIndex() + 1));
-  });
+    function gapPx() {
+      const cs = getComputedStyle(track);
+      const g = parseFloat(cs.gap || cs.columnGap || "0");
+      return Number.isFinite(g) ? g : 0;
+    }
 
-  dotsWrap?.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-dot]");
-    if (!b) return;
-    scrollToIndex(parseInt(b.dataset.dot, 10));
-  });
+    function stepPx() {
+      const r = items[0].getBoundingClientRect();
+      return r.width + gapPx();
+    }
 
-  let t;
-  track.addEventListener(
-    "scroll",
-    () => {
+    function maxIndex() {
+      return items.length - 1;
+    }
+
+    function currentIndex() {
+      const s = stepPx();
+      if (!s) return 0;
+      return Math.round(track.scrollLeft / s);
+    }
+
+    function setActiveDot(i) {
+      dotBtns.forEach((b, k) => b.classList.toggle("active", k === i));
+    }
+
+    function scrollToIndex(i) {
+      const s = stepPx();
+      track.scrollTo({ left: i * s, behavior: "smooth" });
+      setActiveDot(i);
+    }
+
+    // mostra UI solo se davvero scrolla
+    function refreshOverflow() {
+      const canScroll = track.scrollWidth > track.clientWidth + 6;
+      wrap.classList.toggle("sliderActive", canScroll);
+      if (!canScroll) setActiveDot(0);
+    }
+
+    prev.addEventListener("click", () => {
+      const i = Math.max(0, currentIndex() - 1);
+      scrollToIndex(i);
+    });
+
+    next.addEventListener("click", () => {
+      const i = Math.min(maxIndex(), currentIndex() + 1);
+      scrollToIndex(i);
+    });
+
+    dots.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-dot]");
+      if (!b) return;
+      scrollToIndex(parseInt(b.dataset.dot, 10));
+    });
+
+    let t;
+    track.addEventListener("scroll", () => {
       clearTimeout(t);
       t = setTimeout(() => setActiveDot(currentIndex()), 60);
-    },
-    { passive: true }
-  );
+    }, { passive: true });
 
-  setActiveDot(0);
+    window.addEventListener("resize", () => {
+      refreshOverflow();
+      setActiveDot(currentIndex());
+    });
+
+    // init
+    setActiveDot(0);
+    refreshOverflow();
+  });
 })();
