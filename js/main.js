@@ -12,20 +12,28 @@ if (hamb && panel) {
     // Nasconde il bottone WhatsApp quando il menu è aperto
     document.body.classList.toggle('menu-open', isOpen);
   });
-}
 
+  // Chiudi menu quando clicchi un link (mobile)
+  panel.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+    panel.classList.remove("show");
+    hamb.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("menu-open");
+  });
+}
 
 // ============================
 // CONFIG: URL APPS SCRIPT
 // ============================
-const LEAD_API = "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
-
+const LEAD_API =
+  "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
 
 // ============================
 // CAMPI DINAMICI: PRODOTTO + CONSEGNA
 // ============================
-const selectProdotto = document.querySelector('#cereale');
-const campoExtra = document.querySelector('#campoExtraDinamico');
+const selectProdotto = document.querySelector("#cereale");
+const campoExtra = document.querySelector("#campoExtraDinamico");
 
 function renderSelect(label, name, options) {
   return `
@@ -33,7 +41,7 @@ function renderSelect(label, name, options) {
       <label>${label}</label>
       <select name="${name}">
         <option value="">Seleziona…</option>
-        ${options.map(o => `<option value="${o}">${o}</option>`).join("")}
+        ${options.map((o) => `<option value="${o}">${o}</option>`).join("")}
       </select>
     </div>
   `;
@@ -55,41 +63,38 @@ function creaCampoExtra(prodotto) {
 
   // ----- CAMPI SPECIFICI PRODOTTO -----
   if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
-    campoExtra.innerHTML += renderSelect(
-      "Granulometria desiderata",
-      "extra_granulometria",
-      ["Grossa", "Media", "Fine"]
-    );
-  }
-
-  else if (prodotto === "Frumento") {
-    campoExtra.innerHTML += renderSelect(
-      "Animali destinatari",
-      "extra_animali",
-      ["Bovini", "Suini", "Pollame", "Ovini", "Altro"]
-    );
-  }
-
-  else if (prodotto === "Grana verde") {
-    campoExtra.innerHTML += renderSelect(
-      "Formato grana verde",
-      "extra_formato_grana",
-      ["Intero", "Tritato"]
-    );
+    campoExtra.innerHTML += renderSelect("Granulometria desiderata", "extra_granulometria", [
+      "Grossa",
+      "Media",
+      "Fine",
+    ]);
+  } else if (prodotto === "Frumento") {
+    campoExtra.innerHTML += renderSelect("Animali destinatari", "extra_animali", [
+      "Bovini",
+      "Suini",
+      "Pollame",
+      "Ovini",
+      "Altro",
+    ]);
+  } else if (prodotto === "Grana verde") {
+    campoExtra.innerHTML += renderSelect("Formato grana verde", "extra_formato_grana", [
+      "Intero",
+      "Tritato",
+    ]);
 
     campoExtra.innerHTML += `<div id="wrapGranaGranulo"></div>`;
 
     const formatoSel = campoExtra.querySelector('[name="extra_formato_grana"]');
-    const wrap = campoExtra.querySelector('#wrapGranaGranulo');
+    const wrap = campoExtra.querySelector("#wrapGranaGranulo");
 
     if (formatoSel && wrap) {
       const update = () => {
         if (formatoSel.value === "Tritato") {
-          wrap.innerHTML = renderSelect(
-            "Granulometria",
-            "extra_granulometria_grana",
-            ["Grossa", "Media", "Fine"]
-          );
+          wrap.innerHTML = renderSelect("Granulometria", "extra_granulometria_grana", [
+            "Grossa",
+            "Media",
+            "Fine",
+          ]);
         } else {
           wrap.innerHTML = "";
         }
@@ -98,90 +103,80 @@ function creaCampoExtra(prodotto) {
       formatoSel.addEventListener("change", update);
       update();
     }
-  }
-
-  else if (prodotto === "Mix personalizzato") {
-    campoExtra.innerHTML += renderInput(
-      "Composizione del mix",
-      "extra_mix",
-      "Es. mais + orzo + frumento"
-    );
-  }
-
-  else if (prodotto === "Altro / da definire") {
-    campoExtra.innerHTML += renderInput(
-      "Prodotto richiesto",
-      "extra_altro",
-      "Descrivi cosa ti serve"
-    );
+  } else if (prodotto === "Mix personalizzato") {
+    campoExtra.innerHTML += renderInput("Composizione del mix", "extra_mix", "Es. mais + orzo + frumento");
+  } else if (prodotto === "Altro / da definire") {
+    campoExtra.innerHTML += renderInput("Prodotto richiesto", "extra_altro", "Descrivi cosa ti serve");
   }
 
   // ----- CONSEGNA (per tutti) -----
-  campoExtra.innerHTML += renderSelect(
-    "Consegna",
-    "tipo_consegna",
-    ["A domicilio", "Presso la tua azienda"]
-  );
+  campoExtra.innerHTML += renderSelect("Consegna", "tipo_consegna", ["A domicilio", "Presso la tua azienda"]);
 }
 
 if (selectProdotto) {
-  selectProdotto.addEventListener('change', (e) => {
+  selectProdotto.addEventListener("change", (e) => {
     creaCampoExtra(e.target.value);
   });
 
   if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
 }
 
-
 // ============================
 // JSONP helper (GitHub Pages)
 // ============================
-function jsonp(url, timeoutMs = 12000){
-  return new Promise((resolve, reject)=>{
+function jsonp(url, timeoutMs = 12000) {
+  return new Promise((resolve, reject) => {
     const cb = "__lead_cb_" + Math.random().toString(36).slice(2);
     const s = document.createElement("script");
 
-    let t = setTimeout(()=>{
+    let t = setTimeout(() => {
       cleanup();
       reject(new Error("Timeout richiesta"));
     }, timeoutMs);
 
-    function cleanup(){
+    function cleanup() {
       clearTimeout(t);
-      try { delete window[cb]; } catch(e) { window[cb] = undefined; }
+      try {
+        delete window[cb];
+      } catch (e) {
+        window[cb] = undefined;
+      }
       if (s && s.parentNode) s.parentNode.removeChild(s);
     }
 
-    window[cb] = (data)=>{
+    window[cb] = (data) => {
       cleanup();
       resolve(data);
     };
 
-    s.onerror = ()=>{
+    s.onerror = () => {
       cleanup();
       reject(new Error("Errore JSONP"));
     };
 
-    const full = url + (url.includes("?") ? "&" : "?")
-      + "callback=" + encodeURIComponent(cb)
-      + "&t=" + Date.now();
+    const full =
+      url +
+      (url.includes("?") ? "&" : "?") +
+      "callback=" +
+      encodeURIComponent(cb) +
+      "&t=" +
+      Date.now();
 
     s.src = full;
     document.body.appendChild(s);
   });
 }
 
-
 // ============================
 // COLLECT EXTRA (leggibile)
 // ============================
-function collectExtrasReadable(){
+function collectExtrasReadable() {
   if (!campoExtra) return "";
 
   const nodes = campoExtra.querySelectorAll("select, input, textarea");
   const parts = [];
 
-  nodes.forEach(el=>{
+  nodes.forEach((el) => {
     const val = (el.value || "").trim();
     if (!val) return;
 
@@ -195,27 +190,26 @@ function collectExtrasReadable(){
   return parts.join(" | ");
 }
 
-
 // ============================
 // SUBMIT PREVENTIVO
 // ============================
-const form = document.querySelector('#preventivoForm');
+const form = document.querySelector("#preventivoForm");
 
-function safe(selector){
+function safe(selector) {
   const el = form?.querySelector(selector);
   return (el?.value || "").trim();
 }
 
 if (form) {
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nome = safe('#nome');
-    const telefono = safe('#telefono');
-    const prodotto = safe('#cereale');
-    const quantita = safe('#quantita');
-    const comune = safe('#comune');
-    const note = safe('#note');
+    const nome = safe("#nome");
+    const telefono = safe("#telefono");
+    const prodotto = safe("#cereale");
+    const quantita = safe("#quantita");
+    const comune = safe("#comune");
+    const note = safe("#note");
 
     const extra = collectExtrasReadable();
 
@@ -223,30 +217,39 @@ if (form) {
     const leadUrl =
       LEAD_API +
       "?action=lead" +
-      "&nome=" + encodeURIComponent(nome) +
-      "&telefono=" + encodeURIComponent(telefono) +
-      "&cereale=" + encodeURIComponent(prodotto) +
-      "&extra=" + encodeURIComponent(extra) +
-      "&quantita=" + encodeURIComponent(quantita) +
-      "&comune=" + encodeURIComponent(comune) +
-      "&note=" + encodeURIComponent(note) +
-      "&pagina=" + encodeURIComponent(location.href);
+      "&nome=" +
+      encodeURIComponent(nome) +
+      "&telefono=" +
+      encodeURIComponent(telefono) +
+      "&cereale=" +
+      encodeURIComponent(prodotto) +
+      "&extra=" +
+      encodeURIComponent(extra) +
+      "&quantita=" +
+      encodeURIComponent(quantita) +
+      "&comune=" +
+      encodeURIComponent(comune) +
+      "&note=" +
+      encodeURIComponent(note) +
+      "&pagina=" +
+      encodeURIComponent(location.href);
 
-    try{
+    try {
       await jsonp(leadUrl);
-    }catch(err){
+    } catch (err) {
       console.warn("Lead non salvato:", err.message);
     }
 
     // ----- 2) MESSAGGIO WHATSAPP PROFESSIONALE -----
-    const msg =
-`Ciao AgroTritura!
+    const msg = `Ciao AgroTritura!
 Vorrei un preventivo per mangime su misura.
 
 📌 Dettagli ordine:
 - Prodotto: ${prodotto || "-"}
 - Quantità: ${quantita || "-"}
-- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${nome ? `\n- Nome: ${nome}` : ""}
+- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${
+      nome ? `\n- Nome: ${nome}` : ""
+    }
 
 🔧 Dettagli specifici:
 - ${extra || "-"}
@@ -259,80 +262,83 @@ Grazie!`;
     const url = "https://wa.me/393341067510?text=" + encodeURIComponent(msg);
     window.open(url, "_blank");
   });
+}
+
 // ============================
-// GALLERIA PRO: bottoni + pallini
+// GALLERIA PRO: bottoni + pallini (richiede i data-attributes nell'HTML)
 // ============================
-(function initGalleryPro(){
+(function initGalleryPro() {
   const wrap = document.querySelector("[data-gallery]");
-  if(!wrap) return;
+  if (!wrap) return;
 
   const track = wrap.querySelector("[data-gallery-track]");
   const btnPrev = wrap.querySelector("[data-gallery-prev]");
   const btnNext = wrap.querySelector("[data-gallery-next]");
-  const dotsWrap = document.querySelector("[data-gallery-dots]");
-  const items = Array.from(track.querySelectorAll(".g-item"));
+  const dotsWrap = wrap.parentElement?.querySelector("[data-gallery-dots]");
+  const items = track ? Array.from(track.querySelectorAll(".g-item")) : [];
 
-  if(!track || items.length === 0) return;
+  if (!track || items.length === 0) return;
 
   // crea pallini
-  if(dotsWrap){
-    dotsWrap.innerHTML = items.map((_, i)=> `<button class="galleryDot" type="button" aria-label="Vai alla foto ${i+1}" data-dot="${i}"></button>`).join("");
+  if (dotsWrap) {
+    dotsWrap.innerHTML = items
+      .map(
+        (_, i) =>
+          `<button class="galleryDot" type="button" aria-label="Vai alla foto ${i + 1}" data-dot="${i}"></button>`
+      )
+      .join("");
   }
   const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll(".galleryDot")) : [];
 
-  function cardStep(){
-    // quanto “scorrere” per ogni click (larghezza di una card + gap)
+  function getGap() {
+    const style = getComputedStyle(track);
+    return parseFloat(style.gap || 0) || 14;
+  }
+
+  function cardStep() {
     const first = items[0];
     const rect = first.getBoundingClientRect();
-    const style = getComputedStyle(track);
-    const gap = parseFloat(style.columnGap || style.gap || 0) || 14;
-    return rect.width + gap;
+    return rect.width + getGap();
   }
 
-  function setActiveDot(index){
-    dots.forEach((d,i)=> d.classList.toggle("active", i===index));
+  function setActiveDot(index) {
+    dots.forEach((d, i) => d.classList.toggle("active", i === index));
   }
 
-  function currentIndex(){
-    const left = track.scrollLeft;
+  function currentIndex() {
     const step = cardStep();
-    return Math.round(left / step);
+    return step ? Math.round(track.scrollLeft / step) : 0;
   }
 
-  function scrollToIndex(i){
+  function scrollToIndex(i) {
     const step = cardStep();
     track.scrollTo({ left: i * step, behavior: "smooth" });
     setActiveDot(i);
   }
 
-  // bottoni
-  btnPrev?.addEventListener("click", ()=>{
-    const i = Math.max(0, currentIndex() - 1);
-    scrollToIndex(i);
+  btnPrev?.addEventListener("click", () => {
+    scrollToIndex(Math.max(0, currentIndex() - 1));
   });
 
-  btnNext?.addEventListener("click", ()=>{
-    const i = Math.min(items.length - 1, currentIndex() + 1);
-    scrollToIndex(i);
+  btnNext?.addEventListener("click", () => {
+    scrollToIndex(Math.min(items.length - 1, currentIndex() + 1));
   });
 
-  // click pallini
-  dotsWrap?.addEventListener("click", (e)=>{
+  dotsWrap?.addEventListener("click", (e) => {
     const b = e.target.closest("[data-dot]");
-    if(!b) return;
+    if (!b) return;
     scrollToIndex(parseInt(b.dataset.dot, 10));
   });
 
-  // aggiorna pallino durante swipe
   let t;
-  track.addEventListener("scroll", ()=>{
-    clearTimeout(t);
-    t = setTimeout(()=>{
-      setActiveDot(currentIndex());
-    }, 60);
-  }, { passive: true });
+  track.addEventListener(
+    "scroll",
+    () => {
+      clearTimeout(t);
+      t = setTimeout(() => setActiveDot(currentIndex()), 60);
+    },
+    { passive: true }
+  );
 
-  // init
   setActiveDot(0);
 })();
-}
