@@ -8,20 +8,18 @@ if (hamb && panel) {
   hamb.addEventListener('click', () => {
     const isOpen = panel.classList.toggle('show');
     hamb.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-
+    // nasconde il bottone WhatsApp quando il menu è aperto (se usi questa classe in CSS)
     document.body.classList.toggle('menu-open', isOpen);
   });
 }
 
-
 // ============================
-// CONFIG: URL APPS SCRIPT
+// CONFIG: URL APPS SCRIPT (LEADS)
 // ============================
 const LEAD_API = "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
 
-
 // ============================
-// CAMPI DINAMICI PREVENTIVO
+// CAMPI DINAMICI: PRODOTTO + CONSEGNA
 // ============================
 const selectProdotto = document.querySelector('#cereale');
 const campoExtra = document.querySelector('#campoExtraDinamico');
@@ -52,29 +50,25 @@ function creaCampoExtra(prodotto) {
 
   campoExtra.innerHTML = "";
 
+  // --- Campo specifico prodotto ---
   if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
     campoExtra.innerHTML += renderSelect(
       "Granulometria desiderata",
       "extra_granulometria",
       ["Grossa", "Media", "Fine"]
     );
-  }
-
-  else if (prodotto === "Frumento") {
+  } else if (prodotto === "Frumento") {
     campoExtra.innerHTML += renderSelect(
       "Animali destinatari",
       "extra_animali",
       ["Bovini", "Suini", "Pollame", "Ovini", "Altro"]
     );
-  }
-
-  else if (prodotto === "Grana verde") {
+  } else if (prodotto === "Grana verde") {
     campoExtra.innerHTML += renderSelect(
       "Formato grana verde",
       "extra_formato_grana",
       ["Intero", "Tritato"]
     );
-
     campoExtra.innerHTML += `<div id="wrapGranaGranulo"></div>`;
 
     const formatoSel = campoExtra.querySelector('[name="extra_formato_grana"]');
@@ -92,28 +86,24 @@ function creaCampoExtra(prodotto) {
           wrap.innerHTML = "";
         }
       };
-
       formatoSel.addEventListener("change", update);
       update();
     }
-  }
-
-  else if (prodotto === "Mix personalizzato") {
+  } else if (prodotto === "Mix personalizzato") {
     campoExtra.innerHTML += renderInput(
       "Composizione del mix",
       "extra_mix",
-      "Es. mais + orzo + frumento"
+      "Es. mais + orzo + frumento (percentuali se le sai)"
     );
-  }
-
-  else if (prodotto === "Altro / da definire") {
+  } else if (prodotto === "Altro / da definire") {
     campoExtra.innerHTML += renderInput(
       "Prodotto richiesto",
       "extra_altro",
-      "Descrivi cosa ti serve"
+      "Descrivi cosa ti serve (cereale/miscela)"
     );
   }
 
+  // --- Campo CONSEGNA (per tutti) ---
   campoExtra.innerHTML += renderSelect(
     "Consegna",
     "tipo_consegna",
@@ -125,17 +115,15 @@ if (selectProdotto) {
   selectProdotto.addEventListener('change', (e) => {
     creaCampoExtra(e.target.value);
   });
-
   if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
 }
 
-
 // ============================
-// JSONP helper
+// JSONP helper (per GitHub Pages / CORS)
 // ============================
 function jsonp(url, timeoutMs = 12000){
   return new Promise((resolve, reject)=>{
-    const cb = "__lead_cb_" + Math.random().toString(36).slice(2);
+    const cb = "__cb_" + Math.random().toString(36).slice(2);
     const s = document.createElement("script");
 
     let t = setTimeout(()=>{
@@ -168,9 +156,30 @@ function jsonp(url, timeoutMs = 12000){
   });
 }
 
+// ============================
+// COLLECT EXTRA (leggibile)
+// ============================
+function collectExtrasReadable(){
+  if (!campoExtra) return "";
+
+  const nodes = campoExtra.querySelectorAll("select, input, textarea");
+  const parts = [];
+
+  nodes.forEach(el=>{
+    const val = (el.value || "").trim();
+    if (!val) return;
+
+    const wrap = el.closest("div");
+    const label = wrap ? (wrap.querySelector("label")?.textContent || "").trim() : "";
+    if (label) parts.push(`${label}: ${val}`);
+    else parts.push(val);
+  });
+
+  return parts.join(" | ");
+}
 
 // ============================
-// SUBMIT PREVENTIVO
+// SUBMIT PREVENTIVO: salva lead + apre WhatsApp
 // ============================
 const form = document.querySelector('#preventivoForm');
 
@@ -189,12 +198,9 @@ if (form) {
     const quantita = safe('#quantita');
     const comune = safe('#comune');
     const note = safe('#note');
+    const extra = collectExtrasReadable();
 
-    const extra = Array.from(campoExtra.querySelectorAll("select,input"))
-      .map(el => el.value?.trim())
-      .filter(Boolean)
-      .join(" | ");
-
+    // 1) Salva lead su Google Sheet (non blocca WhatsApp se fallisce)
     const leadUrl =
       LEAD_API +
       "?action=lead" +
@@ -207,84 +213,118 @@ if (form) {
       "&note=" + encodeURIComponent(note) +
       "&pagina=" + encodeURIComponent(location.href);
 
-    try { await jsonp(leadUrl); } catch {}
+    try{ await jsonp(leadUrl); }catch(err){ console.warn("Lead non salvato:", err.message); }
 
+    // 2) Messaggio WhatsApp PRO
     const msg =
 `Ciao AgroTritura!
 Vorrei un preventivo per mangime su misura.
 
+📌 Dettagli ordine:
 - Prodotto: ${prodotto || "-"}
 - Quantità: ${quantita || "-"}
-- Comune: ${comune || "-"}
+- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${nome ? `\n- Nome: ${nome}` : ""}
 
-${extra ? "Dettagli: " + extra : ""}
+🔧 Dettagli specifici:
+- ${extra || "-"}
 
-${note ? "Note: " + note : ""}`;
+📝 Note:
+${note || "-"}
 
-    window.open("https://wa.me/393341067510?text=" + encodeURIComponent(msg), "_blank");
+Grazie!`;
+
+    const url = "https://wa.me/393341067510?text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
   });
 }
 
-
 // ============================
-// SLIDER PRO AUTOMATICO
+// SLIDER PRO: frecce + pallini per TUTTE le sezioni a scorrimento
+// Richiede HTML:
+//  - wrapper: [data-slider]
+//  - track:   [data-slider-track]
+//  - prev:    [data-slider-prev]
+//  - next:    [data-slider-next]
+//  - dots:    [data-slider-dots]
 // ============================
 (function initSliders(){
-  const tracks = Array.from(document.querySelectorAll(".gridScroll, .galleryScroll"));
+  const wraps = Array.from(document.querySelectorAll('[data-slider]'));
+  if (wraps.length === 0) return;
 
-  tracks.forEach(track => {
+  wraps.forEach((wrap)=>{
+    const track = wrap.querySelector('[data-slider-track]');
+    if(!track) return;
 
-    if (track.scrollWidth <= track.clientWidth + 8) return;
+    const btnPrev = wrap.querySelector('[data-slider-prev]');
+    const btnNext = wrap.querySelector('[data-slider-next]');
+    const dotsWrap = wrap.querySelector('[data-slider-dots]');
 
-    const wrap = document.createElement("div");
-    wrap.className = "sliderWrap sliderActive";
+    const items = Array.from(track.children).filter(el=>el.nodeType===1);
+    if(items.length <= 1) return;
 
-    track.parentNode.insertBefore(wrap, track);
-    wrap.appendChild(track);
-
-    const btnPrev = document.createElement("button");
-    btnPrev.className = "sliderBtn prev";
-    btnPrev.innerHTML = "‹";
-
-    const btnNext = document.createElement("button");
-    btnNext.className = "sliderBtn next";
-    btnNext.innerHTML = "›";
-
-    const dots = document.createElement("div");
-    dots.className = "sliderDots";
-
-    const items = Array.from(track.children);
-
-    items.forEach((_, i)=>{
-      const d = document.createElement("button");
-      d.className = "sliderDot";
-      if(i===0) d.classList.add("active");
-      dots.appendChild(d);
-
-      d.addEventListener("click", ()=>{
-        track.scrollTo({
-          left: items[i].offsetLeft,
-          behavior:"smooth"
-        });
-      });
-    });
-
-    wrap.appendChild(btnPrev);
-    wrap.appendChild(btnNext);
-    wrap.appendChild(dots);
-
-    function updateDots(){
-      const idx = Math.round(track.scrollLeft / items[0].clientWidth);
-      dots.querySelectorAll(".sliderDot")
-        .forEach((d,i)=> d.classList.toggle("active", i===idx));
+    function isActive(){
+      return track.scrollWidth > track.clientWidth + 2;
     }
 
-    btnPrev.onclick = ()=> track.scrollBy({ left:-items[0].clientWidth, behavior:"smooth" });
-    btnNext.onclick = ()=> track.scrollBy({ left: items[0].clientWidth, behavior:"smooth" });
+    function applyActive(){
+      wrap.classList.toggle('sliderActive', isActive());
+    }
 
-    track.addEventListener("scroll", ()=>{
-      clearTimeout(track._t);
-      track._t = setTimeout(updateDots, 60);
+    function stepPx(){
+      const first = items[0];
+      const rect = first.getBoundingClientRect();
+      const style = getComputedStyle(track);
+      const gap = parseFloat(style.columnGap || style.gap || 0) || 14;
+      return rect.width + gap;
+    }
+
+    function maxIndex(){
+      return Math.max(0, items.length - 1);
+    }
+
+    function currentIndex(){
+      const step = stepPx() || 1;
+      return Math.max(0, Math.min(maxIndex(), Math.round(track.scrollLeft / step)));
+    }
+
+    function setActiveDot(i){
+      if(!dotsWrap) return;
+      const dots = Array.from(dotsWrap.querySelectorAll('.sliderDot'));
+      dots.forEach((d, idx)=>d.classList.toggle('active', idx===i));
+    }
+
+    function scrollToIndex(i){
+      const step = stepPx();
+      track.scrollTo({ left: i * step, behavior: 'smooth' });
+      setActiveDot(i);
+    }
+
+    // crea pallini
+    if(dotsWrap){
+      dotsWrap.innerHTML = items.map((_, i)=>
+        `<button class="sliderDot" type="button" aria-label="Vai alla slide ${i+1}" data-dot="${i}"></button>`
+      ).join('');
+    }
+
+    btnPrev?.addEventListener('click', ()=> scrollToIndex(Math.max(0, currentIndex()-1)));
+    btnNext?.addEventListener('click', ()=> scrollToIndex(Math.min(maxIndex(), currentIndex()+1)));
+
+    dotsWrap?.addEventListener('click', (e)=>{
+      const b = e.target.closest('[data-dot]');
+      if(!b) return;
+      scrollToIndex(parseInt(b.dataset.dot, 10));
+    });
+
+    // aggiorna pallini durante swipe
+    let t;
+    track.addEventListener('scroll', ()=>{
+      clearTimeout(t);
+      t = setTimeout(()=> setActiveDot(currentIndex()), 60);
     }, { passive:true });
+
+    // init + resize
+    setActiveDot(0);
+    applyActive();
+    window.addEventListener('resize', applyActive);
   });
 })();
