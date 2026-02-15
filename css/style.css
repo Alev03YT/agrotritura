@@ -184,7 +184,12 @@ img{max-width:100%;display:block}
   margin-top:26px;
 }
 .g-item{grid-column:span 4; border-radius:16px; overflow:hidden; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); background:white}
-.g-item img{width:100%; height:220px; object-fit:cover}
+.g-item img{
+  width:100%;
+  height:auto;          /* niente stretching */
+  object-fit:contain;   /* mantiene qualità */
+  background:#fff;
+}
 @media (max-width: 900px){ .g-item{grid-column:span 6} }
 @media (max-width: 600px){ .g-item{grid-column:span 12} }
 
