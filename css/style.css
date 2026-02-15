@@ -349,4 +349,12 @@ details p{color:var(--muted); margin:10px 0 0}
     right:16px !important;
     bottom:90px !important; /* lo alziamo (non sopra il footer) */
   }
+/* spazio sotto la pagina per non far coprire il footer dal bottone WhatsApp */
+body {
+  padding-bottom: 120px;
+/* più respiro sopra nella hero da telefono */
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 40px !important;
+  }
 }
