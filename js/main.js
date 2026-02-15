@@ -8,13 +8,18 @@ if (hamb && panel) {
   hamb.addEventListener('click', () => {
     const isOpen = panel.classList.toggle('show');
     hamb.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+    // Nasconde il bottone WhatsApp quando il menu è aperto
+    document.body.classList.toggle('menu-open', isOpen);
   });
 }
 
+
 // ============================
-// CONFIG: URL APPS SCRIPT (LEADS + ORDINI)
+// CONFIG: URL APPS SCRIPT
 // ============================
 const LEAD_API = "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
+
 
 // ============================
 // CAMPI DINAMICI: PRODOTTO + CONSEGNA
@@ -48,25 +53,30 @@ function creaCampoExtra(prodotto) {
 
   campoExtra.innerHTML = "";
 
-  // --- Campo specifico prodotto ---
+  // ----- CAMPI SPECIFICI PRODOTTO -----
   if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
     campoExtra.innerHTML += renderSelect(
       "Granulometria desiderata",
       "extra_granulometria",
       ["Grossa", "Media", "Fine"]
     );
-  } else if (prodotto === "Frumento") {
+  }
+
+  else if (prodotto === "Frumento") {
     campoExtra.innerHTML += renderSelect(
       "Animali destinatari",
       "extra_animali",
       ["Bovini", "Suini", "Pollame", "Ovini", "Altro"]
     );
-  } else if (prodotto === "Grana verde") {
+  }
+
+  else if (prodotto === "Grana verde") {
     campoExtra.innerHTML += renderSelect(
       "Formato grana verde",
       "extra_formato_grana",
       ["Intero", "Tritato"]
     );
+
     campoExtra.innerHTML += `<div id="wrapGranaGranulo"></div>`;
 
     const formatoSel = campoExtra.querySelector('[name="extra_formato_grana"]');
@@ -84,24 +94,29 @@ function creaCampoExtra(prodotto) {
           wrap.innerHTML = "";
         }
       };
+
       formatoSel.addEventListener("change", update);
       update();
     }
-  } else if (prodotto === "Mix personalizzato") {
+  }
+
+  else if (prodotto === "Mix personalizzato") {
     campoExtra.innerHTML += renderInput(
       "Composizione del mix",
       "extra_mix",
-      "Es. mais + orzo + frumento (percentuali se le sai)"
-    );
-  } else if (prodotto === "Altro / da definire") {
-    campoExtra.innerHTML += renderInput(
-      "Prodotto richiesto",
-      "extra_altro",
-      "Descrivi cosa ti serve (cereale/miscela)"
+      "Es. mais + orzo + frumento"
     );
   }
 
-  // --- Campo CONSEGNA (per tutti) ---
+  else if (prodotto === "Altro / da definire") {
+    campoExtra.innerHTML += renderInput(
+      "Prodotto richiesto",
+      "extra_altro",
+      "Descrivi cosa ti serve"
+    );
+  }
+
+  // ----- CONSEGNA (per tutti) -----
   campoExtra.innerHTML += renderSelect(
     "Consegna",
     "tipo_consegna",
@@ -113,16 +128,19 @@ if (selectProdotto) {
   selectProdotto.addEventListener('change', (e) => {
     creaCampoExtra(e.target.value);
   });
+
   if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
 }
 
+
 // ============================
-// JSONP helper (per GitHub Pages / CORS)
+// JSONP helper (GitHub Pages)
 // ============================
 function jsonp(url, timeoutMs = 12000){
   return new Promise((resolve, reject)=>{
     const cb = "__lead_cb_" + Math.random().toString(36).slice(2);
     const s = document.createElement("script");
+
     let t = setTimeout(()=>{
       cleanup();
       reject(new Error("Timeout richiesta"));
@@ -131,7 +149,7 @@ function jsonp(url, timeoutMs = 12000){
     function cleanup(){
       clearTimeout(t);
       try { delete window[cb]; } catch(e) { window[cb] = undefined; }
-      if(s && s.parentNode) s.parentNode.removeChild(s);
+      if (s && s.parentNode) s.parentNode.removeChild(s);
     }
 
     window[cb] = (data)=>{
@@ -153,6 +171,7 @@ function jsonp(url, timeoutMs = 12000){
   });
 }
 
+
 // ============================
 // COLLECT EXTRA (leggibile)
 // ============================
@@ -168,6 +187,7 @@ function collectExtrasReadable(){
 
     const wrap = el.closest("div");
     const label = wrap ? (wrap.querySelector("label")?.textContent || "").trim() : "";
+
     if (label) parts.push(`${label}: ${val}`);
     else parts.push(val);
   });
@@ -175,8 +195,9 @@ function collectExtrasReadable(){
   return parts.join(" | ");
 }
 
+
 // ============================
-// SUBMIT PREVENTIVO: salva lead + apre WhatsApp
+// SUBMIT PREVENTIVO
 // ============================
 const form = document.querySelector('#preventivoForm');
 
@@ -198,7 +219,7 @@ if (form) {
 
     const extra = collectExtrasReadable();
 
-    // 1) Salva lead su Google Sheet (non blocca WhatsApp se fallisce)
+    // ----- 1) SALVA LEAD SU GOOGLE SHEETS -----
     const leadUrl =
       LEAD_API +
       "?action=lead" +
@@ -215,10 +236,9 @@ if (form) {
       await jsonp(leadUrl);
     }catch(err){
       console.warn("Lead non salvato:", err.message);
-      // continuiamo comunque
     }
 
-    // 2) Messaggio WhatsApp PRO
+    // ----- 2) MESSAGGIO WHATSAPP PROFESSIONALE -----
     const msg =
 `Ciao AgroTritura!
 Vorrei un preventivo per mangime su misura.
