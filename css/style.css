@@ -298,4 +298,55 @@ details p{color:var(--muted); margin:10px 0 0}
     right:18px;
     box-shadow:0 10px 25px rgba(0,0,0,0.25);
   }
+/* =========================
+   FIX MOBILE (footer full width + gap hero + whatsapp overlap)
+   ========================= */
+@media (max-width: 768px){
+
+  /* A) FOOTER: sfondo verde a tutta larghezza (non più “riquadro”) */
+  .footer{
+    width:100%;
+    margin:0 !important;
+    background:#0f3b2e;           /* verde footer */
+  }
+
+  /* se il verde era su un blocco interno, lo azzeriamo */
+  .footer .container,
+  .footer .cols,
+  .footer .bottom{
+    background:transparent !important;
+  }
+
+  /* padding del footer interno */
+  .footer .container{
+    width:100%;
+    max-width:100%;
+    padding-left:18px !important;
+    padding-right:18px !important;
+  }
+
+  /* B) SPAZIO BIANCO TRA HERO E SEZIONE "Il servizio" */
+  /* (di solito è dato da padding/margin troppo grandi) */
+  .hero{
+    padding-bottom:18px !important;
+    margin-bottom:0 !important;
+  }
+  .hero .badges{
+    margin-bottom:10px !important;
+  }
+
+  /* prima sezione dopo hero */
+  #servizio.section{
+    padding-top:22px !important;
+    margin-top:0 !important;
+  }
+
+  /* C) WhatsApp flottante: non deve coprire il footer */
+  body{
+    padding-bottom:170px !important; /* spazio “di sicurezza” */
+  }
+  .whatsappFloat{
+    right:16px !important;
+    bottom:90px !important; /* lo alziamo (non sopra il footer) */
+  }
 }
