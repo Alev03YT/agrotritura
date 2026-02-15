@@ -181,14 +181,8 @@ img{max-width:100%;display:block}
 /* ======================================================
    GALLERIA PRO (swipe + bottoni + pallini, NO TAGLI)
    ====================================================== */
-
-.galleryPro{
-  margin-top:26px;
-}
-
-.galleryWrap{
-  position:relative;
-}
+.galleryPro{margin-top:26px;}
+.galleryWrap{position:relative;}
 
 .gallery{
   display:flex;
@@ -198,8 +192,6 @@ img{max-width:100%;display:block}
   scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x:contain;
-
-  /* nasconde scrollbar (quasi ovunque) */
   scrollbar-width:none;
 }
 .gallery::-webkit-scrollbar{display:none;}
@@ -207,21 +199,16 @@ img{max-width:100%;display:block}
 .g-item{
   flex:0 0 82%;
   scroll-snap-align:start;
-
   background:white;
   border-radius:16px;
   overflow:hidden;
   box-shadow:var(--shadow);
   border:1px solid rgba(0,0,0,.06);
-
-  /* riquadro fisso pro (stabile per verticali/orizzontali) */
   aspect-ratio: 4 / 3;
-
   display:flex;
   align-items:center;
   justify-content:center;
 }
-
 .g-item img{
   width:100%;
   height:100%;
@@ -247,13 +234,10 @@ img{max-width:100%;display:block}
   box-shadow:0 12px 26px rgba(0,0,0,.22);
   backdrop-filter: blur(10px);
 }
-
 .galleryNav:hover{filter:brightness(1.05);}
 .galleryNav:active{transform:translateY(-50%) scale(.98);}
-
 .galleryNav.prev{left:10px;}
 .galleryNav.next{right:10px;}
-
 .galleryNav svg{width:20px;height:20px;}
 
 /* Pallini indicatori */
@@ -263,7 +247,6 @@ img{max-width:100%;display:block}
   justify-content:center;
   margin-top:10px;
 }
-
 .galleryDot{
   width:9px;height:9px;
   border-radius:999px;
@@ -271,7 +254,6 @@ img{max-width:100%;display:block}
   background:rgba(46,93,46,.14);
   cursor:pointer;
 }
-
 .galleryDot.active{
   background:var(--orange);
   border-color:rgba(255,152,0,.55);
@@ -289,10 +271,7 @@ img{max-width:100%;display:block}
     scroll-snap-type:none;
     padding:0;
   }
-  .g-item{
-    flex:auto;
-    aspect-ratio: 4 / 3;
-  }
+  .g-item{flex:auto; aspect-ratio:4/3;}
   .galleryNav{display:none;}
   .galleryDots{display:none;}
 }
@@ -396,7 +375,61 @@ details p{color:var(--muted); margin:10px 0 0}
   .mobilePanel.show{display:block}
 }
 
-/* ===================== FIX MOBILE REALI ===================== */
+/* ======================================================
+   SLIDER PRO (stile frecce + pallini per TUTTE le sezioni)
+   (le frecce/pallini compaiono solo se wrapper ha .sliderActive)
+   ====================================================== */
+.sliderWrap{position:relative;}
+.sliderWrap .sliderBtn,
+.sliderWrap .sliderDots{display:none;}
+.sliderWrap.sliderActive .sliderBtn,
+.sliderWrap.sliderActive .sliderDots{display:flex;}
+
+/* frecce */
+.sliderBtn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  color:#111;
+  font-weight:900;
+  font-size:26px;
+  line-height:1;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  user-select:none;
+}
+.sliderBtn:hover{filter:brightness(.98)}
+.sliderBtn.prev{left:-10px}
+.sliderBtn.next{right:-10px}
+
+/* pallini */
+.sliderDots{
+  margin-top:10px;
+  justify-content:center;
+  gap:8px;
+}
+.sliderDot{
+  width:9px;height:9px;
+  border-radius:999px;
+  border:0;
+  background:rgba(0,0,0,.22);
+  cursor:pointer;
+  padding:0;
+}
+.sliderDot.active{
+  background:var(--orange);
+  transform:scale(1.15);
+}
+
+/* ===================== FIX MOBILE REALI + SLIDE TUTTE SEZIONI ===================== */
 @media (max-width: 768px){
 
   .container{padding-left:16px; padding-right:16px;}
@@ -435,78 +468,38 @@ details p{color:var(--muted); margin:10px 0 0}
     box-shadow:0 10px 25px rgba(0,0,0,.25);
   }
 
-  /* (opzionale) se vuoi nasconderlo a menu aperto:
-     body.menu-open .whatsappFloat{display:none;} */
-}
-/* ======================================================
-   SLIDER PRO (tutte le sezioni a scorrimento)
-   - frecce + pallini
-   - appare solo se c'è overflow (sliderActive)
-   ====================================================== */
+  /* =======================================
+     ✅ SLIDE SU MOBILE: TUTTE LE SEZIONI
+     (gridScroll + galleryScroll)
+     ======================================= */
+  .gridScroll,
+  .galleryScroll{
+    display:flex !important;
+    gap:12px;
+    overflow-x:auto;
+    padding-bottom:10px;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width:none;
+  }
+  .gridScroll::-webkit-scrollbar,
+  .galleryScroll::-webkit-scrollbar{display:none;}
 
-.sliderWrap{
-  position:relative;
-}
+  .gridScroll > .feature,
+  .galleryScroll > .g-item{
+    flex:0 0 85%;
+    scroll-snap-align:start;
+  }
 
-.sliderWrap .sliderBtn,
-.sliderWrap .sliderDots{
-  display:none;
-}
+  @media (max-width: 420px){
+    .gridScroll > .feature,
+    .galleryScroll > .g-item{
+      flex-basis: 90%;
+    }
+  }
 
-.sliderWrap.sliderActive .sliderBtn,
-.sliderWrap.sliderActive .sliderDots{
-  display:flex;
-}
-
-/* frecce */
-.sliderBtn{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:42px;
-  height:42px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,.12);
-  background:rgba(255,255,255,.92);
-  box-shadow:0 10px 25px rgba(0,0,0,.15);
-  color:#111;
-  font-weight:900;
-  font-size:26px;
-  line-height:1;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:5;
-  user-select:none;
-}
-
-.sliderBtn:hover{filter:brightness(.98)}
-.sliderBtn.prev{left:-10px}
-.sliderBtn.next{right:-10px}
-
-/* pallini */
-.sliderDots{
-  margin-top:10px;
-  justify-content:center;
-  gap:8px;
-}
-
-.sliderDot{
-  width:9px;
-  height:9px;
-  border-radius:999px;
-  border:0;
-  background:rgba(0,0,0,.22);
-  cursor:pointer;
-  padding:0;
-}
-.sliderDot.active{
-  background:var(--orange);
-  transform:scale(1.15);
-}
-
-/* Mobile: frecce un filo più piccole */
-@media (max-width: 768px){
+  /* Mobile: frecce un filo più piccole */
   .sliderBtn{
     width:40px;
     height:40px;
@@ -514,4 +507,4 @@ details p{color:var(--muted); margin:10px 0 0}
   }
   .sliderBtn.prev{left:-6px}
   .sliderBtn.next{right:-6px}
-                  }
+}
