@@ -276,7 +276,7 @@ details p{color:var(--muted); margin:10px 0 0}
   padding:10px 10px;
   border-radius:12px;
   text-decoration:none;
-  font-weight:800
+  font-weight:800;
 }
 .mobilePanel a:hover{background:rgba(46,93,46,.08)}
 
@@ -307,37 +307,24 @@ details p{color:var(--muted); margin:10px 0 0}
     -webkit-overflow-scrolling: touch;
   }
 
-  /* spazio in basso per non far coprire il footer dal bottone */
-  body{padding-bottom:0;}
-  .footer{padding-bottom:120px;}
-
-  /* bottone WhatsApp più “pulito” */
-  .whatsappFloat{
-    right:16px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.25);
+  /* ✅ QUESTA è la cosa chiave:
+     spazio "vero" sotto al footer (zona chiara) per il bottone WhatsApp */
+  body{
+    padding-bottom:140px;
   }
 
-  /* quando il menu è aperto, nascondi il bottone */
-  body.menu-open .whatsappFloat{display:none;}
-/* =========================
-   FOOTER PERFETTO + WHATSAPP IN AREA BIANCA
-   ========================= */
+  /* Footer torna “normale”: finisce sotto al copyright */
+  .footer{
+    padding-bottom:26px;
+  }
 
-/* Il riquadro verde termina esattamente sotto il copyright */
-.footer{
-  padding-bottom: 20px;
-  margin-bottom: 0;
-}
+  /* bottone WhatsApp nel bianco (non sopra il footer) */
+  .whatsappFloat{
+    right:16px;
+    bottom:24px;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+  }
 
-/* Spazio bianco reale sotto la pagina */
-body{
-  padding-bottom: 120px;
-}
-
-/* Bottone WhatsApp nella zona bianca */
-.whatsappFloat{
-  position: fixed;
-  right: 18px;
-  bottom: 24px;
-  z-index: 9999;
+  /* se vuoi nasconderlo quando il menu è aperto (opzionale):
+     body.menu-open .whatsappFloat{display:none;} */
 }
