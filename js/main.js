@@ -143,4 +143,183 @@ function collectExtrasReadable(){
   const parts = [];
   nodes.forEach(el=>{
     const val = (el.value || "").trim();
-    if (!val)
+    if (!val) return;
+    const wrap = el.closest("div");
+    const label = wrap ? (wrap.querySelector("label")?.textContent || "").trim() : "";
+    parts.push(label ? `${label}: ${val}` : val);
+  });
+  return parts.join(" | ");
+}
+
+
+// ============================
+// SUBMIT PREVENTIVO (salva lead + apre WhatsApp)
+// ============================
+const form = document.querySelector('#preventivoForm');
+function safe(selector){
+  const el = form?.querySelector(selector);
+  return (el?.value || "").trim();
+}
+
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nome = safe('#nome');
+    const telefono = safe('#telefono');
+    const prodotto = safe('#cereale');
+    const quantita = safe('#quantita');
+    const comune = safe('#comune');
+    const note = safe('#note');
+    const extra = collectExtrasReadable();
+
+    const leadUrl =
+      LEAD_API +
+      "?action=lead" +
+      "&nome=" + encodeURIComponent(nome) +
+      "&telefono=" + encodeURIComponent(telefono) +
+      "&cereale=" + encodeURIComponent(prodotto) +
+      "&extra=" + encodeURIComponent(extra) +
+      "&quantita=" + encodeURIComponent(quantita) +
+      "&comune=" + encodeURIComponent(comune) +
+      "&note=" + encodeURIComponent(note) +
+      "&pagina=" + encodeURIComponent(location.href);
+
+    try { await jsonp(leadUrl); }
+    catch(err){ console.warn("Lead non salvato:", err.message); }
+
+    const msg =
+`Ciao AgroTritura!
+Vorrei un preventivo per mangime su misura.
+
+📌 Dettagli ordine:
+- Prodotto: ${prodotto || "-"}
+- Quantità: ${quantita || "-"}
+- Comune/Indirizzo: ${comune || "-"}${telefono ? `\n- Telefono: ${telefono}` : ""}${nome ? `\n- Nome: ${nome}` : ""}
+
+🔧 Dettagli specifici:
+- ${extra || "-"}
+
+📝 Note:
+${note || "-"}
+
+Grazie!`;
+
+    window.open("https://wa.me/393341067510?text=" + encodeURIComponent(msg), "_blank");
+  });
+}
+
+
+// ============================
+// SLIDER PRO (TUTTE LE SEZIONI): frecce + pallini auto
+// Funziona su: .gridScroll e .galleryScroll
+// ============================
+(function initAllSliders(){
+  const tracks = Array.from(document.querySelectorAll(".gridScroll, .galleryScroll"));
+  if (tracks.length === 0) return;
+
+  // Crea controlli in DOM (senza toccare HTML file)
+  tracks.forEach((track, idx) => {
+    // crea wrapper se non c'è
+    let wrap = track.closest(".sliderWrap");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "sliderWrap";
+      track.parentNode.insertBefore(wrap, track);
+      wrap.appendChild(track);
+    }
+
+    // bottoni
+    let prev = wrap.querySelector(".sliderBtn.prev");
+    let next = wrap.querySelector(".sliderBtn.next");
+    if (!prev) {
+      prev = document.createElement("button");
+      prev.className = "sliderBtn prev";
+      prev.type = "button";
+      prev.setAttribute("aria-label", "Indietro");
+      prev.textContent = "‹";
+      wrap.appendChild(prev);
+    }
+    if (!next) {
+      next = document.createElement("button");
+      next.className = "sliderBtn next";
+      next.type = "button";
+      next.setAttribute("aria-label", "Avanti");
+      next.textContent = "›";
+      wrap.appendChild(next);
+    }
+
+    // dots
+    let dots = wrap.querySelector(".sliderDots");
+    if (!dots) {
+      dots = document.createElement("div");
+      dots.className = "sliderDots";
+      wrap.appendChild(dots);
+    }
+
+    // elementi “slide”
+    const items = Array.from(track.children).filter(el =>
+      el.classList.contains("feature") || el.classList.contains("g-item") || el.classList.contains("card")
+    );
+    if (items.length === 0) return;
+
+    function getStep(){
+      const first = items[0];
+      const gap = parseFloat(getComputedStyle(track).gap || getComputedStyle(track).columnGap || 12) || 12;
+      return first.getBoundingClientRect().width + gap;
+    }
+
+    function currentIndex(){
+      const step = getStep();
+      return Math.max(0, Math.min(items.length - 1, Math.round(track.scrollLeft / step)));
+    }
+
+    function setActive(i){
+      const btns = Array.from(dots.querySelectorAll("button"));
+      btns.forEach((b, k)=> b.classList.toggle("active", k === i));
+    }
+
+    function scrollToIndex(i){
+      const step = getStep();
+      track.scrollTo({ left: i * step, behavior: "smooth" });
+      setActive(i);
+    }
+
+    // crea pallini
+    function rebuildDots(){
+      dots.innerHTML = items.map((_, i)=> `<button type="button" class="sliderDot" aria-label="Vai alla slide ${i+1}" data-i="${i}"></button>`).join("");
+      setActive(currentIndex());
+    }
+
+    dots.addEventListener("click", (e)=>{
+      const b = e.target.closest("button[data-i]");
+      if (!b) return;
+      scrollToIndex(parseInt(b.dataset.i, 10));
+    });
+
+    prev.addEventListener("click", ()=>{
+      scrollToIndex(Math.max(0, currentIndex() - 1));
+    });
+
+    next.addEventListener("click", ()=>{
+      scrollToIndex(Math.min(items.length - 1, currentIndex() + 1));
+    });
+
+    let t;
+    track.addEventListener("scroll", ()=>{
+      clearTimeout(t);
+      t = setTimeout(()=> setActive(currentIndex()), 60);
+    }, { passive:true });
+
+    function updateActiveState(){
+      // attiva controlli solo se c'è overflow
+      const hasOverflow = track.scrollWidth > (track.clientWidth + 2);
+      wrap.classList.toggle("sliderActive", hasOverflow);
+      if (hasOverflow) rebuildDots();
+    }
+
+    // prima init + su resize
+    updateActiveState();
+    window.addEventListener("resize", updateActiveState);
+  });
+})();
