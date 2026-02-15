@@ -357,4 +357,15 @@ body {
   .hero {
     padding-top: 40px !important;
   }
+/* spazio reale sotto la pagina per il bottone flottante */
+footer {
+  margin-bottom: 120px;
+}
+
+/* posizione corretta bottone WhatsApp */
+.whatsapp-float {
+  position: fixed;
+  right: 16px;
+  bottom: 20px;   /* non troppo alto */
+  z-index: 9999;
 }
