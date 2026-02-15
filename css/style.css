@@ -385,4 +385,34 @@ details p{color:var(--muted); margin:10px 0 0}
     max-height:240px;
     object-fit:contain;
   }
+/* ===== GALLERIA MOBILE: SWIPE + FOTO INTERE (NO TAGLI) ===== */
+@media (max-width: 768px){
+
+  .gallery{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    padding-bottom:8px;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .g-item{
+    min-width:85%;
+    height:230px;              /* altezza riquadro */
+    flex-shrink:0;
+    scroll-snap-align:start;
+    background:#fff;           /* sfondo del riquadro */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .g-item img{
+    width:100%;
+    height:100%;
+    object-fit:contain;        /* ✅ NO TAGLI */
+    display:block;
+    background:#fff;           /* evita “trasparenze” strane */
+  }
 }
