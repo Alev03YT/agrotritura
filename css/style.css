@@ -178,21 +178,126 @@ img{max-width:100%;display:block}
 .table tr:hover td{background:rgba(46,93,46,.04)}
 .note{margin-top:12px; color:var(--muted)}
 
-.gallery{
-  display:grid; gap:14px;
-  grid-template-columns:repeat(12,1fr);
+/* ======================================================
+   GALLERIA PRO (swipe + bottoni + pallini, NO TAGLI)
+   ====================================================== */
+
+.galleryPro{
   margin-top:26px;
 }
-.g-item{grid-column:span 4; border-radius:16px; overflow:hidden; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); background:white}
+
+.galleryWrap{
+  position:relative;
+}
+
+.gallery{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding:6px 2px 14px;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x:contain;
+
+  /* nasconde scrollbar (quasi ovunque) */
+  scrollbar-width:none;
+}
+.gallery::-webkit-scrollbar{display:none;}
+
+.g-item{
+  flex:0 0 82%;
+  scroll-snap-align:start;
+
+  background:white;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(0,0,0,.06);
+
+  /* riquadro fisso pro (stabile per verticali/orizzontali) */
+  aspect-ratio: 4 / 3;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
 .g-item img{
   width:100%;
-  height:auto;          /* niente stretching */
-  object-fit:contain;   /* mantiene qualità */
+  height:100%;
+  object-fit:contain; /* ✅ NO TAGLI */
   background:#fff;
 }
-@media (max-width: 900px){ .g-item{grid-column:span 6} }
-@media (max-width: 600px){ .g-item{grid-column:span 12} }
 
+/* Bottoni freccia (overlay) */
+.galleryNav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(30,61,30,.55);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  z-index:5;
+  box-shadow:0 12px 26px rgba(0,0,0,.22);
+  backdrop-filter: blur(10px);
+}
+
+.galleryNav:hover{filter:brightness(1.05);}
+.galleryNav:active{transform:translateY(-50%) scale(.98);}
+
+.galleryNav.prev{left:10px;}
+.galleryNav.next{right:10px;}
+
+.galleryNav svg{width:20px;height:20px;}
+
+/* Pallini indicatori */
+.galleryDots{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.galleryDot{
+  width:9px;height:9px;
+  border-radius:999px;
+  border:1px solid rgba(46,93,46,.35);
+  background:rgba(46,93,46,.14);
+  cursor:pointer;
+}
+
+.galleryDot.active{
+  background:var(--orange);
+  border-color:rgba(255,152,0,.55);
+  transform:scale(1.05);
+}
+
+/* Desktop: torna griglia (opzionale, pulita) */
+@media (min-width: 900px){
+  .galleryWrap{position:static;}
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+    overflow:visible;
+    scroll-snap-type:none;
+    padding:0;
+  }
+  .g-item{
+    flex:auto;
+    aspect-ratio: 4 / 3;
+  }
+  .galleryNav{display:none;}
+  .galleryDots{display:none;}
+}
+
+/* ===================== CTA BAND ===================== */
 .ctaBand{
   background:linear-gradient(135deg,var(--green-700),var(--green-900));
   color:white;
@@ -205,6 +310,7 @@ img{max-width:100%;display:block}
 .ctaBand p{margin:6px 0 0; color:rgba(255,255,255,.88)}
 .ctaBand .btn{white-space:nowrap}
 
+/* ===================== FORM ===================== */
 .form{
   display:grid; gap:12px;
   background:white; padding:18px; border-radius:16px;
@@ -228,6 +334,7 @@ textarea{min-height:110px; resize:vertical}
 .btn.dark:hover{filter:brightness(.98)}
 .btn.outline{background:transparent; border:1px solid rgba(30,61,30,.35); color:var(--green-900)}
 
+/* ===================== FAQ ===================== */
 .faq{margin-top:18px}
 details{
   background:white; border:1px solid rgba(0,0,0,.08);
@@ -258,7 +365,7 @@ details p{color:var(--muted); margin:10px 0 0}
 .whatsappFloat{
   position:fixed;
   right:18px;
-  bottom:18px;
+  bottom: calc(18px + env(safe-area-inset-bottom));
   z-index:80;
   background:#25D366;
   color:white;
@@ -267,8 +374,6 @@ details p{color:var(--muted); margin:10px 0 0}
   border-radius:999px;
   box-shadow:0 18px 40px rgba(0,0,0,.25);
   font-weight:900;
-  /* safe area iPhone */
-  bottom: calc(18px + env(safe-area-inset-bottom));
 }
 
 /* ===================== MENU MOBILE ===================== */
@@ -308,33 +413,6 @@ details p{color:var(--muted); margin:10px 0 0}
   /* card un po' più compatte */
   .card .pad{padding:16px;}
   .card .img{height:145px;}
-  .g-item img{height:180px;}
-
-  /* ===== Griglie “a scorrimento” (meno scroll verticale) ===== */
-  .gridScroll{
-    grid-template-columns:unset;
-    grid-auto-flow:column;
-    grid-auto-columns:86%;
-    overflow-x:auto;
-    overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    padding-bottom:6px;
-  }
-  .gridScroll > *{scroll-snap-align:start;}
-  .gridScroll .feature{grid-column:auto;}
-
-  .galleryScroll{
-    grid-template-columns:unset;
-    grid-auto-flow:column;
-    grid-auto-columns:86%;
-    overflow-x:auto;
-    overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    padding-bottom:6px;
-  }
-  .galleryScroll > *{scroll-snap-align:start;}
 
   /* tabella prezzi scrollabile */
   .table{
@@ -344,75 +422,19 @@ details p{color:var(--muted); margin:10px 0 0}
     -webkit-overflow-scrolling: touch;
   }
 
-  /* ✅ QUESTA è la cosa chiave:
-     spazio "vero" sotto al footer (zona chiara) per il bottone WhatsApp */
-  body{
-    padding-bottom:140px;
-  }
+  /* spazio sotto pagina per bottone */
+  body{padding-bottom:140px;}
 
-  /* Footer torna “normale”: finisce sotto al copyright */
-  .footer{
-    padding-bottom:26px;
-  }
+  /* footer finisce sotto copyright */
+  .footer{padding-bottom:26px;}
 
-  /* bottone WhatsApp nel bianco (non sopra il footer) */
+  /* bottone WhatsApp nel bianco */
   .whatsappFloat{
     right:16px;
     bottom:24px;
     box-shadow:0 10px 25px rgba(0,0,0,.25);
   }
 
-  /* se vuoi nasconderlo quando il menu è aperto (opzionale):
-    body.menu-open .whatsappFloat{display:none;} */
-/* ===== GALLERIA PERFETTA SU TELEFONO ===== */
-@media (max-width: 768px){
-
-  .gallery{
-    display:flex;
-    gap:12px;
-    overflow-x:auto;
-    padding-bottom:6px;
-    scroll-snap-type:x mandatory;
-  }
-
-  .g-item{
-    min-width:85%;
-    scroll-snap-align:start;
-  }
-
-  .g-item img{
-    height:auto;
-    max-height:240px;
-    object-fit:contain;
-  }
-/* ===== GALLERIA MOBILE: SWIPE + FOTO INTERE (NO TAGLI) ===== */
-@media (max-width: 768px){
-
-  .gallery{
-    display:flex;
-    gap:12px;
-    overflow-x:auto;
-    padding-bottom:8px;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .g-item{
-    min-width:85%;
-    height:230px;              /* altezza riquadro */
-    flex-shrink:0;
-    scroll-snap-align:start;
-    background:#fff;           /* sfondo del riquadro */
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .g-item img{
-    width:100%;
-    height:100%;
-    object-fit:contain;        /* ✅ NO TAGLI */
-    display:block;
-    background:#fff;           /* evita “trasparenze” strane */
-  }
+  /* (opzionale) se vuoi nasconderlo a menu aperto:
+     body.menu-open .whatsappFloat{display:none;} */
 }
