@@ -38,7 +38,9 @@ img{max-width:100%;display:block}
   display:flex; align-items:center; justify-content:space-between;
   padding:12px 0;
 }
-.brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+.brand{
+  display:flex; align-items:center; gap:10px; text-decoration:none;
+}
 .brand-badge{
   width:38px;height:38px;border-radius:10px;
   background:linear-gradient(135deg,var(--green-700),var(--green-900));
@@ -128,8 +130,10 @@ img{max-width:100%;display:block}
 .card .pad{padding:18px}
 .card h3{margin:0 0 6px; font-size:1.08rem}
 .card p{margin:0; color:var(--muted)}
-.card .img{height:170px;background:#ddd center/cover no-repeat;}
-
+.card .img{
+  height:170px;
+  background:#ddd center/cover no-repeat;
+}
 .feature{grid-column:span 4}
 @media (max-width: 900px){ .feature{grid-column:span 6} }
 @media (max-width: 600px){ .feature{grid-column:span 12} }
@@ -141,7 +145,10 @@ img{max-width:100%;display:block}
   margin:14px 0 0; padding:0; list-style:none;
   display:grid; gap:10px;
 }
-.list li{display:flex; gap:10px; align-items:flex-start; color:var(--text);}
+.list li{
+  display:flex; gap:10px; align-items:flex-start;
+  color:var(--text);
+}
 .tick{
   flex:0 0 auto;
   width:22px;height:22px;border-radius:7px;
@@ -150,7 +157,6 @@ img{max-width:100%;display:block}
   color:var(--green-700); font-weight:900;
 }
 
-/* ===================== TABELLA ===================== */
 .table{
   width:100%;
   border-collapse:collapse;
@@ -172,41 +178,49 @@ img{max-width:100%;display:block}
 .table tr:hover td{background:rgba(46,93,46,.04)}
 .note{margin-top:12px; color:var(--muted)}
 
-/* ===================== GALLERIA (DESKTOP = GRIGLIA) ===================== */
+/* ===================== GALLERIA (desktop: griglia, mobile: slider) ===================== */
 .gallery{
   display:grid;
   gap:14px;
   grid-template-columns:repeat(12,1fr);
   margin-top:26px;
 }
+
 .g-item{
   grid-column:span 4;
   border-radius:16px;
   overflow:hidden;
   box-shadow:var(--shadow);
   border:1px solid rgba(0,0,0,.06);
-  background:white;
+  background:#fff;
+  position:relative;
+  aspect-ratio: 4 / 3;
   display:flex;
-  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
+
 .g-item img{
   width:100%;
-  aspect-ratio: 4 / 3;
+  height:100%;
   object-fit:contain; /* ✅ NO TAGLI */
   background:#fff;
 }
+
+/* didascalia */
 .g-cap{
+  position:absolute;
+  left:0; right:0; bottom:0;
   padding:10px 12px;
+  color:#fff;
   font-weight:800;
-  font-size:.95rem;
-  color:var(--text);
-  border-top:1px solid rgba(0,0,0,.06);
-  background:#fff;
+  font-size:.92rem;
+  background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.60));
 }
+
 @media (max-width: 900px){ .g-item{grid-column:span 6} }
 @media (max-width: 600px){ .g-item{grid-column:span 12} }
 
-/* ===================== CTA BAND ===================== */
 .ctaBand{
   background:linear-gradient(135deg,var(--green-700),var(--green-900));
   color:white;
@@ -219,7 +233,6 @@ img{max-width:100%;display:block}
 .ctaBand p{margin:6px 0 0; color:rgba(255,255,255,.88)}
 .ctaBand .btn{white-space:nowrap}
 
-/* ===================== FORM ===================== */
 .form{
   display:grid; gap:12px;
   background:white; padding:18px; border-radius:16px;
@@ -243,12 +256,10 @@ textarea{min-height:110px; resize:vertical}
 .btn.dark:hover{filter:brightness(.98)}
 .btn.outline{background:transparent; border:1px solid rgba(30,61,30,.35); color:var(--green-900)}
 
-/* ===================== FAQ ===================== */
 .faq{margin-top:18px}
 details{
   background:white; border:1px solid rgba(0,0,0,.08);
-  border-radius:14px; padding:12px 14px;
-  box-shadow:0 8px 18px rgba(0,0,0,.07);
+  border-radius:14px; padding:12px 14px; box-shadow:0 8px 18px rgba(0,0,0,.07);
 }
 details + details{margin-top:10px}
 summary{cursor:pointer; font-weight:800}
@@ -273,21 +284,20 @@ details p{color:var(--muted); margin:10px 0 0}
 
 /* ===================== WHATSAPP FLOAT ===================== */
 .whatsappFloat{
-  position:fixed;
-  right:18px;
+  position:fixed; right:18px;
   bottom: calc(18px + env(safe-area-inset-bottom));
   z-index:80;
-  background:#25D366;
-  color:white;
-  text-decoration:none;
-  padding:14px 16px;
-  border-radius:999px;
+  background:#25D366; color:white; text-decoration:none;
+  padding:14px 16px; border-radius:999px;
   box-shadow:0 18px 40px rgba(0,0,0,.25);
   font-weight:900;
 }
 
 /* ===================== MENU MOBILE ===================== */
-.mobilePanel{display:none;padding:10px 0 16px;}
+.mobilePanel{
+  display:none;
+  padding:10px 0 16px;
+}
 .mobilePanel a{
   display:block;
   padding:10px 10px;
@@ -304,22 +314,24 @@ details p{color:var(--muted); margin:10px 0 0}
 }
 
 /* ======================================================
-   SLIDER PRO (frecce + pallini) — usato per TUTTI gli slider
-   (frecce/pallini compaiono solo se wrapper ha .sliderActive)
+   SLIDER PRO (frecce + pallini) per tutte le sezioni a scorrimento
+   JS aggiunge .sliderActive solo se c'è overflow.
    ====================================================== */
-.sliderWrap{position:relative;}
-.sliderWrap .sliderBtn,
-.sliderWrap .sliderDots{display:none;}
-.sliderWrap.sliderActive .sliderBtn,
-.sliderWrap.sliderActive .sliderDots{display:flex;}
 
+.sliderWrap{ position:relative; }
+.sliderBtn, .sliderDots{ display:none; }
+.sliderWrap.sliderActive .sliderBtn{ display:flex; }
+.sliderWrap.sliderActive .sliderDots{ display:flex; }
+
+/* frecce */
 .sliderBtn{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:42px;height:42px;
+  width:44px;
+  height:44px;
   border-radius:999px;
-  border:1px solid rgba(0,0,0,.12);
+  border:1px solid rgba(0,0,0,.10);
   background:rgba(255,255,255,.92);
   box-shadow:0 10px 25px rgba(0,0,0,.15);
   color:#111;
@@ -332,17 +344,19 @@ details p{color:var(--muted); margin:10px 0 0}
   z-index:5;
   user-select:none;
 }
-.sliderBtn:hover{filter:brightness(.98)}
-.sliderBtn.prev{left:-10px}
-.sliderBtn.next{right:-10px}
+.sliderBtn:hover{ filter:brightness(.98); }
+.sliderBtn.prev{ left:-10px; }
+.sliderBtn.next{ right:-10px; }
 
+/* pallini */
 .sliderDots{
   margin-top:10px;
   justify-content:center;
   gap:8px;
 }
 .sliderDot{
-  width:9px;height:9px;
+  width:9px;
+  height:9px;
   border-radius:999px;
   border:0;
   background:rgba(0,0,0,.22);
@@ -354,8 +368,9 @@ details p{color:var(--muted); margin:10px 0 0}
   transform:scale(1.15);
 }
 
-/* ===================== MOBILE: sezioni più compatte + slider attivi ===================== */
+/* ===================== FIX MOBILE REALI + SLIDE ===================== */
 @media (max-width: 768px){
+
   .container{padding-left:16px; padding-right:16px;}
 
   .hero{min-height:68vh;}
@@ -368,6 +383,7 @@ details p{color:var(--muted); margin:10px 0 0}
   .card .pad{padding:16px;}
   .card .img{height:145px;}
 
+  /* tabella prezzi scrollabile */
   .table{
     display:block;
     overflow-x:auto;
@@ -375,42 +391,49 @@ details p{color:var(--muted); margin:10px 0 0}
     -webkit-overflow-scrolling: touch;
   }
 
+  /* spazio sotto pagina per bottone */
   body{padding-bottom:140px;}
+
   .footer{padding-bottom:26px;}
+
   .whatsappFloat{
     right:16px;
     bottom:24px;
     box-shadow:0 10px 25px rgba(0,0,0,.25);
   }
 
-  /* ✅ SLIDER “HORIZONTAL” PER TUTTE LE SEZIONI */
+  /* track slider mobile */
   .gridScroll,
   .galleryScroll{
     display:flex !important;
     gap:12px;
     overflow-x:auto;
-    padding:6px 2px 12px;
+    padding-bottom:10px;
     scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
     scrollbar-width:none;
   }
   .gridScroll::-webkit-scrollbar,
-  .galleryScroll::-webkit-scrollbar{display:none;}
+  .galleryScroll::-webkit-scrollbar{ display:none; }
 
-  .gridScroll > .feature,
-  .galleryScroll > .g-item{
-    flex:0 0 85%;
-    scroll-snap-align:start;
-  }
+  .gridScroll > .feature{ flex:0 0 85%; scroll-snap-align:start; }
+  .galleryScroll > .g-item{ flex:0 0 85%; scroll-snap-align:start; }
 
   @media (max-width: 420px){
     .gridScroll > .feature,
-    .galleryScroll > .g-item{flex-basis:90%;}
+    .galleryScroll > .g-item{ flex-basis:90%; }
   }
 
-  /* frecce più piccole su mobile */
-  .sliderBtn{width:40px;height:40px;font-size:24px;}
-  .sliderBtn.prev{left:-6px}
-  .sliderBtn.next{right:-6px}
-      }
+  /* frecce un filo più piccole */
+  .sliderBtn{
+    width:40px;
+    height:40px;
+    font-size:24px;
+  }
+  .sliderBtn.prev{ left:-6px; }
+  .sliderBtn.next{ right:-6px; }
+
+  /* se vuoi nascondere WhatsApp quando il menu è aperto */
+  body.menu-open .whatsappFloat{ display:none; }
+}
