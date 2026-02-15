@@ -319,4 +319,25 @@ details p{color:var(--muted); margin:10px 0 0}
 
   /* quando il menu è aperto, nascondi il bottone */
   body.menu-open .whatsappFloat{display:none;}
+/* =========================
+   FOOTER PERFETTO + WHATSAPP IN AREA BIANCA
+   ========================= */
+
+/* Il riquadro verde termina esattamente sotto il copyright */
+.footer{
+  padding-bottom: 20px;
+  margin-bottom: 0;
+}
+
+/* Spazio bianco reale sotto la pagina */
+body{
+  padding-bottom: 120px;
+}
+
+/* Bottone WhatsApp nella zona bianca */
+.whatsappFloat{
+  position: fixed;
+  right: 18px;
+  bottom: 24px;
+  z-index: 9999;
 }
