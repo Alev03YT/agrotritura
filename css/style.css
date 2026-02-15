@@ -23,9 +23,11 @@ body{
 }
 a{color:inherit}
 img{max-width:100%;display:block}
+
 .container{max-width:var(--max); margin:0 auto; padding:0 20px}
 .small{font-size:.92rem;color:var(--muted)}
 
+/* ===================== TOPBAR ===================== */
 .topbar{
   position:sticky; top:0; z-index:50;
   background:rgba(255,255,255,.92);
@@ -46,6 +48,7 @@ img{max-width:100%;display:block}
 }
 .brand strong{font-size:1.05rem}
 .brand span{display:block;font-size:.82rem;color:var(--muted)}
+
 .menu{display:flex; gap:18px; align-items:center}
 .menu a{
   text-decoration:none; color:var(--text);
@@ -59,10 +62,12 @@ img{max-width:100%;display:block}
   box-shadow:0 10px 20px rgba(255,152,0,.25);
 }
 .menu .cta:hover{filter:brightness(.98); background:var(--orange)}
+
 .hamb{display:none; background:transparent; border:0; padding:10px; border-radius:10px}
 .hamb:focus{outline:2px solid rgba(46,93,46,.25)}
 .hamb svg{width:24px;height:24px}
 
+/* ===================== HERO ===================== */
 .hero{
   position:relative;
   min-height:74vh;
@@ -102,6 +107,7 @@ img{max-width:100%;display:block}
   padding:8px 12px; border-radius:999px;
 }
 
+/* ===================== SEZIONI ===================== */
 .section{padding:70px 0}
 .section.alt{background:linear-gradient(180deg, rgba(46,93,46,.06), rgba(46,93,46,0));}
 .h2{font-size:1.9rem; margin:0 0 10px}
@@ -226,7 +232,9 @@ details + details{margin-top:10px}
 summary{cursor:pointer; font-weight:800}
 details p{color:var(--muted); margin:10px 0 0}
 
+/* ===================== FOOTER ===================== */
 .footer{
+  width:100%;
   padding:26px 0;
   background:#0f2510;
   color:rgba(255,255,255,.86);
@@ -241,131 +249,74 @@ details p{color:var(--muted); margin:10px 0 0}
 .footer ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
 .footer .bottom{margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,.12); font-size:.9rem}
 
+/* ===================== WHATSAPP FLOAT ===================== */
 .whatsappFloat{
-  position:fixed; right:18px; bottom:18px; z-index:80;
-  background:#25D366; color:white; text-decoration:none;
-  padding:14px 16px; border-radius:999px;
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:80;
+  background:#25D366;
+  color:white;
+  text-decoration:none;
+  padding:14px 16px;
+  border-radius:999px;
   box-shadow:0 18px 40px rgba(0,0,0,.25);
   font-weight:900;
+  /* safe area iPhone */
+  bottom: calc(18px + env(safe-area-inset-bottom));
 }
 
+/* ===================== MENU MOBILE ===================== */
 .mobilePanel{
   display:none;
   padding:10px 0 16px;
 }
-.mobilePanel a{display:block; padding:10px 10px; border-radius:12px; text-decoration:none; font-weight:800}
+.mobilePanel a{
+  display:block;
+  padding:10px 10px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:800
+}
 .mobilePanel a:hover{background:rgba(46,93,46,.08)}
 
 @media (max-width: 900px){
   .menu{display:none}
   .hamb{display:inline-flex}
   .mobilePanel.show{display:block}
-/* ===== FIX MOBILE GLOBALI ===== */
+}
+
+/* ===================== FIX MOBILE REALI ===================== */
 @media (max-width: 768px){
 
-  /* margini laterali uniformi */
-  .container{
-    padding-left:16px;
-    padding-right:16px;
-  }
+  .container{padding-left:16px; padding-right:16px;}
 
-  /* footer non tagliato */
-  .footer{
-    padding-left:20px;
-    padding-right:20px;
-  }
+  /* riduce “vuoto” tra hero e prima sezione */
+  .hero{min-height:68vh;}
+  .hero .wrap{padding:52px 0 26px;}
+  .hero .badges{margin-top:18px; margin-bottom:8px;}
 
-  /* form preventivo centrato */
-  .form{
-    width:100%;
-  }
+  .section{padding:56px 0;}
+  #servizio.section{padding-top:34px;}
 
   /* tabella prezzi scrollabile */
   .table{
     display:block;
     overflow-x:auto;
     white-space:nowrap;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* spazio per bottone WhatsApp flottante */
-  body{
-    padding-bottom:90px;
-  }
+  /* spazio in basso per non far coprire il footer dal bottone */
+  body{padding-bottom:0;}
+  .footer{padding-bottom:120px;}
 
-  /* bottone WhatsApp più elegante su mobile */
+  /* bottone WhatsApp più “pulito” */
   .whatsappFloat{
-    bottom:18px;
-    right:18px;
+    right:16px;
     box-shadow:0 10px 25px rgba(0,0,0,0.25);
   }
-/* =========================
-   FIX MOBILE (footer full width + gap hero + whatsapp overlap)
-   ========================= */
-@media (max-width: 768px){
 
-  /* A) FOOTER: sfondo verde a tutta larghezza (non più “riquadro”) */
-  .footer{
-    width:100%;
-    margin:0 !important;
-    background:#0f3b2e;           /* verde footer */
-  }
-
-  /* se il verde era su un blocco interno, lo azzeriamo */
-  .footer .container,
-  .footer .cols,
-  .footer .bottom{
-    background:transparent !important;
-  }
-
-  /* padding del footer interno */
-  .footer .container{
-    width:100%;
-    max-width:100%;
-    padding-left:18px !important;
-    padding-right:18px !important;
-  }
-
-  /* B) SPAZIO BIANCO TRA HERO E SEZIONE "Il servizio" */
-  /* (di solito è dato da padding/margin troppo grandi) */
-  .hero{
-    padding-bottom:18px !important;
-    margin-bottom:0 !important;
-  }
-  .hero .badges{
-    margin-bottom:10px !important;
-  }
-
-  /* prima sezione dopo hero */
-  #servizio.section{
-    padding-top:22px !important;
-    margin-top:0 !important;
-  }
-
-  /* C) WhatsApp flottante: non deve coprire il footer */
-  body{
-    padding-bottom:170px !important; /* spazio “di sicurezza” */
-  }
-  .whatsappFloat{
-    right:16px !important;
-    bottom:90px !important; /* lo alziamo (non sopra il footer) */
-  }
-/* spazio sotto la pagina per non far coprire il footer dal bottone WhatsApp */
-body {
-  padding-bottom: 120px;
-/* più respiro sopra nella hero da telefono */
-@media (max-width: 768px) {
-  .hero {
-    padding-top: 40px !important;
-  }
-/* spazio reale sotto la pagina per il bottone flottante */
-footer {
-  margin-bottom: 120px;
-}
-
-/* posizione corretta bottone WhatsApp */
-.whatsapp-float {
-  position: fixed;
-  right: 16px;
-  bottom: 20px;   /* non troppo alto */
-  z-index: 9999;
+  /* quando il menu è aperto, nascondi il bottone */
+  body.menu-open .whatsappFloat{display:none;}
 }
