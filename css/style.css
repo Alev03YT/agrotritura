@@ -363,5 +363,26 @@ details p{color:var(--muted); margin:10px 0 0}
   }
 
   /* se vuoi nasconderlo quando il menu è aperto (opzionale):
-     body.menu-open .whatsappFloat{display:none;} */
+    body.menu-open .whatsappFloat{display:none;} */
+/* ===== GALLERIA PERFETTA SU TELEFONO ===== */
+@media (max-width: 768px){
+
+  .gallery{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    padding-bottom:6px;
+    scroll-snap-type:x mandatory;
+  }
+
+  .g-item{
+    min-width:85%;
+    scroll-snap-align:start;
+  }
+
+  .g-item img{
+    height:auto;
+    max-height:240px;
+    object-fit:contain;
+  }
 }
