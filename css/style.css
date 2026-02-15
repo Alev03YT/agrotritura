@@ -438,3 +438,80 @@ details p{color:var(--muted); margin:10px 0 0}
   /* (opzionale) se vuoi nasconderlo a menu aperto:
      body.menu-open .whatsappFloat{display:none;} */
 }
+/* ======================================================
+   SLIDER PRO (tutte le sezioni a scorrimento)
+   - frecce + pallini
+   - appare solo se c'è overflow (sliderActive)
+   ====================================================== */
+
+.sliderWrap{
+  position:relative;
+}
+
+.sliderWrap .sliderBtn,
+.sliderWrap .sliderDots{
+  display:none;
+}
+
+.sliderWrap.sliderActive .sliderBtn,
+.sliderWrap.sliderActive .sliderDots{
+  display:flex;
+}
+
+/* frecce */
+.sliderBtn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  color:#111;
+  font-weight:900;
+  font-size:26px;
+  line-height:1;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  user-select:none;
+}
+
+.sliderBtn:hover{filter:brightness(.98)}
+.sliderBtn.prev{left:-10px}
+.sliderBtn.next{right:-10px}
+
+/* pallini */
+.sliderDots{
+  margin-top:10px;
+  justify-content:center;
+  gap:8px;
+}
+
+.sliderDot{
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  border:0;
+  background:rgba(0,0,0,.22);
+  cursor:pointer;
+  padding:0;
+}
+.sliderDot.active{
+  background:var(--orange);
+  transform:scale(1.15);
+}
+
+/* Mobile: frecce un filo più piccole */
+@media (max-width: 768px){
+  .sliderBtn{
+    width:40px;
+    height:40px;
+    font-size:24px;
+  }
+  .sliderBtn.prev{left:-6px}
+  .sliderBtn.next{right:-6px}
+                  }
