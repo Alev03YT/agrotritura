@@ -76,7 +76,7 @@ img{max-width:100%;display:block}
 .hamb:focus{outline:2px solid rgba(46,93,46,.25)}
 .hamb svg{width:24px;height:24px}
 
-/* ===================== HERO PRO ===================== */
+/* ===================== HERO PRO (NO BLUR “censura”) ===================== */
 .hero{
   position:relative;
   min-height:74vh;
@@ -90,7 +90,7 @@ img{max-width:100%;display:block}
     linear-gradient(90deg, rgba(30,61,30,.78), rgba(30,61,30,.28)),
     url("../img/IMG-20260216-WA0000.jpg") center/contain no-repeat;
 
-  background-color:#153016; /* riempie i bordi elegante */
+  background-color:#153016; /* bordi eleganti */
 }
 
 /* vignetta soft */
@@ -100,8 +100,8 @@ img{max-width:100%;display:block}
   inset:0;
   pointer-events:none;
   background:
-    radial-gradient(900px 420px at 30% 20%, rgba(0,0,0,.00), rgba(0,0,0,.28) 70%),
-    radial-gradient(700px 520px at 70% 80%, rgba(0,0,0,.00), rgba(0,0,0,.33) 78%);
+    radial-gradient(900px 420px at 30% 20%, rgba(0,0,0,.00), rgba(0,0,0,.26) 70%),
+    radial-gradient(700px 520px at 70% 80%, rgba(0,0,0,.00), rgba(0,0,0,.32) 78%);
 }
 
 .hero .wrap{
@@ -110,17 +110,15 @@ img{max-width:100%;display:block}
   padding:56px 0;
 }
 
-/* glass card senza BLUR (così la foto resta nitida) */
+/* card “glass” ma SENZA backdrop-filter (evita blur foto) */
 .hero .container.wrap{
-  background:rgba(255,255,255,.08);
+  background:rgba(15, 37, 16, .42);
   border:1px solid rgba(255,255,255,.16);
   border-radius:22px;
   box-shadow:0 18px 60px rgba(0,0,0,.30);
-  /* ❌ tolto blur che sfocava lo sfondo */
-  backdrop-filter: blur(3px) saturate(120%);
-  -webkit-backdrop-filter: blur(3px) saturate(120%);
+  padding:28px 18px;
 }
-  
+
 .kicker{
   display:inline-flex; gap:10px; align-items:center;
   background:rgba(255,255,255,.10);
@@ -149,58 +147,37 @@ img{max-width:100%;display:block}
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
   padding:12px 16px; border-radius:14px; text-decoration:none;
   font-weight:800; letter-spacing:.2px;
-.btn.primary{
-  background:var(--orange);
-  color:#fff;
-  box-shadow:0 18px 35px rgba(255,152,0,.25);
 }
-
+.btn.primary{background:var(--orange); color:white; box-shadow:0 18px 35px rgba(255,152,0,.25)}
 .btn.ghost{
-  background:rgba(255,255,255,.10);
-  color:#fff;
+  background:rgba(255,255,255,.10); color:white;
   border:1px solid rgba(255,255,255,.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 .btn.ghost:hover{background:rgba(255,255,255,.14)}
 
 .hero .badges{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:18px;
-  color:rgba(255,255,255,.92);
-  font-weight:800;
-  font-size:.92rem;
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;
+  color:rgba(255,255,255,.92); font-weight:800; font-size:.92rem;
 }
 .hero .badges span{
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.16);
-  padding:8px 12px;
-  border-radius:999px;
+  padding:8px 12px; border-radius:999px;
 }
 
 @media (max-width:768px){
   .hero{
     min-height:70vh;
-
-    /* ✅ niente zoom = meno sfocatura */
-    background-size: 100% auto;
-
-    /* centratura comoda */
-    background-position: center 42%;
+    background-size: 112%;
+    background-position:center 45%;
   }
-
-  .hero .container.wrap{
-    padding:18px 14px;
-    border-radius:20px;
-  }
-
+  .hero .container.wrap{padding:18px 14px; border-radius:20px;}
   .hero h1{font-size:clamp(1.9rem,7vw,2.7rem);}
   .hero p{font-size:1.02rem;}
   .kicker{font-size:.90rem;}
   .hero .actions .btn{width:100%; justify-content:center;}
 }
+
 /* ===================== SEZIONI ===================== */
 .section{padding:70px 0}
 .section.alt{background:linear-gradient(180deg, rgba(46,93,46,.06), rgba(46,93,46,0));}
@@ -272,14 +249,13 @@ img{max-width:100%;display:block}
 .table tr:hover td{background:rgba(46,93,46,.04)}
 .note{margin-top:12px; color:var(--muted)}
 
-/* ===================== GALLERIA (desktop: griglia, mobile: slider) ===================== */
+/* ===================== GALLERIA (immagini “riempiono” riquadro) ===================== */
 .gallery{
   display:grid;
   gap:14px;
   grid-template-columns:repeat(12,1fr);
   margin-top:26px;
 }
-
 .g-item{
   grid-column:span 4;
   border-radius:16px;
@@ -293,16 +269,15 @@ img{max-width:100%;display:block}
   align-items:center;
   justify-content:center;
 }
-
 .g-item img{
   width:100%;
   height:100%;
-  object-fit:cover;
-  object-position:center;
+  object-fit:cover;       /* ✅ adattata al riquadro */
+  object-position:center; /* ✅ taglio centrato */
   background:#fff;
 }
 
-/* ===== DIDASCALIE GALLERIA PRO (eleganti) ===== */
+/* didascalia PRO */
 .g-cap{
   position:absolute;
   left:10px;
@@ -318,13 +293,12 @@ img{max-width:100%;display:block}
   letter-spacing:.2px;
   text-shadow:0 2px 10px rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.16);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 @media (max-width: 900px){ .g-item{grid-column:span 6} }
 @media (max-width: 600px){ .g-item{grid-column:span 12} }
 
+/* ===================== CTA BAND ===================== */
 .ctaBand{
   background:linear-gradient(135deg,var(--green-700),var(--green-900));
   color:white;
@@ -337,6 +311,7 @@ img{max-width:100%;display:block}
 .ctaBand p{margin:6px 0 0; color:rgba(255,255,255,.88)}
 .ctaBand .btn{white-space:nowrap}
 
+/* ===================== FORM ===================== */
 .form{
   display:grid; gap:12px;
   background:white; padding:18px; border-radius:16px;
@@ -360,6 +335,7 @@ textarea{min-height:110px; resize:vertical}
 .btn.dark:hover{filter:brightness(.98)}
 .btn.outline{background:transparent; border:1px solid rgba(30,61,30,.35); color:var(--green-900)}
 
+/* ===================== FAQ ===================== */
 .faq{margin-top:18px}
 details{
   background:white; border:1px solid rgba(0,0,0,.08);
@@ -418,9 +394,8 @@ details p{color:var(--muted); margin:10px 0 0}
 }
 
 /* ======================================================
-   SLIDER PRO (frecce + pallini) per tutte le sezioni a scorrimento
+   SLIDER PRO (frecce + pallini) – compare solo se .sliderActive
    ====================================================== */
-
 .sliderWrap{ position:relative; }
 .sliderBtn, .sliderDots{ display:none; }
 .sliderWrap.sliderActive .sliderBtn{ display:flex; }
@@ -473,7 +448,6 @@ details p{color:var(--muted); margin:10px 0 0}
 
 /* ===================== FIX MOBILE REALI + SLIDE ===================== */
 @media (max-width: 768px){
-
   .container{padding-left:16px; padding-right:16px;}
 
   .section{padding:42px 0;}
@@ -482,6 +456,7 @@ details p{color:var(--muted); margin:10px 0 0}
   .card .pad{padding:16px;}
   .card .img{height:145px;}
 
+  /* tabella prezzi scrollabile */
   .table{
     display:block;
     overflow-x:auto;
@@ -489,8 +464,8 @@ details p{color:var(--muted); margin:10px 0 0}
     -webkit-overflow-scrolling: touch;
   }
 
+  /* spazio sotto pagina per bottone */
   body{padding-bottom:140px;}
-
   .footer{padding-bottom:26px;}
 
   .whatsappFloat{
@@ -499,6 +474,7 @@ details p{color:var(--muted); margin:10px 0 0}
     box-shadow:0 10px 25px rgba(0,0,0,.25);
   }
 
+  /* track slider mobile */
   .gridScroll,
   .galleryScroll{
     display:flex !important;
@@ -521,6 +497,7 @@ details p{color:var(--muted); margin:10px 0 0}
     .galleryScroll > .g-item{ flex-basis:90%; }
   }
 
+  /* frecce più piccole */
   .sliderBtn{
     width:40px;
     height:40px;
@@ -529,5 +506,6 @@ details p{color:var(--muted); margin:10px 0 0}
   .sliderBtn.prev{ left:-6px; }
   .sliderBtn.next{ right:-6px; }
 
+  /* nasconde WhatsApp quando menu aperto */
   body.menu-open .whatsappFloat{ display:none; }
 }
