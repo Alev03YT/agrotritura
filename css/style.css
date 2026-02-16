@@ -76,65 +76,105 @@ img{max-width:100%;display:block}
 .hamb:focus{outline:2px solid rgba(46,93,46,.25)}
 .hamb svg{width:24px;height:24px}
 
-/* ===================== HERO ===================== */
+/* ===================== HERO PRO ===================== */
 .hero{
   position:relative;
   min-height:74vh;
   display:grid;
   place-items:center;
-  color:white;
+  color:#fff;
+  overflow:hidden;
 
-  /* sfondo nuovo nitido */
   background:
-    linear-gradient(90deg, rgba(30,61,30,.78), rgba(30,61,30,.35)),
-    url("../img/IMG-20260216-WA0000.jpg") center/cover no-repeat;
+    radial-gradient(1200px 600px at 15% 15%, rgba(255,255,255,.10), transparent 60%),
+    linear-gradient(90deg, rgba(30,61,30,.78), rgba(30,61,30,.28)),
+    url("../img/hero_mulino.jpg") center/contain no-repeat;
 
-  background-size:cover;
-  background-position:center;
+  background-color:#153016; /* riempie i bordi elegante */
 }
-@media (max-width:768px){
-  .hero{
-    min-height:88vh;
 
-    /* evita sgranature mobile */
-    background-position:center top;
-    background-size:cover;
-  }
-}
+/* vignetta soft */
 .hero::after{
   content:"";
   position:absolute;
   inset:0;
-  background:radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,.25));
   pointer-events:none;
+  background:
+    radial-gradient(900px 420px at 30% 20%, rgba(0,0,0,.00), rgba(0,0,0,.28) 70%),
+    radial-gradient(700px 520px at 70% 80%, rgba(0,0,0,.00), rgba(0,0,0,.33) 78%);
 }
-.hero .wrap{padding:64px 0}
+
+.hero .wrap{
+  position:relative;
+  z-index:2;
+  padding:56px 0;
+}
+
+/* glass card senza toccare HTML */
+.hero .container.wrap{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:22px;
+  box-shadow:0 18px 60px rgba(0,0,0,.30);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  padding:28px 18px;
+}
+
 .kicker{
   display:inline-flex; gap:10px; align-items:center;
-  background:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.10);
   border:1px solid rgba(255,255,255,.18);
-  padding:8px 12px; border-radius:999px;
-  font-weight:600; font-size:.92rem;
+  padding:9px 13px; border-radius:999px;
+  font-weight:800; font-size:.92rem;
+  letter-spacing:.2px;
 }
-.hero h1{margin:16px 0 10px; font-size:clamp(2rem,4vw,3.1rem); line-height:1.1}
-.hero p{max-width:62ch; font-size:1.05rem; color:rgba(255,255,255,.92)}
-.hero .actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+
+.hero h1{
+  margin:16px 0 10px;
+  font-size:clamp(2rem,4.4vw,3.25rem);
+  line-height:1.08;
+  text-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.hero p{
+  max-width:64ch;
+  font-size:1.08rem;
+  color:rgba(255,255,255,.92);
+  text-shadow:0 10px 24px rgba(0,0,0,.28);
+}
+
+.hero .actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px}
+
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
   padding:12px 16px; border-radius:14px; text-decoration:none;
   font-weight:800; letter-spacing:.2px;
 }
-.btn.primary{background:var(--orange); color:white; box-shadow:0 16px 30px rgba(255,152,0,.25)}
-.btn.ghost{background:rgba(255,255,255,.12); color:white; border:1px solid rgba(255,255,255,.20)}
-.btn.ghost:hover{background:rgba(255,255,255,.16)}
+.btn.primary{background:var(--orange); color:white; box-shadow:0 18px 35px rgba(255,152,0,.25)}
+.btn.ghost{
+  background:rgba(255,255,255,.10); color:white;
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(10px);
+}
+.btn.ghost:hover{background:rgba(255,255,255,.14)}
+
 .hero .badges{
-  display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;
-  color:rgba(255,255,255,.92); font-weight:700; font-size:.92rem;
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;
+  color:rgba(255,255,255,.92); font-weight:800; font-size:.92rem;
 }
 .hero .badges span{
-  background:rgba(255,255,255,.10);
+  background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.16);
   padding:8px 12px; border-radius:999px;
+}
+
+@media (max-width:768px){
+  .hero{min-height:70vh; background-size:112%; background-position:center 42%;}
+  .hero .container.wrap{padding:18px 14px; border-radius:20px;}
+  .hero h1{font-size:clamp(1.9rem,7vw,2.7rem);}
+  .hero p{font-size:1.02rem;}
+  .kicker{font-size:.90rem;}
+  .hero .actions .btn{width:100%; justify-content:center;}
 }
 
 /* ===================== SEZIONI ===================== */
@@ -233,20 +273,29 @@ img{max-width:100%;display:block}
 .g-item img{
   width:100%;
   height:100%;
-  object-fit:cover;         /* ✅ riempie il riquadro */
-  object-position:center;   /* ✅ taglio “centrato” */
+  object-fit:cover;
+  object-position:center;
   background:#fff;
 }
 
-/* didascalia */
+/* ===== DIDASCALIE GALLERIA PRO (eleganti) ===== */
 .g-cap{
   position:absolute;
-  left:0; right:0; bottom:0;
+  left:10px;
+  right:10px;
+  bottom:10px;
   padding:10px 12px;
-  color:#fff;
+  border-radius:12px;
+  background:rgba(15, 37, 16, .62);
+  color:rgba(255,255,255,.95);
   font-weight:800;
-  font-size:.92rem;
-  background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.60));
+  font-size:.95rem;
+  line-height:1.25;
+  letter-spacing:.2px;
+  text-shadow:0 2px 10px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 @media (max-width: 900px){ .g-item{grid-column:span 6} }
@@ -346,7 +395,6 @@ details p{color:var(--muted); margin:10px 0 0}
 
 /* ======================================================
    SLIDER PRO (frecce + pallini) per tutte le sezioni a scorrimento
-   JS aggiunge .sliderActive solo se c'è overflow.
    ====================================================== */
 
 .sliderWrap{ position:relative; }
@@ -404,17 +452,12 @@ details p{color:var(--muted); margin:10px 0 0}
 
   .container{padding-left:16px; padding-right:16px;}
 
-  .hero{min-height:68vh;}
-  .hero .wrap{padding:52px 0 26px;}
-  .hero .badges{margin-top:18px; margin-bottom:8px;}
-
   .section{padding:42px 0;}
   #servizio.section{padding-top:26px;}
 
   .card .pad{padding:16px;}
   .card .img{height:145px;}
 
-  /* tabella prezzi scrollabile */
   .table{
     display:block;
     overflow-x:auto;
@@ -422,7 +465,6 @@ details p{color:var(--muted); margin:10px 0 0}
     -webkit-overflow-scrolling: touch;
   }
 
-  /* spazio sotto pagina per bottone */
   body{padding-bottom:140px;}
 
   .footer{padding-bottom:26px;}
@@ -433,7 +475,6 @@ details p{color:var(--muted); margin:10px 0 0}
     box-shadow:0 10px 25px rgba(0,0,0,.25);
   }
 
-  /* track slider mobile */
   .gridScroll,
   .galleryScroll{
     display:flex !important;
@@ -456,7 +497,6 @@ details p{color:var(--muted); margin:10px 0 0}
     .galleryScroll > .g-item{ flex-basis:90%; }
   }
 
-  /* frecce un filo più piccole */
   .sliderBtn{
     width:40px;
     height:40px;
@@ -465,31 +505,5 @@ details p{color:var(--muted); margin:10px 0 0}
   .sliderBtn.prev{ left:-6px; }
   .sliderBtn.next{ right:-6px; }
 
-  /* se vuoi nascondere WhatsApp quando il menu è aperto */
   body.menu-open .whatsappFloat{ display:none; }
-/* ===== DIDASCALIE GALLERIA PRO ===== */
-.g-item{
-  position:relative; /* serve per posizionare la didascalia sopra la foto */
-}
-
-.g-cap{
-  position:absolute;
-  left:10px;
-  right:10px;
-  bottom:10px;
-  padding:10px 12px;
-  border-radius:12px;
-
-  background:rgba(15, 37, 16, .62); /* verde scuro trasparente */
-  color:rgba(255,255,255,.95);
-  font-weight:800;
-  font-size:.95rem;
-  line-height:1.25;
-
-  letter-spacing:.2px;
-  text-shadow:0 2px 10px rgba(0,0,0,.35);
-
-  border:1px solid rgba(255,255,255,.16);
-  backdrop-filter: blur(10px);
-  }
 }
