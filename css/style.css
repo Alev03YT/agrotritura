@@ -83,9 +83,30 @@ img{max-width:100%;display:block}
   display:grid;
   place-items:center;
   color:white;
+
+  /* sfondo nuovo nitido */
   background:
-    linear-gradient(90deg, rgba(30,61,30,.82), rgba(30,61,30,.40)),
-    url("../img/hero_mulino.jpg") center/cover no-repeat;
+    linear-gradient(90deg, rgba(30,61,30,.78), rgba(30,61,30,.35)),
+    url("../img/IMG-20260216-WA0000.jpg") center/cover no-repeat;
+
+  background-size:cover;
+  background-position:center;
+}
+@media (max-width:768px){
+  .hero{
+    min-height:88vh;
+
+    /* evita sgranature mobile */
+    background-position:center top;
+    background-size:cover;
+  }
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,.25));
+  pointer-events:none;
 }
 .hero .wrap{padding:64px 0}
 .kicker{
