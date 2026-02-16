@@ -334,7 +334,51 @@
           <div>
             <label for="comune">Comune e Indirizzo</label>
             <input id="comune" name="comune" placeholder="Es. Novara, Trecate, Galliate…"/>
+
+            <!-- ✅ AGGIUNTA: BOX CALCOLO TRASPORTO/QUOTA (riempito via JS) -->
+            <div class="quoteBox" data-quote-box style="display:none;">
+              <div class="badgeMini">🚚 Stima trasporto (andata/ritorno)</div>
+
+              <div class="quoteRow">
+                <div>
+                  <div class="label">Distanza stimata</div>
+                  <div class="hint">Calcolata in base all’indirizzo inserito</div>
+                </div>
+                <div class="value" data-q-km>—</div>
+              </div>
+
+              <div class="quoteRow">
+                <div>
+                  <div class="label">Carburante stimato</div>
+                  <div class="hint">Jeep Cherokee KJ 2.8 CRD • consumo medio</div>
+                </div>
+                <div class="value" data-q-fuel>—</div>
+              </div>
+
+              <div class="quoteRow">
+                <div>
+                  <div class="label">Totale trasporto</div>
+                  <div class="hint">Carburante + margine trasporto</div>
+                </div>
+                <div class="value" data-q-transport>—</div>
+              </div>
+
+              <div class="quoteTotal">
+                <div class="label">Totale stimato ordine</div>
+                <div class="value" data-q-total>—</div>
+              </div>
+
+              <div class="quoteAlert" data-q-alert style="display:none;"></div>
+
+              <!-- valori “nascosti” (JS li può usare per WhatsApp/Sheets) -->
+              <input type="hidden" name="calc_km_roundtrip" id="calc_km_roundtrip" value="">
+              <input type="hidden" name="calc_fuel_cost" id="calc_fuel_cost" value="">
+              <input type="hidden" name="calc_transport_cost" id="calc_transport_cost" value="">
+              <input type="hidden" name="calc_total_estimate" id="calc_total_estimate" value="">
+            </div>
+            <!-- ✅ FINE AGGIUNTA -->
           </div>
+
           <div>
             <label for="telefono">Telefono (facoltativo)</label>
             <input id="telefono" name="telefono" placeholder="Per essere richiamato"/>
@@ -395,38 +439,38 @@
       <button aria-label="Indietro" class="sliderBtn prev" data-slider-prev="" type="button">‹</button>
       <button aria-label="Avanti" class="sliderBtn next" data-slider-next="" type="button">›</button>
 
+      <!-- ✅ FIX: tolto il doppio div "gallery" duplicato -->
       <div class="gallery galleryScroll" data-slider-track="">
-<div class="gallery galleryScroll" data-slider-track>
-  <div class="g-item">
-    <img alt="Bovini - razione su misura" loading="lazy" src="img/galleria_bovino.jpg" />
-    <div class="g-cap">Razione su misura per bovini: più benessere e digestione migliore.</div>
-  </div>
+        <div class="g-item">
+          <img alt="Bovini - razione su misura" loading="lazy" src="img/galleria_bovino.jpg" />
+          <div class="g-cap">Razione su misura per bovini: più benessere e digestione migliore.</div>
+        </div>
 
-  <div class="g-item">
-    <img alt="Suini - mangime fresco" loading="lazy" src="img/galleria_maialino.jpg" />
-    <div class="g-cap">Mangime fresco per suini: tritatura uniforme e alimentazione controllata.</div>
-  </div>
+        <div class="g-item">
+          <img alt="Suini - mangime fresco" loading="lazy" src="img/galleria_maialino.jpg" />
+          <div class="g-cap">Mangime fresco per suini: tritatura uniforme e alimentazione controllata.</div>
+        </div>
 
-  <div class="g-item">
-    <img alt="Ovini e caprini - alimentazione mirata" loading="lazy" src="img/galleria_capra.jpg" />
-    <div class="g-cap">Ovini e caprini: miscela bilanciata per energia e salute quotidiana.</div>
-  </div>
+        <div class="g-item">
+          <img alt="Ovini e caprini - alimentazione mirata" loading="lazy" src="img/galleria_capra.jpg" />
+          <div class="g-cap">Ovini e caprini: miscela bilanciata per energia e salute quotidiana.</div>
+        </div>
 
-  <div class="g-item">
-    <img alt="Allevamento e cura quotidiana" loading="lazy" src="img/galleria_allevamento.jpg" />
-    <div class="g-cap">Cura e gestione dell’allevamento: qualità nella razione, serenità ogni giorno.</div>
-  </div>
+        <div class="g-item">
+          <img alt="Allevamento e cura quotidiana" loading="lazy" src="img/galleria_allevamento.jpg" />
+          <div class="g-cap">Cura e gestione dell’allevamento: qualità nella razione, serenità ogni giorno.</div>
+        </div>
 
-  <div class="g-item">
-    <img alt="Mangime tritato pronto all'uso" loading="lazy" src="img/galleria_sbriciolato.jpg" />
-    <div class="g-cap">Tritato fresco pronto all’uso: pulito, costante e adatto ai tuoi animali.</div>
-  </div>
+        <div class="g-item">
+          <img alt="Mangime tritato pronto all'uso" loading="lazy" src="img/galleria_sbriciolato.jpg" />
+          <div class="g-cap">Tritato fresco pronto all’uso: pulito, costante e adatto ai tuoi animali.</div>
+        </div>
 
-  <div class="g-item">
-    <img alt="Cereali selezionati" loading="lazy" src="img/galleria_riso.jpg" />
-    <div class="g-cap">Cereali selezionati e lavorati su richiesta: niente magazzino, solo freschezza.</div>
-  </div>
-</div>
+        <div class="g-item">
+          <img alt="Cereali selezionati" loading="lazy" src="img/galleria_riso.jpg" />
+          <div class="g-cap">Cereali selezionati e lavorati su richiesta: niente magazzino, solo freschezza.</div>
+        </div>
+      </div>
 
       <div class="sliderDots" data-slider-dots=""></div>
     </div>
