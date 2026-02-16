@@ -599,3 +599,77 @@ details p{color:var(--muted); margin:10px 0 0}
   .quoteRow .value{font-size:.95rem;}
   .quoteTotal .value{font-size:1.05rem;}
 }
+/* ===================== QUOTE BOX (stima trasporto) ===================== */
+.quoteBox{
+  margin-top:10px;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.08);
+  background:linear-gradient(180deg, rgba(46,93,46,.06), rgba(255,255,255,1));
+  box-shadow:0 8px 22px rgba(0,0,0,.06);
+}
+
+.badgeMini{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:.86rem;
+  color:#123012;
+  background:rgba(46,93,46,.10);
+  border:1px solid rgba(46,93,46,.18);
+  margin-bottom:10px;
+}
+
+.quoteRow{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 0;
+  border-top:1px dashed rgba(0,0,0,.10);
+}
+.quoteRow:first-of-type{ border-top:0; }
+
+.quoteRow .label{
+  font-weight:900;
+  font-size:.92rem;
+}
+.quoteRow .hint{
+  color:var(--muted);
+  font-size:.86rem;
+  margin-top:2px;
+}
+.quoteRow .value{
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.quoteTotal{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(0,0,0,.10);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.quoteTotal .label{ font-weight:900; }
+.quoteTotal .value{
+  font-weight:900;
+  font-size:1.05rem;
+  white-space:nowrap;
+}
+
+.quoteAlert{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(255,152,0,.12);
+  border:1px solid rgba(255,152,0,.28);
+  color:#6b3d00;
+  font-weight:800;
+  font-size:.9rem;
+}
