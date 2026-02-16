@@ -301,3 +301,205 @@ function initSlider(sliderWrap){
 }
 
 document.querySelectorAll("[data-slider]").forEach(initSlider);
+
+
+
+// =====================================================================
+// ✅ AGGIUNTA: STIMA TRASPORTO (KM A/R + GASOLIO + MARGINE) + BOX UI
+// - NON modifica il tuo submit handler: aggiunge la stima nelle NOTE
+// - Richiede Apps Script action=distance (vedi sotto)
+// =====================================================================
+(function initTransportQuote(){
+  if (!form) return;
+
+  // --- CONFIG (modificabile)
+  const ORIGIN_ADDRESS = "Novara, Italia";   // <-- metti qui il tuo punto di partenza (sede)
+  const DIESEL_EUR_L = 1.725;                // “via di mezzo” tra 1,65 e 1,80
+  const CONSUMPTION_L_PER_100KM = 11.5;      // Jeep Cherokee KJ 2.8 CRD (stima prudente)
+  const TRANSPORT_MARGIN_PCT = 0.30;         // +30% sul costo carburante (profitto + imprevisti)
+  const TRANSPORT_MIN_EUR = 8;               // minimo per non andare mai sotto
+  const FREE_DELIVERY_MAX_KM_ONEWAY = 15;    // regola sito (entro 15km)
+  const FREE_DELIVERY_MIN_ORDER_EUR = 30;    // regola sito (>= 30€)
+
+  // prezzi indicativi “medi” (per stima totale ordine)
+  const PRICE_MID_EUR_KG = {
+    "Mais": 2.00,
+    "Orzo": 1.90,
+    "Avena": 1.90,
+    "Frumento": 1.95,
+    "Grana verde": 2.05,
+    "Mix personalizzato": 2.20
+  };
+
+  // --- elementi UI (già aggiunti in HTML)
+  const quoteBox = form.querySelector("[data-quote-box]");
+  const elKm = form.querySelector("[data-q-km]");
+  const elFuel = form.querySelector("[data-q-fuel]");
+  const elTransport = form.querySelector("[data-q-transport]");
+  const elTotal = form.querySelector("[data-q-total]");
+  const elAlert = form.querySelector("[data-q-alert]");
+
+  const hidKmRT = form.querySelector("#calc_km_roundtrip");
+  const hidFuel = form.querySelector("#calc_fuel_cost");
+  const hidTransport = form.querySelector("#calc_transport_cost");
+  const hidTotal = form.querySelector("#calc_total_estimate");
+
+  const inputComune = form.querySelector("#comune");
+  const inputQuantita = form.querySelector("#quantita");
+  const inputProdotto = form.querySelector("#cereale");
+  const textareaNote = form.querySelector("#note");
+
+  if (!quoteBox || !inputComune) return;
+
+  // cache ultima stima (usata per append nelle note)
+  let lastQuote = null;
+
+  function fmtEur(n){
+    if (typeof n !== "number" || !isFinite(n)) return "—";
+    return n.toFixed(2).replace(".", ",") + " €";
+  }
+  function fmtKm(n){
+    if (typeof n !== "number" || !isFinite(n)) return "—";
+    return (Math.round(n * 10) / 10).toString().replace(".", ",") + " km";
+  }
+  function parseKg(str){
+    // estrae primo numero (accetta "100", "100kg", "100 kg", "100,5 kg")
+    const m = (str || "").replace(",", ".").match(/(\d+(?:\.\d+)?)/);
+    if (!m) return null;
+    const v = parseFloat(m[1]);
+    return isFinite(v) ? v : null;
+  }
+
+  function computeQuote(oneWayKm){
+    const kmRT = oneWayKm * 2;
+    const liters = (kmRT * CONSUMPTION_L_PER_100KM) / 100;
+    const fuelCost = liters * DIESEL_EUR_L;
+
+    // costo trasporto con margine + minimo
+    let transportCost = fuelCost * (1 + TRANSPORT_MARGIN_PCT);
+    if (transportCost < TRANSPORT_MIN_EUR) transportCost = TRANSPORT_MIN_EUR;
+
+    // stima ordine (se posso)
+    const prodotto = (inputProdotto?.value || "").trim();
+    const kg = parseKg(inputQuantita?.value || "");
+    let goodsCost = null;
+    if (kg && PRICE_MID_EUR_KG[prodotto]) goodsCost = kg * PRICE_MID_EUR_KG[prodotto];
+
+    // regola: consegna gratuita entro 15km e ordine >= 30€
+    let transportApplied = transportCost;
+    let freeApplied = false;
+    if (oneWayKm <= FREE_DELIVERY_MAX_KM_ONEWAY && goodsCost !== null && goodsCost >= FREE_DELIVERY_MIN_ORDER_EUR){
+      transportApplied = 0;
+      freeApplied = true;
+    }
+
+    const total = (goodsCost !== null) ? (goodsCost + transportApplied) : null;
+
+    return {
+      oneWayKm,
+      kmRT,
+      liters,
+      fuelCost,
+      transportCost,
+      transportApplied,
+      freeApplied,
+      goodsCost,
+      total
+    };
+  }
+
+  function renderQuote(q){
+    if (!q) {
+      quoteBox.style.display = "none";
+      return;
+    }
+
+    quoteBox.style.display = "block";
+    elKm && (elKm.textContent = fmtKm(q.kmRT));
+    elFuel && (elFuel.textContent = fmtEur(q.fuelCost));
+    elTransport && (elTransport.textContent = q.transportApplied === 0 ? "0,00 €" : fmtEur(q.transportApplied));
+    elTotal && (elTotal.textContent = q.total !== null ? fmtEur(q.total) : "—");
+
+    // hidden fields (per WhatsApp/Sheets)
+    hidKmRT && (hidKmRT.value = q.kmRT.toFixed(2));
+    hidFuel && (hidFuel.value = q.fuelCost.toFixed(2));
+    hidTransport && (hidTransport.value = q.transportApplied.toFixed(2));
+    hidTotal && (hidTotal.value = q.total !== null ? q.total.toFixed(2) : "");
+
+    // alert/info
+    if (elAlert) {
+      elAlert.style.display = "none";
+      elAlert.textContent = "";
+      if (q.total === null) {
+        elAlert.style.display = "block";
+        elAlert.textContent = "Per vedere il totale stimato inserisci anche una quantità (es. 100 kg).";
+      } else if (q.freeApplied) {
+        elAlert.style.display = "block";
+        elAlert.textContent = "Consegna stimata: gratuita (entro 15 km e ordine ≥ 30€).";
+      }
+    }
+  }
+
+  async function fetchDistanceKmOneWay(destinationAddress){
+    // Richiede Apps Script: action=distance&from=...&to=...
+    const url = LEAD_API
+      + "?action=distance"
+      + "&from=" + encodeURIComponent(ORIGIN_ADDRESS)
+      + "&to=" + encodeURIComponent(destinationAddress);
+
+    const data = await jsonp(url, 12000);
+    // atteso: { ok:true, km:12.3 }
+    if (!data || data.ok !== true || typeof data.km !== "number") {
+      throw new Error("Risposta distance non valida");
+    }
+    return data.km;
+  }
+
+  // debounce
+  let timer = null;
+  function scheduleUpdate(){
+    clearTimeout(timer);
+    timer = setTimeout(updateQuote, 500);
+  }
+
+  async function updateQuote(){
+    const addr = (inputComune.value || "").trim();
+    if (!addr || addr.length < 4) {
+      lastQuote = null;
+      renderQuote(null);
+      return;
+    }
+
+    try{
+      const kmOneWay = await fetchDistanceKmOneWay(addr);
+      lastQuote = computeQuote(kmOneWay);
+      renderQuote(lastQuote);
+    }catch(err){
+      // se non hai ancora implementato action=distance, non rompe nulla
+      lastQuote = null;
+      renderQuote(null);
+      console.warn("Stima distanza non disponibile:", err.message);
+    }
+  }
+
+  // Aggiorna su input
+  inputComune.addEventListener("input", scheduleUpdate);
+  inputQuantita?.addEventListener("input", scheduleUpdate);
+  inputProdotto?.addEventListener("change", scheduleUpdate);
+
+  // ✅ AGGIUNTA: prima del tuo submit, inserisco la stima nelle NOTE (senza toccare il tuo handler)
+  form.addEventListener("submit", ()=>{
+    if (!lastQuote || !textareaNote) return;
+
+    const stamp = `\n\n🚚 Stima trasporto (automatica)\n- Km A/R: ${fmtKm(lastQuote.kmRT)}\n- Carburante stimato: ${fmtEur(lastQuote.fuelCost)}\n- Trasporto: ${lastQuote.transportApplied === 0 ? "0,00 € (gratuito)" : fmtEur(lastQuote.transportApplied)}${lastQuote.total !== null ? `\n- Totale stimato: ${fmtEur(lastQuote.total)}` : ""}`;
+
+    const cur = textareaNote.value || "";
+    // evita duplicati
+    if (cur.includes("🚚 Stima trasporto (automatica)")) return;
+
+    textareaNote.value = (cur.trim() ? cur : "").trim() + stamp;
+  }, true);
+
+  // init
+  updateQuote();
+})();
