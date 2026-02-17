@@ -25,7 +25,7 @@ if (hamb && panel) {
 // ============================
 // CONFIG: URL APPS SCRIPT
 // ============================
-const LEAD_API = "https://script.google.com/macros/s/AKfycbxUnE_CyMElnXLxcZKXT8nI0iQ2k1udJZIJUx2V8snqKrj1Om10RAgKHp-nbKjeA3Xy/exec";
+const LEAD_API = "https://script.google.com/macros/s/AKfycbx8ppBJ73ZyoAFLPxHugetMUv6VwS1i4s1jeRtrSWNRKL_UAxZxqTbWjgcHHD4KJmKL/exec";
 
 
 // ============================
