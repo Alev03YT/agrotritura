@@ -27,7 +27,51 @@ if (hamb && panel) {
 // ============================
 const LEAD_API = "https://script.google.com/macros/s/AKfycbykB-jtTTq0t6aem_sEAfX9xCMCLtNbswXcXPYi5ek_DcNPQif0TJmrCkKSNAXIGNCS/exec";
 
+// ============================
+// CONFIG TRASPORTO (stima)
+// ============================
+// Prezzo gasolio: hai detto "una via di mezzo" tra 1,65 e 1,80
+const DIESEL_EUR_L = 1.725;
 
+// Consumo medio Jeep Cherokee KJ 2.8 CRD (stima): cambia tu se vuoi
+const CONSUMO_L_100KM = 11.0;
+
+// Extra usura/manutenzione (gomme, tagliandi, ecc.) per km
+const USURA_EUR_KM = 0.08;
+
+// Margine sul costo trasporto (per non andare “a pari”)
+const MARGINE_TRASPORTO = 0.25; // 25%
+
+// Minimo trasporto (solo se non è gratuito)
+const TRASPORTO_MIN_EUR = 6.00;
+
+// Regola già presente: gratis >=30€ entro 15km (puoi modificarla)
+const SOGLIA_GRATIS_EUR = 30;
+const KM_GRATIS = 15;
+
+function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+
+function costoKmStimato(){
+  const carburante = (CONSUMO_L_100KM / 100) * DIESEL_EUR_L;  // €/km
+  return carburante + USURA_EUR_KM;
+}
+
+function stimaTrasportoEuro(kmSoloAndata, totaleMerceEuro){
+  const km = Number(kmSoloAndata);
+  if (!isFinite(km) || km <= 0) return null;
+
+  // regola gratis
+  if (isFinite(totaleMerceEuro) && totaleMerceEuro >= SOGLIA_GRATIS_EUR && km <= KM_GRATIS) {
+    return 0;
+  }
+
+  const kmAR = km * 2; // andata + ritorno
+  const base = kmAR * costoKmStimato();
+  const conMargine = base * (1 + MARGINE_TRASPORTO);
+  const finale = Math.max(TRASPORTO_MIN_EUR, conMargine);
+
+  return round2(finale);
+}
 // ============================
 // CAMPI DINAMICI: PRODOTTO + CONSEGNA
 // ============================
@@ -89,6 +133,28 @@ function creaCampoExtra(prodotto) {
 
   // consegna per tutti
   campoExtra.innerHTML += renderSelect("Consegna", "tipo_consegna", ["A domicilio", "Presso la tua azienda"]);
+  // campo distanza (mostrato solo se serve)
+campoExtra.innerHTML += `
+  <div id="wrapDistanza" style="margin-top:10px; display:none">
+    <label>Distanza (km sola andata)</label>
+    <input name="distanza_km" inputmode="decimal" placeholder="Es. 12.5" />
+    <div style="margin-top:6px; font-size:.9rem; opacity:.8">
+      Consiglio: apri Google Maps e prendi i km dalla tua sede al cliente.
+    </div>
+  </div>
+`;
+
+const consegnaSel = campoExtra.querySelector('[name="tipo_consegna"]');
+const wrapDistanza = campoExtra.querySelector('#wrapDistanza');
+
+function toggleDistanza(){
+  const v = (consegnaSel?.value || "");
+  // la distanza serve sia per A domicilio che per Presso la tua azienda
+  const show = (v === "A domicilio" || v === "Presso la tua azienda");
+  if (wrapDistanza) wrapDistanza.style.display = show ? "" : "none";
+}
+consegnaSel?.addEventListener("change", toggleDistanza);
+toggleDistanza();
 }
 
 if (selectProdotto) {
