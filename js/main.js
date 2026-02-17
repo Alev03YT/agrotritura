@@ -31,24 +31,14 @@ const LEAD_API = "https://script.google.com/macros/s/AKfycbx8ppBJ73ZyoAFLPxHuget
 // ============================
 // CONFIG TRASPORTO (stima)
 // ============================
-// Prezzo gasolio: via di mezzo tra 1,65 e 1,80
-const DIESEL_EUR_L = 1.725;
+const DIESEL_EUR_L = 1.725;    // via di mezzo tra 1,65 e 1,80
+const CONSUMO_L_100KM = 11.0;  // Jeep Cherokee KJ 2.8 CRD (stima)
+const USURA_EUR_KM = 0.08;     // extra usura/manutenzione per km
+const MARGINE_TRASPORTO = 0.25;// 25%
+const TRASPORTO_MIN_EUR = 6.00;// minimo (se non gratis)
 
-// Consumo medio Jeep Cherokee KJ 2.8 CRD (stima): cambia tu se vuoi
-const CONSUMO_L_100KM = 11.0;
-
-// Extra usura/manutenzione (gomme, tagliandi, ecc.) per km
-const USURA_EUR_KM = 0.08;
-
-// Margine sul costo trasporto (per non andare “a pari”)
-const MARGINE_TRASPORTO = 0.25; // 25%
-
-// Minimo trasporto (solo se non è gratuito)
-const TRASPORTO_MIN_EUR = 6.00;
-
-// Regola: gratis >=30€ entro 15km
-const SOGLIA_GRATIS_EUR = 30;
-const KM_GRATIS = 15;
+const SOGLIA_GRATIS_EUR = 30;  // gratis >=30€
+const KM_GRATIS = 15;          // entro 15km
 
 function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
 
@@ -102,121 +92,6 @@ function renderInput(label, name, placeholder) {
   `;
 }
 
-function creaCampoExtra(prodotto) {
-  if (!campoExtra) return;
-
-  campoExtra.innerHTML = "";
-
-  if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
-    campoExtra.innerHTML += renderSelect("Granulometria desiderata", "extra_granulometria", ["Grossa", "Media", "Fine"]);
-  } else if (prodotto === "Frumento") {
-    campoExtra.innerHTML += renderSelect("Animali destinatari", "extra_animali", ["Bovini", "Suini", "Pollame", "Ovini", "Altro"]);
-  } else if (prodotto === "Grana verde") {
-    campoExtra.innerHTML += renderSelect("Formato grana verde", "extra_formato_grana", ["Intero", "Tritato"]);
-    campoExtra.innerHTML += `<div id="wrapGranaGranulo"></div>`;
-
-    const formatoSel = campoExtra.querySelector('[name="extra_formato_grana"]');
-    const wrap = campoExtra.querySelector('#wrapGranaGranulo');
-
-    const update = () => {
-      if (formatoSel.value === "Tritato") {
-        wrap.innerHTML = renderSelect("Granulometria", "extra_granulometria_grana", ["Grossa", "Media", "Fine"]);
-      } else {
-        wrap.innerHTML = "";
-      }
-    };
-
-    formatoSel.addEventListener("change", update);
-    update();
-  } else if (prodotto === "Mix personalizzato") {
-    campoExtra.innerHTML += renderInput("Composizione del mix", "extra_mix", "Es. mais + orzo + frumento");
-  } else if (prodotto === "Altro / da definire") {
-    campoExtra.innerHTML += renderInput("Prodotto richiesto", "extra_altro", "Descrivi cosa ti serve");
-  }
-
-  // consegna per tutti
-  campoExtra.innerHTML += renderSelect("Consegna", "tipo_consegna", ["A domicilio", "Presso la tua azienda"]);
-
-  // campo distanza (mostrato solo se serve)
-  campoExtra.innerHTML += `
-    <div id="wrapDistanza" style="margin-top:10px; display:none">
-      <label>Distanza (km sola andata)</label>
-      <input name="distanza_km" inputmode="decimal" placeholder="Es. 12.5" />
-      <div style="margin-top:6px; font-size:.9rem; opacity:.8">
-        Consiglio: apri Google Maps e prendi i km dalla tua sede al cliente.
-      </div>
-    </div>
-  `;
-
-  // box stima trasporto
-  campoExtra.innerHTML += `
-    <div id="trasportoPreview" style="
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,.10);
-      background:rgba(46,93,46,.06);
-      font-weight:900;
-      display:none;
-    ">
-      Trasporto stimato A/R: <span id="trasportoVal">—</span>
-      <div style="margin-top:6px; font-size:.9rem; font-weight:700; opacity:.85">
-        Include andata+ritorno, gasolio, usura e margine.
-      </div>
-    </div>
-  `;
-
-  const consegnaSel = campoExtra.querySelector('[name="tipo_consegna"]');
-  const wrapDistanza = campoExtra.querySelector('#wrapDistanza');
-  const kmEl = campoExtra.querySelector('[name="distanza_km"]');
-  const trasportoPreview = campoExtra.querySelector('#trasportoPreview');
-  const trasportoVal = campoExtra.querySelector('#trasportoVal');
-
-  function toggleDistanza(){
-    const v = (consegnaSel?.value || "");
-    // la distanza serve sia per A domicilio che per Presso la tua azienda
-    const show = (v === "A domicilio" || v === "Presso la tua azienda");
-    if (wrapDistanza) wrapDistanza.style.display = show ? "" : "none";
-
-    // se nascondo distanza, nascondo anche preview
-    if (!show && trasportoPreview) trasportoPreview.style.display = "none";
-  }
-
-  function updateTrasportoPreview(){
-    const kmTxt = (kmEl?.value || "").trim().replace(",", ".");
-    const km = parseFloat(kmTxt);
-
-    // salvo comunque la distanza per whatsapp (anche se non valida)
-    if (form) form.setAttribute("data-distanza-km", kmTxt);
-
-    if (!isFinite(km) || km <= 0){
-      if (trasportoPreview) trasportoPreview.style.display = "none";
-      if (form) form.setAttribute("data-trasporto-eur", "");
-      return;
-    }
-
-    // Non abbiamo “totale merce” calcolato qui, quindi niente regola gratis automatica:
-    // (se vuoi, in futuro calcoliamo anche il totale prodotto)
-    const stima = stimaTrasportoEuro(km, null);
-
-    if (trasportoPreview) trasportoPreview.style.display = "";
-    if (trasportoVal) trasportoVal.textContent = (stima === 0) ? "GRATIS" : `${stima} €`;
-
-    if (form) form.setAttribute("data-trasporto-eur", String(stima));
-  }
-
-  consegnaSel?.addEventListener("change", toggleDistanza);
-  kmEl?.addEventListener("input", updateTrasportoPreview);
-
-  toggleDistanza();
-  updateTrasportoPreview();
-}
-
-if (selectProdotto) {
-  selectProdotto.addEventListener('change', (e) => creaCampoExtra(e.target.value));
-  if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
-}
-
 
 // ============================
 // JSONP helper (GitHub Pages)
@@ -258,6 +133,197 @@ function jsonp(url, timeoutMs = 12000){
 
 
 // ============================
+// DISTANZA AUTOMATICA (da Apps Script) — ORIGINE NASCOSTA
+// Richiesta: ?action=distance&to=...&callback=...
+// ============================
+async function fetchDistanceKmOneWay(toAddress){
+  const url = LEAD_API
+    + "?action=distance"
+    + "&to=" + encodeURIComponent(toAddress);
+
+  const data = await jsonp(url, 12000);
+  if (!data || data.ok !== true || typeof data.km !== "number") {
+    throw new Error((data && data.error) ? data.error : "Risposta distance non valida");
+  }
+  return data.km;
+}
+
+
+// ============================
+// SUBMIT PREVENTIVO
+// ============================
+const form = document.querySelector('#preventivoForm');
+
+function safe(selector){
+  const el = form?.querySelector(selector);
+  return (el?.value || "").trim();
+}
+
+function creaCampoExtra(prodotto) {
+  if (!campoExtra) return;
+
+  campoExtra.innerHTML = "";
+
+  if (["Mais", "Orzo", "Avena"].includes(prodotto)) {
+    campoExtra.innerHTML += renderSelect("Granulometria desiderata", "extra_granulometria", ["Grossa", "Media", "Fine"]);
+  } else if (prodotto === "Frumento") {
+    campoExtra.innerHTML += renderSelect("Animali destinatari", "extra_animali", ["Bovini", "Suini", "Pollame", "Ovini", "Altro"]);
+  } else if (prodotto === "Grana verde") {
+    campoExtra.innerHTML += renderSelect("Formato grana verde", "extra_formato_grana", ["Intero", "Tritato"]);
+    campoExtra.innerHTML += `<div id="wrapGranaGranulo"></div>`;
+
+    const formatoSel = campoExtra.querySelector('[name="extra_formato_grana"]');
+    const wrap = campoExtra.querySelector('#wrapGranaGranulo');
+
+    const update = () => {
+      if (formatoSel.value === "Tritato") {
+        wrap.innerHTML = renderSelect("Granulometria", "extra_granulometria_grana", ["Grossa", "Media", "Fine"]);
+      } else {
+        wrap.innerHTML = "";
+      }
+    };
+
+    formatoSel.addEventListener("change", update);
+    update();
+  } else if (prodotto === "Mix personalizzato") {
+    campoExtra.innerHTML += renderInput("Composizione del mix", "extra_mix", "Es. mais + orzo + frumento");
+  } else if (prodotto === "Altro / da definire") {
+    campoExtra.innerHTML += renderInput("Prodotto richiesto", "extra_altro", "Descrivi cosa ti serve");
+  }
+
+  // consegna per tutti
+  campoExtra.innerHTML += renderSelect("Consegna", "tipo_consegna", ["A domicilio", "Presso la tua azienda"]);
+
+  // campo distanza (fallback manuale)
+  campoExtra.innerHTML += `
+    <div id="wrapDistanza" style="margin-top:10px; display:none">
+      <label>Distanza (km sola andata) <span style="opacity:.7;font-weight:700">(opzionale)</span></label>
+      <input name="distanza_km" inputmode="decimal" placeholder="Se non calcola in automatico, inserisci tu i km" />
+      <div style="margin-top:6px; font-size:.9rem; opacity:.8">
+        Se la stima automatica non compare, puoi inserire manualmente i km da Google Maps.
+      </div>
+    </div>
+  `;
+
+  // box stima trasporto
+  campoExtra.innerHTML += `
+    <div id="trasportoPreview" style="
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(46,93,46,.06);
+      font-weight:900;
+      display:none;
+    ">
+      Trasporto stimato A/R: <span id="trasportoVal">—</span>
+      <div id="trasportoHint" style="margin-top:6px; font-size:.9rem; font-weight:700; opacity:.85">
+        Include andata+ritorno, gasolio, usura e margine.
+      </div>
+      <div id="trasportoAuto" style="margin-top:6px; font-size:.88rem; font-weight:800; opacity:.8; display:none">
+        Distanza calcolata automaticamente dall’indirizzo inserito.
+      </div>
+      <div id="trasportoErr" style="margin-top:6px; font-size:.88rem; font-weight:800; opacity:.85; display:none">
+        Non riesco a calcolare i km automaticamente: puoi inserirli manualmente.
+      </div>
+    </div>
+  `;
+
+  const consegnaSel = campoExtra.querySelector('[name="tipo_consegna"]');
+  const wrapDistanza = campoExtra.querySelector('#wrapDistanza');
+  const kmEl = campoExtra.querySelector('[name="distanza_km"]');
+  const trasportoPreview = campoExtra.querySelector('#trasportoPreview');
+  const trasportoVal = campoExtra.querySelector('#trasportoVal');
+  const trasportoAuto = campoExtra.querySelector('#trasportoAuto');
+  const trasportoErr = campoExtra.querySelector('#trasportoErr');
+
+  const inputComune = document.querySelector("#comune");
+
+  function setKmAndPreview(km){
+    // salva km sul form (per WhatsApp)
+    if (form) form.setAttribute("data-distanza-km", String(km));
+
+    const stima = stimaTrasportoEuro(km, null);
+    if (trasportoPreview) trasportoPreview.style.display = "";
+    if (trasportoVal) trasportoVal.textContent = (stima === 0) ? "GRATIS" : `${stima} €`;
+    if (form) form.setAttribute("data-trasporto-eur", String(stima));
+  }
+
+  function hidePreview(){
+    if (trasportoPreview) trasportoPreview.style.display = "none";
+    if (form) {
+      form.setAttribute("data-distanza-km", "");
+      form.setAttribute("data-trasporto-eur", "");
+    }
+  }
+
+  function toggleDistanza(){
+    const v = (consegnaSel?.value || "");
+    const show = (v === "A domicilio" || v === "Presso la tua azienda");
+    if (wrapDistanza) wrapDistanza.style.display = show ? "" : "none";
+    if (!show) hidePreview();
+  }
+
+  function updateManualKm(){
+    const kmTxt = (kmEl?.value || "").trim().replace(",", ".");
+    const km = parseFloat(kmTxt);
+    if (!isFinite(km) || km <= 0) return;
+    if (trasportoAuto) trasportoAuto.style.display = "none";
+    if (trasportoErr) trasportoErr.style.display = "none";
+    setKmAndPreview(km);
+  }
+
+  // ====== AUTO: calcolo km quando cambia l'indirizzo ======
+  let timer = null;
+  async function scheduleAutoDistance(){
+    clearTimeout(timer);
+    timer = setTimeout(async ()=>{
+      const addr = (inputComune?.value || "").trim();
+      const consegna = (consegnaSel?.value || "");
+      const should = (consegna === "A domicilio" || consegna === "Presso la tua azienda");
+      if (!should) return;
+
+      if (!addr || addr.length < 4){
+        hidePreview();
+        if (trasportoAuto) trasportoAuto.style.display = "none";
+        if (trasportoErr) trasportoErr.style.display = "none";
+        return;
+      }
+
+      try{
+        const km = await fetchDistanceKmOneWay(addr);
+        if (trasportoAuto) trasportoAuto.style.display = "";
+        if (trasportoErr) trasportoErr.style.display = "none";
+        setKmAndPreview(km);
+      }catch(err){
+        // fallback manuale
+        if (trasportoAuto) trasportoAuto.style.display = "none";
+        if (trasportoErr) trasportoErr.style.display = "";
+        // non forzo a nascondere: se l'utente mette km manuali funziona
+        console.warn("Distanza automatica non disponibile:", err.message);
+      }
+    }, 650);
+  }
+
+  consegnaSel?.addEventListener("change", ()=>{
+    toggleDistanza();
+    scheduleAutoDistance();
+  });
+
+  kmEl?.addEventListener("input", updateManualKm);
+  inputComune?.addEventListener("input", scheduleAutoDistance);
+
+  toggleDistanza();
+  scheduleAutoDistance();
+}
+
+if (selectProdotto) {
+  selectProdotto.addEventListener('change', (e) => creaCampoExtra(e.target.value));
+  if (selectProdotto.value) creaCampoExtra(selectProdotto.value);
+}
+
+
+// ============================
 // COLLECT EXTRA (leggibile)
 // ============================
 function collectExtrasReadable(){
@@ -278,17 +344,6 @@ function collectExtrasReadable(){
   return parts.join(" | ");
 }
 
-
-// ============================
-// SUBMIT PREVENTIVO
-// ============================
-const form = document.querySelector('#preventivoForm');
-
-function safe(selector){
-  const el = form?.querySelector(selector);
-  return (el?.value || "").trim();
-}
-
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -301,7 +356,7 @@ if (form) {
     const note = safe('#note');
     const extra = collectExtrasReadable();
 
-    // leggo stima trasporto salvata dal preview
+    // km/trasporto (auto o manuale)
     const kmSoloAndata = (form.getAttribute("data-distanza-km") || "").trim();
     const trasportoEurRaw = (form.getAttribute("data-trasporto-eur") || "").trim();
     const trasportoLabel = trasportoEurRaw ? (trasportoEurRaw === "0" ? "GRATIS" : `${trasportoEurRaw} €`) : "";
@@ -330,7 +385,7 @@ Vorrei un preventivo per mangime su misura.
 - Prodotto: ${prodotto || "-"}
 - Quantità: ${quantita || "-"}
 - Comune/Indirizzo: ${comune || "-"}
-${kmSoloAndata ? `- Distanza (km sola andata): ${kmSoloAndata}\n` : ""}${trasportoLabel ? `- Trasporto stimato A/R: ${trasportoLabel}\n` : ""}${telefono ? `- Telefono: ${telefono}\n` : ""}${nome ? `- Nome: ${nome}\n` : ""}
+${kmSoloAndata ? `- Distanza (km sola andata): ${String(kmSoloAndata).replace(".", ",")}\n` : ""}${trasportoLabel ? `- Trasporto stimato A/R: ${trasportoLabel}\n` : ""}${telefono ? `- Telefono: ${telefono}\n` : ""}${nome ? `- Nome: ${nome}\n` : ""}
 
 🔧 Dettagli specifici:
 - ${extra || "-"}
@@ -348,8 +403,6 @@ Grazie!`;
 
 // ============================
 // SLIDER PRO (tutte le sezioni con data-slider)
-// - frecce + pallini
-// - attiva solo se c’è overflow
 // ============================
 function initSlider(sliderWrap){
   const track = sliderWrap.querySelector("[data-slider-track]");
