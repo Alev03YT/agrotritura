@@ -619,3 +619,61 @@ ${righeNote.length ? righeNote.join("\n") : "-"}
     }
   });
 })();
+// =====================================================
+// COPIA DATI PREVENTIVO FORMATTATI PER PDF
+// =====================================================
+const copyBtn = document.querySelector("#copyPreventivo");
+
+if (copyBtn && form) {
+  copyBtn.addEventListener("click", async () => {
+    const nome = safe('#nome');
+    const telefono = safe('#telefono');
+    const prodotto = safe('#cereale');
+    const quantita = safe('#quantita');
+    const comune = safe('#comune');
+    const note = safe('#note');
+    const extra = collectExtrasReadable();
+
+    const kmSoloAndata = (form.getAttribute("data-distanza-km") || "").trim();
+    const trasportoEurRaw = (form.getAttribute("data-trasporto-eur") || "").trim();
+    const trasportoLabel = trasportoEurRaw
+      ? (trasportoEurRaw === "0" ? "GRATUITO" : `${trasportoEurRaw} €`)
+      : "Da calcolare";
+
+    // 🔹 TESTO FORMATTATO COME NEL PDF
+    const testoPDF =
+`PREVENTIVO AGROTRITURA
+
+Cliente:
+Nome: ${nome || "-"}
+Telefono: ${telefono || "-"}
+
+Ordine:
+Prodotto: ${prodotto || "-"}
+Quantità: ${quantita || "-"}
+Comune/Indirizzo: ${comune || "-"}
+
+Trasporto:
+Distanza (solo andata): ${kmSoloAndata || "-"} km
+Costo trasporto A/R: ${trasportoLabel}
+
+Dettagli specifici:
+${extra || "-"}
+
+Note:
+${note || "-"}
+
+---  
+Preventivo generato dal sito AgroTritura`;
+
+    try {
+      await navigator.clipboard.writeText(testoPDF);
+      copyBtn.textContent = "✅ Copiato!";
+      setTimeout(() => {
+        copyBtn.textContent = "📋 Copia dati per PDF";
+      }, 2000);
+    } catch (err) {
+      alert("Errore nella copia. Copia manualmente dal messaggio WhatsApp.");
+    }
+  });
+}
