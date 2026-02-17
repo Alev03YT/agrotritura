@@ -478,3 +478,144 @@ function initSlider(sliderWrap){
 }
 
 document.querySelectorAll("[data-slider]").forEach(initSlider);
+// =====================================================================
+// ✅ SOLUZIONE 2: COPIA DATI PREVENTIVO (tutti i dati) + feedback UI
+// =====================================================================
+(function initCopiaPreventivo(){
+  const form = document.querySelector('#preventivoForm');
+  if (!form) return;
+
+  const btn = document.querySelector('#btnCopiaPreventivo');
+  const feedback = document.querySelector('#copyFeedback');
+  if (!btn) return;
+
+  function val(selector){
+    const el = form.querySelector(selector);
+    return (el?.value || "").trim();
+  }
+
+  function valByName(name){
+    const el = form.querySelector(`[name="${name}"]`);
+    return (el?.value || "").trim();
+  }
+
+  function safeText(s){ return (s || "").trim(); }
+
+  // prende anche gli extra dinamici già formattati (la tua funzione esiste già)
+  function extraReadable(){
+    try {
+      if (typeof collectExtrasReadable === "function") return collectExtrasReadable();
+    } catch(e){}
+    return "";
+  }
+
+  // prova a leggere i campi nascosti del box quote (se esistono)
+  function readCalc(){
+    const kmRT = val('#calc_km_roundtrip');
+    const fuel = val('#calc_fuel_cost');
+    const transport = val('#calc_transport_cost');
+    const total = val('#calc_total_estimate');
+    return { kmRT, fuel, transport, total };
+  }
+
+  function buildPreventivoText(){
+    const nome = val('#nome');
+    const telefono = val('#telefono');
+    const prodotto = val('#cereale');
+    const quantita = val('#quantita');
+    const comune = val('#comune');
+    const note = val('#note');
+
+    // km manuali e stima trasporto (dal tuo sistema attuale)
+    const kmSoloAndata = (form.getAttribute("data-distanza-km") || "").trim();
+    const trasportoEurRaw = (form.getAttribute("data-trasporto-eur") || "").trim();
+
+    const extra = extraReadable();
+
+    // calcoli eventuali dal quoteBox
+    const calc = readCalc();
+
+    // righe “pulite” (solo se valorizzate)
+    const righeCliente = [
+      nome ? `Nome: ${nome}` : null,
+      telefono ? `Telefono: ${telefono}` : null,
+      comune ? `Comune/Indirizzo: ${comune}` : null,
+    ].filter(Boolean);
+
+    const righeOrdine = [
+      prodotto ? `Prodotto: ${prodotto}` : null,
+      quantita ? `Quantità: ${quantita}` : null,
+      extra ? `Dettagli: ${extra}` : null,
+    ].filter(Boolean);
+
+    const righeTrasporto = [];
+
+    if (kmSoloAndata) righeTrasporto.push(`KM sola andata (manuale): ${kmSoloAndata}`);
+    if (trasportoEurRaw) righeTrasporto.push(`Trasporto stimato A/R: ${trasportoEurRaw === "0" ? "GRATIS" : `${trasportoEurRaw} €`}`);
+
+    // se hai anche i calc_* li aggiungo (sono più “da preventivo”)
+    if (calc.kmRT) righeTrasporto.push(`KM A/R (auto): ${calc.kmRT} km`);
+    if (calc.fuel) righeTrasporto.push(`Carburante stimato: ${calc.fuel} €`);
+    if (calc.transport) righeTrasporto.push(`Trasporto applicato: ${calc.transport} €`);
+    if (calc.total) righeTrasporto.push(`Totale stimato ordine: ${calc.total} €`);
+
+    const righeNote = [
+      note ? note : null
+    ].filter(Boolean);
+
+    const testo =
+`📄 DATI PER PREVENTIVO — AgroTritura
+
+👤 Cliente
+${righeCliente.length ? righeCliente.map(r => `- ${r}`).join("\n") : "- (non compilato)"}
+
+📦 Richiesta
+${righeOrdine.length ? righeOrdine.map(r => `- ${r}`).join("\n") : "- (non compilato)"}
+
+🚚 Trasporto / Distanza
+${righeTrasporto.length ? righeTrasporto.map(r => `- ${r}`).join("\n") : "- (non disponibile)"}
+
+📝 Note
+${righeNote.length ? righeNote.join("\n") : "-"}
+
+🔁 Fonte: ${location.href}
+`;
+
+    return testo;
+  }
+
+  async function copyToClipboard(text){
+    // preferisci clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+
+    // fallback
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    ta.style.top = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  btn.addEventListener("click", async ()=>{
+    const text = buildPreventivoText();
+    try{
+      await copyToClipboard(text);
+
+      if (feedback){
+        feedback.style.display = "";
+        setTimeout(()=> feedback.style.display = "none", 1500);
+      }
+    }catch(err){
+      alert("Non sono riuscito a copiare. Se vuoi, te lo mostro in una popup.");
+      console.warn(err);
+    }
+  });
+})();
