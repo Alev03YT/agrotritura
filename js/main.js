@@ -194,17 +194,6 @@ function creaCampoExtra(prodotto) {
   // consegna per tutti
   campoExtra.innerHTML += renderSelect("Consegna", "tipo_consegna", ["A domicilio", "Presso la tua azienda"]);
 
-  // campo distanza (fallback manuale)
-  campoExtra.innerHTML += `
-    <div id="wrapDistanza" style="margin-top:10px; display:none">
-      <label>Distanza (km sola andata) <span style="opacity:.7;font-weight:700">(opzionale)</span></label>
-      <input name="distanza_km" inputmode="decimal" placeholder="Se non calcola in automatico, inserisci tu i km" />
-      <div style="margin-top:6px; font-size:.9rem; opacity:.8">
-        Se la stima automatica non compare, puoi inserire manualmente i km da Google Maps.
-      </div>
-    </div>
-  `;
-
   // box stima trasporto
   campoExtra.innerHTML += `
     <div id="trasportoPreview" style="
