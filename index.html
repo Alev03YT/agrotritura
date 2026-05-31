@@ -333,14 +333,21 @@
         <div class="row">
           <div>
             <label for="comune">Comune e Indirizzo</label>
-            <input id="comune" name="comune" placeholder="Es. Novara, Trecate, Galliate…"/>
-  <div id="wrapDistanza" style="margin-top:10px; display:none">
-    <label>Distanza (km sola andata) <span style="opacity:.7;font-weight:700">(opzionale)</span></label>
-    <input name="distanza_km" inputmode="decimal" placeholder="Se non calcola in automatico, inserisci tu i km" />
-    <div style="margin-top:6px; font-size:.9rem; opacity:.8">
-      Se la stima automatica non compare, puoi inserire manualmente i km da Google Maps.
-    </div>
+<input id="comune" name="comune" placeholder="Es. Novara, Trecate, Galliate…" />
+
+<div id="wrapDistanza" style="margin-top:10px;">
+  <label>Distanza (km sola andata) <span style="opacity:.7">(opzionale)</span></label>
+
+  <input
+    name="distanza_km"
+    inputmode="decimal"
+    placeholder="Inserisci i km se la stima automatica non compare"
+  />
+
+  <div style="margin-top:6px;font-size:.9rem;opacity:.8">
+    Campo facoltativo. Se il calcolo automatico non funziona, puoi inserire i km manualmente.
   </div>
+</div>
 
             <!-- ✅ AGGIUNTA: BOX CALCOLO TRASPORTO/QUOTA (riempito via JS) -->
             <div class="quoteBox" data-quote-box style="display:none;">
