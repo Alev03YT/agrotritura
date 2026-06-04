@@ -51,7 +51,25 @@
     });
 
     logoutBtn.addEventListener('click',(e)=>{e.preventDefault();sessionStorage.removeItem(SESSION_KEY);showLogin();});
-    document.getElementById('refreshBtn').addEventListener('click', loadPrices);
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('refreshBtn');
+
+  btn.textContent = 'Aggiorno...';
+  btn.disabled = true;
+
+  try {
+    await loadPrices();
+    btn.textContent = 'Aggiornato ✓';
+  } catch (error) {
+    btn.textContent = 'Errore';
+    console.error(error);
+  }
+
+  setTimeout(() => {
+    btn.textContent = 'Aggiorna dati';
+    btn.disabled = false;
+  }, 1500);
+});
     document.getElementById('printBtn').addEventListener('click', ()=>window.print());
 
     function formatDate(value){
