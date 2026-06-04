@@ -79,7 +79,6 @@
       document.getElementById('productsCount').textContent = (data.items || []).length;
       document.getElementById('sourceNote').textContent = data.sourceNote || '-';
       const table = document.getElementById('priceTable');
-      grid.innerHTML = '';
       table.innerHTML = '';
       (data.items || []).forEach(item => {
         const delta = deltaInfo(item.currentPrice, item.previousPrice);
