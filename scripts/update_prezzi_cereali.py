@@ -77,7 +77,7 @@ def find_price(text, keyword):
     for line in lines:
         if keyword.lower() in line.lower():
 
-            nums = re.findall(r"\d+", line)
+            nums = re.findall(r"\b\d{3,4}\b", line)
 
             prices = [
                 int(n)
