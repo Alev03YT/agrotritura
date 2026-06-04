@@ -13,10 +13,10 @@ HOME_URL = "https://www.granariamilano.it/"
 DATA_FILE = "data/prezzi-cereali.json"
 
 TARGETS = {
-    "Mais intero": ["mais nazionale"],
-    "Orzo intero": ["orzo nazionale pesante"],
-    "Avena intera": ["avena nazionale"],
-    "Frumento intero": ["frumento panificabile"],
+    "Mais intero": "Alimentare (9.1)",
+    "Orzo intero": "Orzo nazionale pesante",
+    "Avena intera": "Avena nazionale",
+    "Frumento intero": "Frumento panificabile"
 }
 
 def get_html(url):
@@ -71,28 +71,25 @@ def parse_price_number(value):
 
     return None
 
-def find_price(text, keywords):
+def find_price(text, keyword):
     lines = text.splitlines()
 
     for line in lines:
-        clean = " ".join(line.lower().split())
+        if keyword.lower() in line.lower():
 
-        if not any(keyword in clean for keyword in keywords):
-            continue
+            nums = re.findall(r"\d+", line)
 
-        nums = re.findall(r"\d{2,3}(?:[.,]\d{1,2})?", line)
-        prices = []
+            prices = [
+                int(n)
+                for n in nums
+                if 100 <= int(n) <= 1000
+            ]
 
-        for n in nums:
-            parsed = parse_price_number(n)
-            if parsed is not None:
-                prices.append(parsed)
-
-        if len(prices) >= 2:
-            return round((prices[-2] + prices[-1]) / 2, 2)
-
-        if len(prices) == 1:
-            return prices[0]
+            if len(prices) >= 2:
+                return round(
+                    (prices[0] + prices[1]) / 2,
+                    2
+                )
 
     return None
 
