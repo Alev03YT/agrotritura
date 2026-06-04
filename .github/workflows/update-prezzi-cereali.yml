@@ -12,7 +12,8 @@ jobs:
   update-prices:
     runs-on: ubuntu-latest
 
-    0ions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
