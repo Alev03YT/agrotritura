@@ -25,6 +25,9 @@ with open(DATA_FILE, "r", encoding="utf-8") as f:
     data = json.load(f)
 
 html = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=30).text
+print("Pagina scaricata:", len(html), "caratteri")
+print("Primi 500 caratteri:")
+print(html[:500])
 
 data["updatedAt"] = datetime.now(ZoneInfo("Europe/Rome")).isoformat()
 data["sourceNote"] = "Aggiornamento automatico da AgroNotizie, fonte ISMEA Mercati"
