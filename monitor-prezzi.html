@@ -22,9 +22,7 @@
     <section id="dashboardView" class="hidden">
       <div class="monitor-header"><div><h1 class="monitor-title">Monitor Prezzi Cereali</h1><p class="monitor-subtitle">Prezzi di riferimento per mais intero, orzo, avena, frumento e grana verde. I valori sono espressi in euro per tonnellata.</p></div><div class="monitor-actions"><button class="monitor-btn" id="refreshBtn" type="button">Aggiorna dati</button><button class="monitor-btn secondary" id="printBtn" type="button">Stampa</button></div></div>
       <div class="status-row"><div class="stat-card"><div class="stat-label">Ultimo aggiornamento</div><div class="stat-value" id="updatedAt">-</div></div><div class="stat-card"><div class="stat-label">Prodotti monitorati</div><div class="stat-value" id="productsCount">-</div></div><div class="stat-card"><div class="stat-label">Fonte dati</div><div class="stat-value" id="sourceNote">-</div></div></div>
-      <div class="price-grid" id="priceGrid"></div>
       <div class="table-wrap"><table class="table" aria-label="Tabella prezzi cereali"><thead><tr><th>Prodotto</th><th>Prezzo attuale</th><th>Prezzo precedente</th><th>Variazione</th><th>Fonte</th><th>Note</th></tr></thead><tbody id="priceTable"></tbody></table></div>
-      <p class="note">Nota: questa prima versione legge i dati dal file <strong>data/prezzi-cereali.json</strong>. Il prossimo passaggio è collegare una fonte automatica stabile.</p>
     </section>
   </main>
 
@@ -80,13 +78,11 @@
       document.getElementById('updatedAt').textContent = formatDate(data.updatedAt);
       document.getElementById('productsCount').textContent = (data.items || []).length;
       document.getElementById('sourceNote').textContent = data.sourceNote || '-';
-      const grid = document.getElementById('priceGrid');
       const table = document.getElementById('priceTable');
       grid.innerHTML = '';
       table.innerHTML = '';
       (data.items || []).forEach(item => {
         const delta = deltaInfo(item.currentPrice, item.previousPrice);
-        grid.insertAdjacentHTML('beforeend', `<article class="price-card"><h2 class="price-name">${item.name}</h2><div class="price-note">${item.notes || ''}</div><div class="price-main"><div class="price-number">${item.currentPrice ? Number(item.currentPrice).toLocaleString('it-IT') : '<span class="empty-price">--</span>'}</div><div class="price-unit">${item.unit || '€/t'}</div></div><span class="delta ${delta.className}">${delta.text}</span><div class="source">Fonte: ${item.source || '-'}</div></article>`);
         table.insertAdjacentHTML('beforeend', `<tr><td><strong>${item.name}</strong></td><td>${formatPrice(item.currentPrice,item.unit)}</td><td>${formatPrice(item.previousPrice,item.unit)}</td><td><span class="delta ${delta.className}">${delta.text}</span></td><td>${item.source || '-'}</td><td>${item.notes || '-'}</td></tr>`);
       });
     }
