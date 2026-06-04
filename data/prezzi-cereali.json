@@ -1,0 +1,51 @@
+{
+  "updatedAt": "2026-06-04T09:00:00+02:00",
+  "sourceNote": "Dati iniziali dimostrativi. Collegare qui una fonte automatica o aggiornare questo file JSON.",
+  "items": [
+    {
+      "id": "mais-intero",
+      "name": "Mais intero",
+      "unit": "€/t",
+      "currentPrice": 0,
+      "previousPrice": 0,
+      "source": "Da collegare",
+      "notes": "Mais in granella/intero"
+    },
+    {
+      "id": "orzo-intero",
+      "name": "Orzo intero",
+      "unit": "€/t",
+      "currentPrice": 0,
+      "previousPrice": 0,
+      "source": "Da collegare",
+      "notes": "Orzo in chicchi"
+    },
+    {
+      "id": "avena-intera",
+      "name": "Avena intera",
+      "unit": "€/t",
+      "currentPrice": 0,
+      "previousPrice": 0,
+      "source": "Da collegare",
+      "notes": "Avena in chicchi"
+    },
+    {
+      "id": "frumento-intero",
+      "name": "Frumento intero",
+      "unit": "€/t",
+      "currentPrice": 0,
+      "previousPrice": 0,
+      "source": "Da collegare",
+      "notes": "Frumento in chicchi"
+    },
+    {
+      "id": "grana-verde",
+      "name": "Grana verde",
+      "unit": "€/t",
+      "currentPrice": 0,
+      "previousPrice": 0,
+      "source": "Da collegare",
+      "notes": "Grana verde di riso"
+    }
+  ]
+}
