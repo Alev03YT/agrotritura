@@ -1,0 +1,30 @@
+name: Aggiorna prezzi cereali
+
+on:
+  schedule:
+    - cron: "15 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+
+    0ions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas lxml
+
+      - run: python scripts/update_prezzi_cereali.py
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Aggiorna prezzi cereali"
+          file_pattern: data/prezzi-cereali.json
