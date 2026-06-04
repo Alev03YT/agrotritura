@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-06-04T23:58:09.541113+02:00",
-  "sourceNote": "Fonte scelta: Granaria Milano - collegamento automatico PDF in preparazione",
+  "updatedAt": "2026-06-05T00:14:11.469838+02:00",
+  "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
       "id": "mais-intero",
@@ -8,35 +8,35 @@
       "unit": "€/t",
       "currentPrice": 103.0,
       "previousPrice": 103.0,
-      "source": "Granaria Milano",
-      "notes": "In attesa di lettura automatica listino PDF"
+      "source": "Non trovato",
+      "notes": "Voce non trovata automaticamente nel PDF"
     },
     {
       "id": "orzo-intero",
       "name": "Orzo intero",
       "unit": "€/t",
-      "currentPrice": 205.0,
+      "currentPrice": 234.0,
       "previousPrice": 205.0,
       "source": "Granaria Milano",
-      "notes": "In attesa di lettura automatica listino PDF"
+      "notes": "Prezzo medio da ultimo listino pubblico"
     },
     {
       "id": "avena-intera",
       "name": "Avena intera",
       "unit": "€/t",
-      "currentPrice": 0,
-      "previousPrice": 0,
+      "currentPrice": 225.5,
+      "previousPrice": 225.5,
       "source": "Granaria Milano",
-      "notes": "In attesa di lettura automatica listino PDF"
+      "notes": "Prezzo medio da ultimo listino pubblico"
     },
     {
       "id": "frumento-intero",
       "name": "Frumento intero",
       "unit": "€/t",
-      "currentPrice": 130.0,
+      "currentPrice": 249.5,
       "previousPrice": 130.0,
       "source": "Granaria Milano",
-      "notes": "In attesa di lettura automatica listino PDF"
+      "notes": "Prezzo medio da ultimo listino pubblico"
     },
     {
       "id": "grana-verde",
@@ -45,7 +45,7 @@
       "currentPrice": 183.0,
       "previousPrice": 183.0,
       "source": "Da collegare",
-      "notes": "Da trovare su fonte separata"
+      "notes": "Non presente nel listino Granaria Milano"
     }
   ]
 }
