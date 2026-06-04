@@ -61,16 +61,48 @@
       return new Intl.DateTimeFormat('it-IT',{dateStyle:'short',timeStyle:'short'}).format(date);
     }
     function formatPrice(value, unit){
-  table.insertAdjacentHTML('beforeend', `
-<tr>
-  <td><strong>${item.name}</strong></td>
-  <td>${formatPrice(item.currentPrice,item.unit)}</td>
-  <td>${formatPrice(item.previousPrice,item.unit)}</td>
-  <td><span class="delta ${delta.className}">${delta.text}</span></td>
-</tr>
-`);
-      });
-    }
+  if(!value || Number(value) === 0) return '<span class="empty-price">Da collegare</span>';
+  return `${Number(value).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2})} ${unit || '€/t'}`;
+}
+
+function deltaInfo(current, previous){
+  const c = Number(current || 0), p = Number(previous || 0);
+  if(!c || !p) return {className:'', text:'Da collegare'};
+
+  const diff = c - p;
+
+  if(diff > 0) return {className:'up', text:`+${diff.toLocaleString('it-IT',{maximumFractionDigits:2})} €/t`};
+  if(diff < 0) return {className:'down', text:`${diff.toLocaleString('it-IT',{maximumFractionDigits:2})} €/t`};
+
+  return {className:'', text:'0 €/t'};
+}
+
+async function loadPrices(){
+  const response = await fetch('data/prezzi-cereali.json?ts=' + Date.now());
+  const data = await response.json();
+
+  document.getElementById('updatedAt').textContent = formatDate(data.updatedAt);
+  document.getElementById('productsCount').textContent = (data.items || []).length;
+  document.getElementById('sourceNote').textContent = data.sourceNote || '-';
+
+  const table = document.getElementById('priceTable');
+  table.innerHTML = '';
+
+  (data.items || []).forEach(item => {
+    const delta = deltaInfo(item.currentPrice, item.previousPrice);
+
+    table.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td><strong>${item.name}</strong></td>
+        <td>${formatPrice(item.currentPrice,item.unit)}</td>
+        <td>${formatPrice(item.previousPrice,item.unit)}</td>
+        <td><span class="delta ${delta.className}">${delta.text}</span></td>
+        <td>${item.source || '-'}</td>
+        <td>${item.notes || '-'}</td>
+      </tr>
+    `);
+  });
+}
     if(sessionStorage.getItem(SESSION_KEY)==='1') showDashboard(); else showLogin();
   </script>
 </body>
