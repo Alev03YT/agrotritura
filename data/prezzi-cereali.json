@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-06-04T23:51:39.893778+02:00",
-  "sourceNote": "Camera di Commercio Novara - 2026 19 25 maggio NO Listino Agricoli",
+  "updatedAt": "2026-06-04T23:58:09.541113+02:00",
+  "sourceNote": "Fonte scelta: Granaria Milano - collegamento automatico PDF in preparazione",
   "items": [
     {
       "id": "mais-intero",
@@ -8,8 +8,8 @@
       "unit": "€/t",
       "currentPrice": 103.0,
       "previousPrice": 103.0,
-      "source": "CCIAA Novara",
-      "notes": "Prezzo da ultimo listino agricolo Novara"
+      "source": "Granaria Milano",
+      "notes": "In attesa di lettura automatica listino PDF"
     },
     {
       "id": "orzo-intero",
@@ -17,8 +17,8 @@
       "unit": "€/t",
       "currentPrice": 205.0,
       "previousPrice": 205.0,
-      "source": "CCIAA Novara",
-      "notes": "Prezzo da ultimo listino agricolo Novara"
+      "source": "Granaria Milano",
+      "notes": "In attesa di lettura automatica listino PDF"
     },
     {
       "id": "avena-intera",
@@ -26,8 +26,8 @@
       "unit": "€/t",
       "currentPrice": 0,
       "previousPrice": 0,
-      "source": "Non trovato",
-      "notes": "Prezzo non trovato nel PDF"
+      "source": "Granaria Milano",
+      "notes": "In attesa di lettura automatica listino PDF"
     },
     {
       "id": "frumento-intero",
@@ -35,8 +35,8 @@
       "unit": "€/t",
       "currentPrice": 130.0,
       "previousPrice": 130.0,
-      "source": "CCIAA Novara",
-      "notes": "Prezzo da ultimo listino agricolo Novara"
+      "source": "Granaria Milano",
+      "notes": "In attesa di lettura automatica listino PDF"
     },
     {
       "id": "grana-verde",
@@ -44,8 +44,8 @@
       "unit": "€/t",
       "currentPrice": 183.0,
       "previousPrice": 183.0,
-      "source": "CCIAA Novara",
-      "notes": "Prezzo da ultimo listino agricolo Novara"
+      "source": "Da collegare",
+      "notes": "Da trovare su fonte separata"
     }
   ]
 }
