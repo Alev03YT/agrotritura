@@ -1,24 +1,24 @@
 {
-  "updatedAt": "2026-06-04T23:35:25.798861+02:00",
-  "sourceNote": "Aggiornamento automatico da AgroNotizie, fonte ISMEA Mercati",
+  "updatedAt": "2026-06-04T23:51:39.893778+02:00",
+  "sourceNote": "Camera di Commercio Novara - 2026 19 25 maggio NO Listino Agricoli",
   "items": [
     {
       "id": "mais-intero",
       "name": "Mais intero",
       "unit": "€/t",
-      "currentPrice": 0,
-      "previousPrice": 0,
-      "source": "Non trovato",
-      "notes": "Prezzo non trovato per Mais"
+      "currentPrice": 103.0,
+      "previousPrice": 103.0,
+      "source": "CCIAA Novara",
+      "notes": "Prezzo da ultimo listino agricolo Novara"
     },
     {
       "id": "orzo-intero",
       "name": "Orzo intero",
       "unit": "€/t",
-      "currentPrice": 0,
-      "previousPrice": 0,
-      "source": "Non trovato",
-      "notes": "Prezzo non trovato per Orzo"
+      "currentPrice": 205.0,
+      "previousPrice": 205.0,
+      "source": "CCIAA Novara",
+      "notes": "Prezzo da ultimo listino agricolo Novara"
     },
     {
       "id": "avena-intera",
@@ -27,25 +27,25 @@
       "currentPrice": 0,
       "previousPrice": 0,
       "source": "Non trovato",
-      "notes": "Prezzo non trovato per Avena"
+      "notes": "Prezzo non trovato nel PDF"
     },
     {
       "id": "frumento-intero",
       "name": "Frumento intero",
       "unit": "€/t",
-      "currentPrice": 0,
-      "previousPrice": 0,
-      "source": "Non trovato",
-      "notes": "Prezzo non trovato per Frumento tenero"
+      "currentPrice": 130.0,
+      "previousPrice": 130.0,
+      "source": "CCIAA Novara",
+      "notes": "Prezzo da ultimo listino agricolo Novara"
     },
     {
       "id": "grana-verde",
       "name": "Grana verde",
       "unit": "€/t",
-      "currentPrice": 0,
-      "previousPrice": 0,
-      "source": "Da collegare",
-      "notes": "Non presente nella fonte automatica"
+      "currentPrice": 183.0,
+      "previousPrice": 183.0,
+      "source": "CCIAA Novara",
+      "notes": "Prezzo da ultimo listino agricolo Novara"
     }
   ]
 }
