@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-06-04T23:10:35.348925+02:00",
-  "sourceNote": "Dati iniziali dimostrativi. Collegare qui una fonte automatica o aggiornare questo file JSON.",
+  "updatedAt": "2026-06-04T23:24:18.748522+02:00",
+  "sourceNote": "Aggiornamento automatico da AgroNotizie, fonte ISMEA Mercati",
   "items": [
     {
       "id": "mais-intero",
@@ -8,8 +8,8 @@
       "unit": "€/t",
       "currentPrice": 0,
       "previousPrice": 0,
-      "source": "Da collegare",
-      "notes": "Mais in granella/intero"
+      "source": "Non trovato",
+      "notes": "Prezzo non trovato per Mais"
     },
     {
       "id": "orzo-intero",
@@ -17,8 +17,8 @@
       "unit": "€/t",
       "currentPrice": 0,
       "previousPrice": 0,
-      "source": "Da collegare",
-      "notes": "Orzo in chicchi"
+      "source": "Non trovato",
+      "notes": "Prezzo non trovato per Orzo"
     },
     {
       "id": "avena-intera",
@@ -26,8 +26,8 @@
       "unit": "€/t",
       "currentPrice": 0,
       "previousPrice": 0,
-      "source": "Da collegare",
-      "notes": "Avena in chicchi"
+      "source": "Non trovato",
+      "notes": "Prezzo non trovato per Avena"
     },
     {
       "id": "frumento-intero",
@@ -35,8 +35,8 @@
       "unit": "€/t",
       "currentPrice": 0,
       "previousPrice": 0,
-      "source": "Da collegare",
-      "notes": "Frumento in chicchi"
+      "source": "Non trovato",
+      "notes": "Prezzo non trovato per Frumento tenero"
     },
     {
       "id": "grana-verde",
@@ -45,7 +45,7 @@
       "currentPrice": 0,
       "previousPrice": 0,
       "source": "Da collegare",
-      "notes": "Grana verde di riso"
+      "notes": "Non presente nella fonte automatica"
     }
   ]
 }
