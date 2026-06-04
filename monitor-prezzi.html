@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#2e5d2e" />
+  <title>Monitor Prezzi Cereali | AgroTritura</title>
+  <link rel="icon" href="favicon.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body.monitor-page{min-height:100vh;background:radial-gradient(900px 420px at 20% 0%, rgba(46,93,46,.18), transparent 60%),linear-gradient(180deg,#f6f7f8,#eef4ee)}
+    .monitor-shell{padding:28px 0 70px}.monitor-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:24px 0}.monitor-title{margin:0;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.05;color:var(--green-900)}.monitor-subtitle{margin:10px 0 0;color:var(--muted);max-width:72ch}.monitor-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.monitor-btn{border:0;cursor:pointer;border-radius:14px;padding:11px 14px;font-weight:800;background:var(--green-700);color:#fff;box-shadow:0 12px 24px rgba(46,93,46,.20)}.monitor-btn.secondary{background:#fff;color:var(--green-700);border:1px solid rgba(46,93,46,.20);box-shadow:none}.login-card{max-width:520px;margin:60px auto 0}.login-card input{width:100%;border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:13px 14px;font-size:1rem;margin:12px 0;outline:0}.login-card input:focus{border-color:var(--green-700);box-shadow:0 0 0 4px rgba(46,93,46,.12)}.alert{display:none;margin-top:10px;color:#b42318;font-weight:700}.status-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}.stat-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);padding:18px}.stat-label{font-size:.85rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.04em}.stat-value{font-size:1.15rem;font-weight:900;margin-top:6px;color:var(--green-900)}.price-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:22px}.price-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;box-shadow:var(--shadow);padding:18px;position:relative;overflow:hidden}.price-card::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--green-700)}.price-name{font-size:1.05rem;font-weight:900;color:var(--green-900);margin:0 0 6px}.price-note{font-size:.88rem;color:var(--muted);min-height:38px}.price-main{display:flex;align-items:flex-end;gap:6px;margin:18px 0 8px}.price-number{font-size:2.1rem;line-height:1;font-weight:950;letter-spacing:-.04em;color:var(--text)}.price-unit{font-weight:900;color:var(--muted);padding-bottom:4px}.delta{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 10px;font-weight:900;font-size:.92rem;background:#f1f5f9;color:#475569}.delta.up{background:#ecfdf3;color:#027a48}.delta.down{background:#fef3f2;color:#b42318}.source{margin-top:14px;font-size:.83rem;color:var(--muted)}.table-wrap{margin-top:24px;overflow:auto;border-radius:14px;box-shadow:var(--shadow)}.empty-price{color:#94a3b8}.hidden{display:none!important}@media(max-width:1050px){.price-grid{grid-template-columns:repeat(2,1fr)}.status-row{grid-template-columns:1fr}}@media(max-width:640px){.monitor-header{display:block}.monitor-actions{justify-content:flex-start;margin-top:18px}.price-grid{grid-template-columns:1fr}.monitor-shell{padding-top:14px}}
+  </style>
+</head>
+<body class="monitor-page">
+  <div class="topbar"><div class="container"><div class="nav"><a class="brand" href="index.html"><img class="brand-logo" src="img/IMG-20260216-WA0000.jpg" alt="AgroTritura" /><div><strong>AgroTritura</strong><span>Monitor prezzi cereali</span></div></a><nav class="menu" aria-label="Menu monitor"><a href="index.html">Sito</a><a class="cta" href="#" id="logoutBtn">Esci</a></nav></div></div></div>
+
+  <main class="container monitor-shell">
+    <section id="loginView" class="card login-card"><div class="pad"><h1 class="h2">Accesso monitor prezzi</h1><p class="lead">Area separata per controllare i prezzi dei cereali in €/t.</p><form id="loginForm"><input id="passwordInput" type="password" autocomplete="current-password" placeholder="Inserisci password" aria-label="Password" /><button class="monitor-btn" type="submit">Entra</button><div class="alert" id="loginError">Password non corretta.</div></form><p class="note">Pagina non collegata al menu pubblico del sito.</p></div></section>
+
+    <section id="dashboardView" class="hidden">
+      <div class="monitor-header"><div><h1 class="monitor-title">Monitor Prezzi Cereali</h1><p class="monitor-subtitle">Prezzi di riferimento per mais intero, orzo, avena, frumento e grana verde. I valori sono espressi in euro per tonnellata.</p></div><div class="monitor-actions"><button class="monitor-btn" id="refreshBtn" type="button">Aggiorna dati</button><button class="monitor-btn secondary" id="printBtn" type="button">Stampa</button></div></div>
+      <div class="status-row"><div class="stat-card"><div class="stat-label">Ultimo aggiornamento</div><div class="stat-value" id="updatedAt">-</div></div><div class="stat-card"><div class="stat-label">Prodotti monitorati</div><div class="stat-value" id="productsCount">-</div></div><div class="stat-card"><div class="stat-label">Fonte dati</div><div class="stat-value" id="sourceNote">-</div></div></div>
+      <div class="price-grid" id="priceGrid"></div>
+      <div class="table-wrap"><table class="table" aria-label="Tabella prezzi cereali"><thead><tr><th>Prodotto</th><th>Prezzo attuale</th><th>Prezzo precedente</th><th>Variazione</th><th>Fonte</th><th>Note</th></tr></thead><tbody id="priceTable"></tbody></table></div>
+      <p class="note">Nota: questa prima versione legge i dati dal file <strong>data/prezzi-cereali.json</strong>. Il prossimo passaggio è collegare una fonte automatica stabile.</p>
+    </section>
+  </main>
+
+  <script>
+    const PASSWORD_HASH = '7ff4d6a44830318f07aaf8b45f0c2827a46303730778bba3426d83f13c7fab33';
+    const SESSION_KEY = 'agrotrituraMonitorPrezziOk';
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    async function sha256(text){
+      const data = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function showDashboard(){loginView.classList.add('hidden');dashboardView.classList.remove('hidden');logoutBtn.style.display='inline-flex';loadPrices();}
+    function showLogin(){loginView.classList.remove('hidden');dashboardView.classList.add('hidden');logoutBtn.style.display='none';}
+
+    document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const value = document.getElementById('passwordInput').value.trim();
+      const hash = await sha256(value);
+      if(hash === PASSWORD_HASH){sessionStorage.setItem(SESSION_KEY,'1');showDashboard();}
+      else{document.getElementById('loginError').style.display='block';}
+    });
+
+    logoutBtn.addEventListener('click',(e)=>{e.preventDefault();sessionStorage.removeItem(SESSION_KEY);showLogin();});
+    document.getElementById('refreshBtn').addEventListener('click', loadPrices);
+    document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+    function formatDate(value){
+      if(!value) return '-';
+      const date = new Date(value);
+      if(Number.isNaN(date.getTime())) return value;
+      return new Intl.DateTimeFormat('it-IT',{dateStyle:'short',timeStyle:'short'}).format(date);
+    }
+    function formatPrice(value, unit){
+      if(!value || Number(value) === 0) return '<span class="empty-price">Da collegare</span>';
+      return `${Number(value).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2})} ${unit || '€/t'}`;
+    }
+    function deltaInfo(current, previous){
+      const c = Number(current || 0), p = Number(previous || 0);
+      if(!c || !p) return {className:'', text:'Da collegare'};
+      const diff = c - p;
+      if(diff > 0) return {className:'up', text:`+${diff.toLocaleString('it-IT',{maximumFractionDigits:2})} €/t`};
+      if(diff < 0) return {className:'down', text:`${diff.toLocaleString('it-IT',{maximumFractionDigits:2})} €/t`};
+      return {className:'', text:'0 €/t'};
+    }
+    async function loadPrices(){
+      const response = await fetch('data/prezzi-cereali.json?ts=' + Date.now());
+      const data = await response.json();
+      document.getElementById('updatedAt').textContent = formatDate(data.updatedAt);
+      document.getElementById('productsCount').textContent = (data.items || []).length;
+      document.getElementById('sourceNote').textContent = data.sourceNote || '-';
+      const grid = document.getElementById('priceGrid');
+      const table = document.getElementById('priceTable');
+      grid.innerHTML = '';
+      table.innerHTML = '';
+      (data.items || []).forEach(item => {
+        const delta = deltaInfo(item.currentPrice, item.previousPrice);
+        grid.insertAdjacentHTML('beforeend', `<article class="price-card"><h2 class="price-name">${item.name}</h2><div class="price-note">${item.notes || ''}</div><div class="price-main"><div class="price-number">${item.currentPrice ? Number(item.currentPrice).toLocaleString('it-IT') : '<span class="empty-price">--</span>'}</div><div class="price-unit">${item.unit || '€/t'}</div></div><span class="delta ${delta.className}">${delta.text}</span><div class="source">Fonte: ${item.source || '-'}</div></article>`);
+        table.insertAdjacentHTML('beforeend', `<tr><td><strong>${item.name}</strong></td><td>${formatPrice(item.currentPrice,item.unit)}</td><td>${formatPrice(item.previousPrice,item.unit)}</td><td><span class="delta ${delta.className}">${delta.text}</span></td><td>${item.source || '-'}</td><td>${item.notes || '-'}</td></tr>`);
+      });
+    }
+    if(sessionStorage.getItem(SESSION_KEY)==='1') showDashboard(); else showLogin();
+  </script>
+</body>
+</html>
