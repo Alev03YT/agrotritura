@@ -102,6 +102,7 @@ with open(DATA_FILE, "r", encoding="utf-8") as f:
 listino_url = find_latest_listino_url()
 pdf_url = find_pdf_url(listino_url)
 pdf_text = extract_pdf_text(pdf_url)
+print(pdf_text[:5000])
 
 data["updatedAt"] = datetime.now(ZoneInfo("Europe/Rome")).isoformat()
 data["sourceNote"] = "Granaria Milano - ultimo listino pubblico"
