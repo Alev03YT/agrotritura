@@ -7,7 +7,7 @@ with open("data/prezzi-cereali.json", "r", encoding="utf-8") as f:
 
 data["updatedAt"] = datetime.now(
     ZoneInfo("Europe/Rome")
-).strftime("%d/%m/%Y %H:%M")
+).isoformat()
 
 with open("data/prezzi-cereali.json", "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
