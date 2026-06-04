@@ -46,7 +46,7 @@
       e.preventDefault();
       const value = document.getElementById('passwordInput').value.trim();
       const hash = await sha256(value);
-      if(hash === PASSWORD_HASH){sessionStorage.setItem(SESSION_KEY,'1');showDashboard();}
+      if(hash === PASSWORD_HASH){showDashboard();}
       else{document.getElementById('loginError').style.display='block';}
     });
 
@@ -121,7 +121,7 @@ async function loadPrices(){
     `);
   });
 }
-    if(sessionStorage.getItem(SESSION_KEY)==='1') showDashboard(); else showLogin();
+    showLogin();
   </script>
 </body>
 </html>
