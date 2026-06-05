@@ -13,10 +13,29 @@ HOME_URL = "https://www.granariamilano.it/"
 DATA_FILE = "data/prezzi-cereali.json"
 
 TARGETS = {
-    "Mais intero": "Alimentare (9.1)",
-    "Orzo intero": "Orzo nazionale pesante",
-    "Avena intera": "Avena nazionale",
-    "Frumento intero": "Frumento panificabile"
+    TARGETS = {
+    "Mais intero": [
+        "alimentare",
+        "granoturco/mais",
+        "granturco/mais",
+        "mais"
+    ],
+    "Orzo intero": [
+        "orzo nazionale pesante",
+        "orzo nazionale",
+        "orzo"
+    ],
+    "Avena intera": [
+        "avena nazionale",
+        "avena"
+    ],
+    "Frumento intero": [
+        "frumento nazionale uso zootecnico",
+        "frumento zootecnico",
+        "frumento foraggero",
+        "frumento uso mangimistico",
+        "frumento panificabile"
+    ],
 }
 
 def get_html(url):
