@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T00:30:05.472921+02:00",
+  "updatedAt": "2026-06-05T14:23:24.289474+02:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
@@ -7,7 +7,7 @@
       "name": "Mais intero",
       "unit": "€/t",
       "currentPrice": 281.0,
-      "previousPrice": 103.0,
+      "previousPrice": 281.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     },
@@ -25,7 +25,7 @@
       "name": "Avena intera",
       "unit": "€/t",
       "currentPrice": 257.5,
-      "previousPrice": 225.5,
+      "previousPrice": 257.5,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     },
@@ -34,7 +34,7 @@
       "name": "Frumento intero",
       "unit": "€/t",
       "currentPrice": 245.0,
-      "previousPrice": 249.5,
+      "previousPrice": 245.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     },
@@ -42,10 +42,10 @@
       "id": "grana-verde",
       "name": "Grana verde",
       "unit": "€/t",
-      "currentPrice": 183.0,
+      "currentPrice": 190.0,
       "previousPrice": 183.0,
-      "source": "Da collegare",
-      "notes": "Non presente nel listino Granaria Milano"
+      "source": "Granaria Milano",
+      "notes": "Prezzo medio da ultimo listino pubblico"
     }
   ]
 }
