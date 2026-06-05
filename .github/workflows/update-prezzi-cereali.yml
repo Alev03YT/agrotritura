@@ -1,8 +1,8 @@
 name: Aggiorna prezzi cereali TEST
 
-    on:
+on:
   schedule:
-    - cron: "50 7 * * *"
+    - cron: "55 7 * * *"
   workflow_dispatch:
 
 permissions:
