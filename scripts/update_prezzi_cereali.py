@@ -97,25 +97,23 @@ def parse_price_number(value):
 
     return None
 
-def find_price(text, keyword):
+def find_price(text, keywords):
     lines = text.splitlines()
 
-    for line in lines:
-        if keyword.lower() in line.lower():
+    for keyword in keywords:
+        for line in lines:
+            if keyword.lower() in line.lower():
 
-            nums = re.findall(r"\b\d{3,4}\b", line)
+                nums = re.findall(r"\b\d{3,4}\b", line)
 
-            prices = [
-                int(n)
-                for n in nums
-                if 100 <= int(n) <= 1000
-            ]
+                prices = [
+                    int(n.replace(".", ""))
+                    for n in nums
+                    if 100 <= int(n.replace(".", "")) <= 2000
+                ]
 
-            if len(prices) >= 2:
-                return round(
-                    (prices[0] + prices[1]) / 2,
-                    2
-                )
+                if len(prices) >= 2:
+                    return round((prices[0] + prices[1]) / 2, 2)
 
     return None
 
