@@ -106,11 +106,11 @@ def find_price(text, keywords):
 
                 nums = re.findall(r"\b\d{3,4}\b", line)
 
-                prices = [
-                    int(n.replace(".", ""))
-                    for n in nums
-                    if 100 <= int(n.replace(".", "")) <= 2000
-                ]
+                prices = []
+                for n in nums:
+                    value = int(n.replace(".", ""))
+                    if 100 <= value <= 2000:
+                        prices.append(value)
 
                 if len(prices) >= 2:
                     return round((prices[0] + prices[1]) / 2, 2)
