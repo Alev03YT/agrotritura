@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-05T14:23:24.289474+02:00",
+  "updatedAt": "2026-06-05T14:55:59.897137+02:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
@@ -43,7 +43,7 @@
       "name": "Grana verde",
       "unit": "€/t",
       "currentPrice": 190.0,
-      "previousPrice": 183.0,
+      "previousPrice": 190.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     }
