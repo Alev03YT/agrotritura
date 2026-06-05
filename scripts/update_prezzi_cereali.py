@@ -19,15 +19,18 @@ TARGETS = {
         "granturco/mais",
         "mais"
     ],
+
     "Orzo intero": [
         "orzo nazionale pesante",
         "orzo nazionale",
         "orzo"
     ],
+
     "Avena intera": [
         "avena nazionale",
         "avena"
     ],
+
     "Frumento intero": [
         "frumento nazionale uso zootecnico",
         "frumento zootecnico",
@@ -35,6 +38,11 @@ TARGETS = {
         "frumento uso mangimistico",
         "frumento panificabile"
     ],
+
+    "Grana verde": [
+        "risone tondo",
+        "risone"
+    ]
 }
 
 def get_html(url):
