@@ -13,7 +13,6 @@ HOME_URL = "https://www.granariamilano.it/"
 DATA_FILE = "data/prezzi-cereali.json"
 
 TARGETS = {
-    TARGETS = {
     "Mais intero": [
         "alimentare",
         "granoturco/mais",
