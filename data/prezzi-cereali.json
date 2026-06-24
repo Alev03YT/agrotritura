@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-06-24T10:00:11.063284+02:00",
+  "updatedAt": "2026-06-24T12:51:57.079395+02:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
       "id": "mais-intero",
       "name": "Mais intero",
       "unit": "€/t",
-      "currentPrice": 279.0,
+      "currentPrice": 277.0,
       "previousPrice": 279.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
@@ -26,14 +26,14 @@
       "unit": "€/t",
       "currentPrice": 255.5,
       "previousPrice": 255.5,
-      "source": "Granaria Milano",
-      "notes": "Prezzo medio da ultimo listino pubblico"
+      "source": "Non trovato",
+      "notes": "Voce non trovata automaticamente nel PDF"
     },
     {
       "id": "frumento-intero",
       "name": "Frumento intero",
       "unit": "€/t",
-      "currentPrice": 245.0,
+      "currentPrice": 235.0,
       "previousPrice": 245.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
