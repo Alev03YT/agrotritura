@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroTritura | Generatore preventivi</title>
+  <meta name="theme-color" content="#2e5d2e" />
+  <link rel="icon" href="favicon.jpg" />
+  <style>
+    :root{
+      --green:#2e5d2e;--green2:#3f7b3f;--soft:#f4f8f1;--line:#dfe8d7;--text:#1f2a1f;--muted:#607060;--danger:#b42318;
+      --shadow:0 12px 30px rgba(31,42,31,.10);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f8fbf6,#eef5ea);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 110px}
+    .top{position:sticky;top:0;z-index:10;background:rgba(248,251,246,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .top .inner{max-width:980px;margin:auto;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--text)}
+    .brand img{width:42px;height:42px;border-radius:12px;object-fit:cover}.brand strong{display:block;font-size:18px}.brand span{font-size:12px;color:var(--muted)}
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin:14px 0}.card h2{margin:0 0 12px;font-size:20px}.card h3{margin:0 0 10px;font-size:17px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
+    label{display:block;font-size:13px;font-weight:700;margin:0 0 6px;color:#344534}input,select,textarea{width:100%;border:1px solid #cfdcc8;border-radius:12px;padding:12px;font-size:16px;background:#fff;color:var(--text)}textarea{min-height:90px;resize:vertical}.small{font-size:12px;color:var(--muted);line-height:1.45}.row{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:13px;padding:12px 14px;font-weight:800;font-size:15px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}.primary{background:var(--green);color:#fff}.secondary{background:#e9f2e4;color:var(--green)}.ghost{background:#fff;color:var(--green);border:1px solid var(--line)}.danger{background:#fff0ee;color:var(--danger);border:1px solid #ffd6d1}.full{width:100%}.productRow{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fbfdf9;margin-bottom:10px}.summary{display:grid;gap:8px}.sumLine{display:flex;justify-content:space-between;gap:20px;border-bottom:1px dashed var(--line);padding:8px 0}.sumLine.total{font-size:22px;font-weight:900;border-bottom:0;color:var(--green)}.bottomBar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px}.bottomBar .inner{max-width:980px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}.login{max-width:420px;margin:30px auto}.hidden{display:none!important}.archiveItem{border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0;background:#fff}.archiveItem strong{display:block}.archiveItem .row{margin-top:8px}.preview{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;overflow:auto}.preventivoPage{width:794px;max-width:100%;margin:auto;background:#fff;color:#172017;font-family:Arial,sans-serif}.docHead{display:flex;justify-content:space-between;gap:14px;border-bottom:3px solid var(--green);padding-bottom:12px;margin-bottom:14px}.docBrand{display:flex;gap:12px;align-items:center}.docBrand img{width:58px;height:58px;border-radius:10px;object-fit:cover}.docTitle{text-align:right}.docTitle h1{margin:0;color:var(--green);font-size:25px}.docTable{width:100%;border-collapse:collapse;margin:12px 0}.docTable th{background:var(--green);color:#fff;text-align:left;padding:9px}.docTable td{border-bottom:1px solid #dfe8d7;padding:9px}.docInfo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.docBox{border:1px solid #dfe8d7;border-radius:10px;padding:10px}.docTotals{max-width:340px;margin-left:auto}.docNote{border:1px solid #dfe8d7;border-radius:10px;padding:10px;margin-top:12px;white-space:pre-wrap}.watermark{margin-top:16px;color:#607060;font-size:13px;text-align:center}
+    @media(max-width:720px){.grid,.grid3{grid-template-columns:1fr}.top .inner{align-items:flex-start}.docInfo{grid-template-columns:1fr}.docHead{display:block}.docTitle{text-align:left;margin-top:10px}.bottomBar .inner{grid-template-columns:1fr 1fr}.btn{font-size:14px;padding:12px 10px}}
+    @media print{body{background:#fff}.top,.wrap>section:not(#printSection),.bottomBar{display:none!important}.wrap{padding:0;max-width:none}.card{box-shadow:none;border:0;margin:0;padding:0}.preview{border:0}.preventivoPage{width:auto;padding:10mm}.noPrint{display:none!important}}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="inner">
+      <a class="brand" href="index.html">
+        <img src="img/IMG-20260216-WA0000.jpg" alt="AgroTritura" />
+        <div><strong>AgroTritura</strong><span>Generatore preventivi</span></div>
+      </a>
+      <button class="btn ghost" id="logoutBtn" type="button">Esci</button>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section id="loginBox" class="card login">
+      <h2>Accesso preventivi</h2>
+      <p class="small">Inserisci il PIN per aprire il generatore dal telefono.</p>
+      <label for="pin">PIN</label>
+      <input id="pin" type="password" inputmode="numeric" placeholder="Es. 1234" />
+      <button class="btn primary full" id="loginBtn" type="button" style="margin-top:12px">Entra</button>
+      <p class="small">Nota: questa protezione è pratica per nascondere la pagina, ma non è una sicurezza bancaria perché il sito è pubblico.</p>
+    </section>
+
+    <section id="app" class="hidden">
+      <div class="card">
+        <h2>Nuovo preventivo</h2>
+        <div class="grid">
+          <div><label>Nome / Azienda</label><input id="cliente" placeholder="Nome cliente" /></div>
+          <div><label>Telefono</label><input id="telefono" placeholder="Telefono cliente" /></div>
+          <div><label>Indirizzo</label><input id="indirizzo" placeholder="Via, comune, provincia" /></div>
+          <div><label>Destinazione</label><input id="destinazione" placeholder="Polli, galline, bovini..." /></div>
+          <div><label>Consegna</label><select id="consegna"><option>A domicilio</option><option>Ritiro in sede</option><option>Da definire</option></select></div>
+          <div><label>Granulometria</label><select id="granulometria"><option>Da definire</option><option>Fine</option><option>Media</option><option>Grossa</option></select></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Prodotti</h2>
+        <div id="products"></div>
+        <button class="btn secondary" id="addProduct" type="button">+ Aggiungi prodotto</button>
+        <p class="small">I prezzi sono modificabili ogni volta prima di generare il PDF.</p>
+      </div>
+
+      <div class="card">
+        <h2>Trasporto e note</h2>
+        <div class="grid">
+          <div><label>Distanza sola andata (km)</label><input id="km" type="number" min="0" step="0.1" placeholder="Es. 99.9" /></div>
+          <div><label>Trasporto A/R (€)</label><input id="trasporto" type="number" min="0" step="0.01" value="0" /></div>
+        </div>
+        <label style="margin-top:12px">Note</label>
+        <textarea id="note" placeholder="Es. composizione mix, richieste cliente, dettagli consegna..."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>Totali</h2>
+        <div class="summary">
+          <div class="sumLine"><span>Totale merce</span><strong id="totMerce">€ 0,00</strong></div>
+          <div class="sumLine"><span>Trasporto A/R</span><strong id="totTrasporto">€ 0,00</strong></div>
+          <div class="sumLine total"><span>Totale preventivo</span><span id="totale">€ 0,00</span></div>
+        </div>
+      </div>
+
+      <section id="printSection" class="card">
+        <h2 class="noPrint">Anteprima PDF</h2>
+        <div class="preview" id="preview"></div>
+      </section>
+
+      <div class="card noPrint">
+        <h2>Archivio sul telefono</h2>
+        <div class="row">
+          <button class="btn secondary" id="saveBtn" type="button">💾 Salva</button>
+          <button class="btn ghost" id="newBtn" type="button">🧾 Nuovo</button>
+        </div>
+        <div id="archive"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="bottomBar hidden" id="bottomBar">
+    <div class="inner">
+      <button class="btn primary" id="printBtn" type="button">📄 Genera PDF</button>
+      <button class="btn secondary" id="whatsappBtn" type="button">📲 WhatsApp</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const PIN = '2026';
+  const euro = n => (Number(n)||0).toLocaleString('it-IT',{style:'currency',currency:'EUR'});
+  const today = () => new Date().toLocaleDateString('it-IT');
+  const ymd = () => new Date().toISOString().slice(0,10);
+  const products = document.getElementById('products');
+  const app = document.getElementById('app');
+  const loginBox = document.getElementById('loginBox');
+  const bottomBar = document.getElementById('bottomBar');
+  const fields = ['cliente','telefono','indirizzo','destinazione','consegna','granulometria','km','trasporto','note'];
+  const priceMap = { 'Mais':0.60, 'Orzo':0.60, 'Frumento':0.62, 'Grana verde':0.65, 'Mix personalizzato':0.65 };
+
+  function logged(){ return localStorage.getItem('agro_admin_ok') === '1'; }
+  function showApp(){ loginBox.classList.add('hidden'); app.classList.remove('hidden'); bottomBar.classList.remove('hidden'); document.getElementById('logoutBtn').classList.remove('hidden'); render(); loadArchive(); }
+  function showLogin(){ loginBox.classList.remove('hidden'); app.classList.add('hidden'); bottomBar.classList.add('hidden'); document.getElementById('logoutBtn').classList.add('hidden'); }
+
+  document.getElementById('loginBtn').onclick = () => {
+    if(document.getElementById('pin').value.trim() === PIN){ localStorage.setItem('agro_admin_ok','1'); showApp(); }
+    else alert('PIN non corretto');
+  };
+  document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('agro_admin_ok'); showLogin(); };
+
+  function addRow(data={}){
+    const row = document.createElement('div'); row.className='productRow';
+    row.innerHTML = `<div class="grid3">
+      <div><label>Prodotto</label><select class="prod">
+        ${Object.keys(priceMap).map(p=>`<option ${data.prod===p?'selected':''}>${p}</option>`).join('')}
+      </select></div>
+      <div><label>Quantità kg</label><input class="qty" type="number" min="0" step="1" value="${data.qty||''}" placeholder="kg"></div>
+      <div><label>Prezzo €/kg</label><input class="price" type="number" min="0" step="0.01" value="${data.price||''}" placeholder="€/kg"></div>
+      <button class="btn danger remove" type="button">Elimina</button>
+    </div>`;
+    products.appendChild(row);
+    const sel = row.querySelector('.prod'), price = row.querySelector('.price');
+    sel.onchange = () => { if(!price.value) price.value = priceMap[sel.value]; render(); };
+    if(!price.value) price.value = priceMap[sel.value];
+    row.querySelector('.remove').onclick = () => { row.remove(); render(); };
+    row.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',render));
+    render();
+  }
+  document.getElementById('addProduct').onclick = () => addRow();
+
+  function getData(){
+    const obj = {}; fields.forEach(id=>obj[id]=document.getElementById(id).value.trim());
+    obj.rows = [...products.querySelectorAll('.productRow')].map(r=>({
+      prod:r.querySelector('.prod').value,
+      qty:Number(r.querySelector('.qty').value)||0,
+      price:Number(r.querySelector('.price').value)||0
+    })).filter(r=>r.qty>0);
+    obj.merce = obj.rows.reduce((s,r)=>s+r.qty*r.price,0);
+    obj.trasportoNum = Number(obj.trasporto)||0;
+    obj.totale = obj.merce + obj.trasportoNum;
+    obj.numero = localStorage.getItem('agro_current_num') || makeNumber();
+    return obj;
+  }
+  function makeNumber(){
+    const key = 'agro_quote_counter_' + new Date().getFullYear();
+    const next = (Number(localStorage.getItem(key))||0) + 1;
+    localStorage.setItem(key,next);
+    const num = `AT-${new Date().getFullYear()}-${String(next).padStart(4,'0')}`;
+    localStorage.setItem('agro_current_num',num);
+    return num;
+  }
+  function render(){
+    const d = getData();
+    document.getElementById('totMerce').textContent = euro(d.merce);
+    document.getElementById('totTrasporto').textContent = euro(d.trasportoNum);
+    document.getElementById('totale').textContent = euro(d.totale);
+    const mix = d.rows.length ? d.rows.map(r=>`${r.qty} kg ${r.prod}`).join(' + ') : 'Da compilare';
+    const note = `${d.note ? d.note + '\n' : ''}COMPOSIZIONE MIX: ${mix}\nCONSEGNA: ${d.consegna||'Da definire'}\nDESTINAZIONE: ${d.destinazione||'Da definire'}${d.km ? `\nDistanza sola andata: ${d.km} km` : ''}\nGranulometria: ${d.granulometria||'Da definire'}\n\nMangime fresco tritato su misura. Granulometria da definire in base alle esigenze dell'allevamento.`;
+    document.getElementById('preview').innerHTML = `<div class="preventivoPage">
+      <div class="docHead"><div class="docBrand"><img src="img/IMG-20260216-WA0000.jpg" alt=""><div><strong style="font-size:24px;color:#2e5d2e">AgroTritura</strong><br><span>Mangime fresco tritato su misura</span></div></div><div class="docTitle"><h1>Preventivo</h1><div>Data ${today()}</div><div>N° Preventivo <strong>${d.numero}</strong></div></div></div>
+      <div class="docInfo"><div class="docBox"><strong>Nome / Azienda</strong><br>${d.cliente||'-'}<br><br><strong>Telefono</strong><br>${d.telefono||'-'}</div><div class="docBox"><strong>Indirizzo</strong><br>${d.indirizzo||'-'}<br><br><strong>Consegna</strong><br>${d.consegna||'-'}</div></div>
+      <table class="docTable"><thead><tr><th>Prodotto</th><th>Quantità (kg)</th><th>Prezzo €/kg</th><th>Totale €</th></tr></thead><tbody>${d.rows.map(r=>`<tr><td><strong>${r.prod.toUpperCase()}</strong></td><td>${r.qty}</td><td>${euro(r.price)}</td><td>${euro(r.qty*r.price)}</td></tr>`).join('') || '<tr><td colspan="4">Nessun prodotto inserito</td></tr>'}</tbody></table>
+      <div class="docTotals"><div class="sumLine"><span>Totale merce</span><strong>${euro(d.merce)}</strong></div><div class="sumLine"><span>Trasporto A/R</span><strong>${euro(d.trasportoNum)}</strong></div><div class="sumLine total"><span>TOTALE</span><span>${euro(d.totale)}</span></div></div>
+      <div class="docNote"><strong>Note</strong>\n${note}</div><div class="watermark">AgroTritura • Preventivo valido salvo variazioni di disponibilità, quantità e distanza.</div>
+    </div>`;
+  }
+  document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',render));
+  document.getElementById('printBtn').onclick = () => { render(); window.print(); };
+  document.getElementById('whatsappBtn').onclick = () => {
+    const d=getData();
+    const rows=d.rows.map(r=>`- ${r.prod}: ${r.qty} kg x ${euro(r.price)}/kg = ${euro(r.qty*r.price)}`).join('%0A');
+    const txt=`Preventivo AgroTritura ${d.numero}%0ACliente: ${encodeURIComponent(d.cliente||'-')}%0A%0A${rows}%0ATotale merce: ${encodeURIComponent(euro(d.merce))}%0ATrasporto: ${encodeURIComponent(euro(d.trasportoNum))}%0ATOTALE: ${encodeURIComponent(euro(d.totale))}%0A%0AConsegna: ${encodeURIComponent(d.consegna||'-')}%0ADestinazione: ${encodeURIComponent(d.destinazione||'-')}`;
+    window.open('https://wa.me/?text='+txt,'_blank');
+  };
+  function snapshot(){ const d=getData(); d.savedAt=new Date().toISOString(); return d; }
+  document.getElementById('saveBtn').onclick = () => { const arr=JSON.parse(localStorage.getItem('agro_quotes')||'[]'); arr.unshift(snapshot()); localStorage.setItem('agro_quotes',JSON.stringify(arr.slice(0,50))); alert('Preventivo salvato sul telefono'); loadArchive(); };
+  function loadArchive(){
+    const arr=JSON.parse(localStorage.getItem('agro_quotes')||'[]');
+    document.getElementById('archive').innerHTML = arr.length ? arr.map((q,i)=>`<div class="archiveItem"><strong>${q.numero} - ${q.cliente||'Cliente'}</strong><span class="small">${new Date(q.savedAt).toLocaleString('it-IT')} • ${euro(q.totale)}</span><div class="row"><button class="btn ghost load" data-i="${i}" type="button">Apri</button><button class="btn danger del" data-i="${i}" type="button">Elimina</button></div></div>`).join('') : '<p class="small">Nessun preventivo salvato.</p>';
+    document.querySelectorAll('.load').forEach(b=>b.onclick=()=>loadQuote(arr[Number(b.dataset.i)]));
+    document.querySelectorAll('.del').forEach(b=>b.onclick=()=>{arr.splice(Number(b.dataset.i),1);localStorage.setItem('agro_quotes',JSON.stringify(arr));loadArchive();});
+  }
+  function loadQuote(q){ fields.forEach(id=>document.getElementById(id).value=q[id]||''); products.innerHTML=''; (q.rows||[]).forEach(addRow); localStorage.setItem('agro_current_num',q.numero||makeNumber()); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+  document.getElementById('newBtn').onclick = () => { fields.forEach(id=>document.getElementById(id).value=''); document.getElementById('trasporto').value='0'; document.getElementById('consegna').value='A domicilio'; document.getElementById('granulometria').value='Da definire'; products.innerHTML=''; localStorage.removeItem('agro_current_num'); addRow({prod:'Mais',qty:65}); addRow({prod:'Frumento',qty:25}); addRow({prod:'Orzo',qty:10}); render(); };
+
+  if(logged()) showApp(); else showLogin();
+  addRow({prod:'Mais',qty:65}); addRow({prod:'Frumento',qty:25}); addRow({prod:'Orzo',qty:10}); render();
+})();
+</script>
+</body>
+</html>
