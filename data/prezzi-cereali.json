@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-08T11:12:58.865113+02:00",
+  "updatedAt": "2026-07-08T13:16:09.105502+02:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
@@ -15,7 +15,7 @@
       "id": "orzo-intero",
       "name": "Orzo intero",
       "unit": "€/t",
-      "currentPrice": 203.0,
+      "currentPrice": 205.0,
       "previousPrice": 203.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
@@ -33,7 +33,7 @@
       "id": "frumento-intero",
       "name": "Frumento intero",
       "unit": "€/t",
-      "currentPrice": 235.0,
+      "currentPrice": 237.5,
       "previousPrice": 235.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
