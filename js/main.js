@@ -1,4 +1,9 @@
 // AgroTritura — interazioni, preventivo e trasporto
+const mobileFixes = document.createElement("link");
+mobileFixes.rel = "stylesheet";
+mobileFixes.href = "css/mobile-fixes.css";
+document.head.appendChild(mobileFixes);
+
 const PHONE = "393341067510";
 const PREZZI = {
   "Mais": { piccolo: 0.69, grande: 0.63 },
