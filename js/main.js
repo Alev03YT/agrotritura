@@ -5,7 +5,7 @@ mobileFixes.href = "css/mobile-fixes.css";
 document.head.appendChild(mobileFixes);
 
 const PHONE = "393341067510";
-const ORIGIN = { lat: 45.7469, lon: 8.5417 };
+const ORIGIN = { lat: 45.69063, lon: 8.55019 };
 const PREZZI = {
   "Mais": { piccolo: 0.69, grande: 0.63 },
   "Orzo": { piccolo: 0.69, grande: 0.63 },
@@ -14,8 +14,8 @@ const PREZZI = {
   "Mix personalizzato": { piccolo: 0.75, grande: 0.69 }
 };
 
-const euro = v => new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(v);
-const num = v => Number.parseFloat(String(v ?? "").replace(",", ".")) || 0;
+const euro = value => new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(value);
+const num = value => Number.parseFloat(String(value ?? "").replace(",", ".")) || 0;
 let geocodeTimer = null;
 let lastGeocodedAddress = "";
 let locationRequestId = 0;
@@ -43,27 +43,32 @@ function calcola() {
   const merce = unitario && quantita ? unitario * quantita : 0;
   const trasporto = costoTrasporto(km, modalita, merce);
   const totale = trasporto.costo === null || !merce ? null : merce + trasporto.costo;
-  const set = (id, value) => { const el = document.querySelector(id); if (el) el.textContent = value; };
-  set("#qUnit", unitario ? `${unitario.toFixed(2).replace(".", ",")} €/kg` : "—");
-  set("#qGoods", merce ? euro(merce) : "—");
-  set("#qTransport", trasporto.costo === null ? "Da definire" : euro(trasporto.costo));
-  set("#qTotal", totale === null ? "Da confermare" : euro(totale));
-  set("#qMessage", trasporto.testo);
+
+  const qUnit = document.querySelector("#qUnit");
+  const qGoods = document.querySelector("#qGoods");
+  const qTransport = document.querySelector("#qTransport");
+  const qTotal = document.querySelector("#qTotal");
+  const qMessage = document.querySelector("#qMessage");
+  if (qUnit) qUnit.textContent = unitario ? `${unitario.toFixed(2).replace(".", ",")} €/kg` : "—";
+  if (qGoods) qGoods.textContent = merce ? euro(merce) : "—";
+  if (qTransport) qTransport.textContent = trasporto.costo === null ? "Da definire" : euro(trasporto.costo);
+  if (qTotal) qTotal.textContent = totale === null ? "Da confermare" : euro(totale);
+  if (qMessage) qMessage.textContent = trasporto.testo;
   return { prodotto, quantita, modalita, km, unitario, merce, trasporto, totale };
 }
 
 function testoPreventivo(dati) {
   const nome = document.querySelector("#nome")?.value.trim() || "Non indicato";
   const telefono = document.querySelector("#telefono")?.value.trim() || "Non indicato";
-  const indirizzo = document.querySelector("#comune")?.value.trim() || "Non indicato";
+  const comune = document.querySelector("#comune")?.value.trim() || "Non indicato";
   const note = document.querySelector("#note")?.value.trim() || "Nessuna";
-  const modalita = dati.modalita === "ritiro" ? "Ritiro presso AgroTritura" : dati.modalita === "sul-posto" ? "Tritatura presso la mia azienda" : "Consegna a domicilio";
+  const modalitaTesto = dati.modalita === "ritiro" ? "Ritiro presso AgroTritura" : dati.modalita === "sul-posto" ? "Tritatura presso la mia azienda" : "Consegna a domicilio";
   return [
     "Buongiorno, vorrei richiedere un preventivo AgroTritura.", "",
     `Nome: ${nome}`, `Telefono: ${telefono}`,
     `Prodotto: ${dati.prodotto || "Da definire"}`,
     `Quantità: ${dati.quantita ? `${dati.quantita} kg` : "Da definire"}`,
-    `Modalità: ${modalita}`, `Indirizzo: ${indirizzo}`,
+    `Modalità: ${modalitaTesto}`, `Comune/indirizzo: ${comune}`,
     `Distanza sola andata: ${dati.km ? `${dati.km} km` : "Non indicata"}`,
     `Prezzo unitario stimato: ${dati.unitario ? `${dati.unitario.toFixed(2).replace(".", ",")} €/kg` : "Da definire"}`,
     `Totale merce stimato: ${dati.merce ? euro(dati.merce) : "Da definire"}`,
@@ -74,45 +79,51 @@ function testoPreventivo(dati) {
 }
 
 function setLocationStatus(message, type = "info") {
-  const el = document.querySelector("#locationStatus");
-  if (!el) return;
-  el.textContent = message;
-  el.dataset.type = type;
+  const status = document.querySelector("#locationStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.dataset.type = type;
 }
 
-function normalizeAddress(value) {
-  return value
-    .trim()
-    .replace(/\s+/g, " ")
-    .replace(/(\d+)\s*\/\s*([a-z])/gi, "$1/$2")
-    .replace(/(\d+)([a-z])\b/gi, "$1/$2");
+function unique(values) {
+  return [...new Set(values.map(value => value.trim()).filter(Boolean))];
 }
 
-function addressCandidates(address) {
-  const normalized = normalizeAddress(address);
-  const noSuffix = normalized.replace(/(\d+)\/[a-z]\b/gi, "$1");
-  const candidates = [
-    `${normalized}, Provincia di Novara, Piemonte, Italia`,
-    `${normalized}, Piemonte, Italia`,
-    `${normalized}, Italia`
-  ];
-  if (noSuffix !== normalized) {
-    candidates.push(`${noSuffix}, Provincia di Novara, Piemonte, Italia`);
-    candidates.push(`${noSuffix}, Piemonte, Italia`);
-  }
-  return [...new Set(candidates)];
+function buildAddressCandidates(rawAddress) {
+  const cleaned = rawAddress.replace(/\s+/g, " ").trim();
+  const normalizedCivic = cleaned
+    .replace(/(\d+)\s*\/\s*([a-z])/gi, "$1$2")
+    .replace(/(\d+)\s+([a-z])\b/gi, "$1$2");
+  const civicWithoutLetter = normalizedCivic.replace(/(\d+)[a-z]\b/gi, "$1");
+  const withoutCivic = civicWithoutLetter.replace(/\s+\d+\b/, " ").replace(/\s+/g, " ").trim();
+  const spellingVariant = normalizedCivic.replace(/\bGiovan Battista\b/gi, "Giovanni Battista");
+  const spellingVariantShort = civicWithoutLetter.replace(/\bGiovan Battista\b/gi, "Giovanni Battista");
+
+  return unique([
+    `${cleaned}, Italia`,
+    `${normalizedCivic}, Italia`,
+    `${civicWithoutLetter}, Italia`,
+    `${spellingVariant}, Italia`,
+    `${spellingVariantShort}, Italia`,
+    `${normalizedCivic}, Provincia di Novara, Italia`,
+    `${civicWithoutLetter}, Provincia di Novara, Italia`,
+    `${withoutCivic}, Provincia di Novara, Italia`
+  ]);
+}
+
+async function nominatimSearch(query) {
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&countrycodes=it&addressdetails=1&q=${encodeURIComponent(query)}`;
+  const response = await fetch(url, { headers: { "Accept-Language": "it" } });
+  if (!response.ok) throw new Error("Servizio indirizzi temporaneamente non disponibile");
+  const results = await response.json();
+  return Array.isArray(results) ? results : [];
 }
 
 async function geocodeAddress(address) {
-  for (const query of addressCandidates(address)) {
-    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&countrycodes=it&addressdetails=1&q=${encodeURIComponent(query)}`;
-    const response = await fetch(url, { headers: { "Accept-Language": "it" } });
-    if (!response.ok) continue;
-    const results = await response.json();
-    if (Array.isArray(results) && results.length) {
-      const best = results.find(r => ["house", "residential", "road", "building"].includes(r.type)) || results[0];
-      return { lat: Number(best.lat), lon: Number(best.lon), label: best.display_name || normalizeAddress(address) };
-    }
+  for (const candidate of buildAddressCandidates(address)) {
+    const results = await nominatimSearch(candidate);
+    const result = results.find(item => Number.isFinite(Number(item.lat)) && Number.isFinite(Number(item.lon)));
+    if (result) return { lat: Number(result.lat), lon: Number(result.lon), displayName: result.display_name || address };
   }
   throw new Error("Indirizzo non trovato");
 }
@@ -122,8 +133,7 @@ async function reverseGeocode(lat, lon) {
   const response = await fetch(url, { headers: { "Accept-Language": "it" } });
   if (!response.ok) throw new Error("Indirizzo della posizione non disponibile");
   const result = await response.json();
-  const a = result.address || {};
-  return [a.road || a.pedestrian || a.path, a.house_number, a.city || a.town || a.village || a.municipality].filter(Boolean).join(" ") || result.display_name || "Posizione attuale";
+  return result.display_name || "Posizione attuale";
 }
 
 async function routeDistanceKm(destination) {
@@ -132,7 +142,7 @@ async function routeDistanceKm(destination) {
   if (!response.ok) throw new Error("Calcolo percorso non disponibile");
   const result = await response.json();
   if (result.code !== "Ok" || !result.routes?.[0]?.distance) throw new Error("Percorso non trovato");
-  return Math.round(result.routes[0].distance / 100) / 10;
+  return Math.round((result.routes[0].distance / 1000) * 10) / 10;
 }
 
 async function applyDestination(destination, requestId) {
@@ -149,15 +159,16 @@ async function applyDestination(destination, requestId) {
 }
 
 async function calculateFromAddress(force = false) {
-  const input = document.querySelector("#comune");
+  const addressInput = document.querySelector("#comune");
   const modalita = document.querySelector("#modalita")?.value || "consegna";
-  const address = input?.value.trim() || "";
+  const address = addressInput?.value.trim() || "";
   if (modalita !== "consegna") return;
   if (address.length < 6) {
-    if (force) setLocationStatus("Inserisci una via, il numero civico e il comune.", "error");
+    if (force) setLocationStatus("Inserisci almeno la via e il comune.", "error");
     return;
   }
   if (!force && address === lastGeocodedAddress) return;
+
   const requestId = ++locationRequestId;
   setLocationStatus("Ricerca dell’indirizzo e calcolo dei km…", "loading");
   try {
@@ -167,22 +178,27 @@ async function calculateFromAddress(force = false) {
     await applyDestination(destination, requestId);
   } catch (error) {
     if (requestId !== locationRequestId) return;
-    setLocationStatus(`${error.message}. Prova ad aggiungere una virgola prima del comune oppure usa la posizione attuale.`, "error");
+    setLocationStatus(`${error.message}. Prova anche senza /b oppure inserisci i km manualmente.`, "error");
   }
 }
 
 function useCurrentPosition() {
-  if (!navigator.geolocation) return setLocationStatus("La posizione non è supportata da questo dispositivo.", "error");
+  if (!navigator.geolocation) {
+    setLocationStatus("La posizione non è supportata da questo dispositivo.", "error");
+    return;
+  }
   const button = document.querySelector("#useLocationBtn");
   if (button) button.disabled = true;
   setLocationStatus("Recupero della posizione attuale…", "loading");
+
   navigator.geolocation.getCurrentPosition(async position => {
     const requestId = ++locationRequestId;
     const destination = { lat: position.coords.latitude, lon: position.coords.longitude };
     try {
-      const address = await reverseGeocode(destination.lat, destination.lon).catch(() => "Posizione attuale");
-      const input = document.querySelector("#comune");
-      if (input) input.value = address;
+      let address = "Posizione attuale";
+      try { address = await reverseGeocode(destination.lat, destination.lon); } catch {}
+      const addressInput = document.querySelector("#comune");
+      if (addressInput) addressInput.value = address;
       lastGeocodedAddress = address;
       await applyDestination(destination, requestId);
     } catch (error) {
@@ -198,26 +214,46 @@ function useCurrentPosition() {
       3: "Recupero posizione scaduto. Riprova oppure scrivi l’indirizzo."
     };
     setLocationStatus(messages[error.code] || "Impossibile recuperare la posizione.", "error");
-  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
 }
 
 function enhanceLocationFields() {
   const addressInput = document.querySelector("#comune");
   const distanceInput = document.querySelector("#distanza");
   if (!addressInput || !distanceInput || document.querySelector("#useLocationBtn")) return;
+
   addressInput.placeholder = "Es. Via Giovan Battista Gambaro 10/b Galliate";
   distanceInput.placeholder = "Automatica o manuale";
   const addressLabel = addressInput.closest("label");
   const distanceLabel = distanceInput.closest("label");
   if (addressLabel?.firstChild?.nodeType === Node.TEXT_NODE) addressLabel.firstChild.textContent = "Indirizzo completo ";
   if (distanceLabel?.firstChild?.nodeType === Node.TEXT_NODE) distanceLabel.firstChild.textContent = "Distanza sola andata ";
+
   const controls = document.createElement("div");
   controls.className = "location-tools";
-  controls.innerHTML = `<button type="button" id="useLocationBtn" class="location-button">📍 Usa la mia posizione</button><button type="button" id="calculateAddressBtn" class="location-button secondary">Calcola dall’indirizzo</button><small class="location-help">Scrivi direttamente <b>Via Giovan Battista Gambaro 10/b Galliate</b>. I km vengono calcolati automaticamente; se li conosci puoi inserirli a mano.</small><small id="locationStatus" class="location-status" aria-live="polite"></small>`;
+  controls.innerHTML = `
+    <button type="button" id="useLocationBtn" class="location-button">📍 Usa la mia posizione</button>
+    <button type="button" id="calculateAddressBtn" class="location-button secondary">Calcola dall’indirizzo</button>
+    <small class="location-help">Scrivi l’indirizzo completo in un’unica riga, per esempio <b>Via Giovan Battista Gambaro 10/b Galliate</b>. Se il civico non è presente sulla mappa, il sistema userà automaticamente la via più vicina.</small>
+    <small id="locationStatus" class="location-status" aria-live="polite"></small>`;
   addressLabel.insertAdjacentElement("afterend", controls);
+
   const style = document.createElement("style");
-  style.textContent = `.location-tools{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:-8px 0 16px}.location-button{border:0;border-radius:11px;padding:11px 12px;background:#173f2a;color:#fff;font-weight:800;cursor:pointer;min-height:44px}.location-button.secondary{background:#eef5f0;color:#173f2a;border:1px solid #cedbd2}.location-button:disabled{opacity:.6;cursor:wait}.location-help,.location-status{grid-column:1/-1;display:block;line-height:1.35}.location-help{color:#66736b;font-size:.76rem}.location-status{font-size:.78rem;font-weight:750;min-height:1.1em}.location-status[data-type="success"]{color:#257044}.location-status[data-type="error"]{color:#a33a2b}.location-status[data-type="loading"]{color:#8b620f}@media(max-width:620px){.location-tools{grid-template-columns:1fr 1fr;margin:-2px 0 12px}.location-button{font-size:.78rem;padding:9px 7px}.location-help{font-size:.7rem}}`;
+  style.textContent = `
+    .location-tools{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:-8px 0 16px}
+    .location-button{border:0;border-radius:11px;padding:11px 12px;background:#173f2a;color:#fff;font-weight:800;cursor:pointer;min-height:44px}
+    .location-button.secondary{background:#eef5f0;color:#173f2a;border:1px solid #cedbd2}
+    .location-button:disabled{opacity:.6;cursor:wait}
+    .location-help,.location-status{grid-column:1/-1;display:block;line-height:1.35}
+    .location-help{color:#66736b;font-size:.76rem}
+    .location-status{font-size:.78rem;font-weight:750;min-height:1.1em}
+    .location-status[data-type="error"]{color:#a43e35}
+    .location-status[data-type="success"]{color:#287348}
+    .location-status[data-type="loading"]{color:#8b620f}
+    @media(max-width:620px){.location-tools{grid-template-columns:1fr 1fr;margin:-2px 0 12px}.location-button{font-size:.78rem;padding:9px 7px}.location-help{font-size:.7rem}}
+  `;
   document.head.appendChild(style);
+
   document.querySelector("#useLocationBtn")?.addEventListener("click", useCurrentPosition);
   document.querySelector("#calculateAddressBtn")?.addEventListener("click", () => calculateFromAddress(true));
   addressInput.addEventListener("input", () => {
@@ -227,10 +263,12 @@ function enhanceLocationFields() {
       distanceInput.dataset.autoCalculated = "false";
       calcola();
     }
-    geocodeTimer = setTimeout(() => calculateFromAddress(false), 1100);
+    geocodeTimer = setTimeout(() => calculateFromAddress(false), 1200);
   });
   addressInput.addEventListener("blur", () => calculateFromAddress(false));
-  distanceInput.addEventListener("input", () => { if (document.activeElement === distanceInput) distanceInput.dataset.autoCalculated = "false"; });
+  distanceInput.addEventListener("input", () => {
+    if (document.activeElement === distanceInput) distanceInput.dataset.autoCalculated = "false";
+  });
 }
 
 function initMenu() {
@@ -257,18 +295,26 @@ function initPreventivo() {
     document.querySelector(`#${id}`)?.addEventListener("input", calcola);
     document.querySelector(`#${id}`)?.addEventListener("change", calcola);
   });
-  document.querySelector("#modalita")?.addEventListener("change", e => { if (e.target.value === "consegna") calculateFromAddress(false); });
+  document.querySelector("#modalita")?.addEventListener("change", event => {
+    if (event.target.value === "consegna") calculateFromAddress(false);
+  });
   form.addEventListener("submit", event => {
     event.preventDefault();
-    window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(testoPreventivo(calcola()))}`, "_blank", "noopener");
+    const dati = calcola();
+    window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(testoPreventivo(dati))}`, "_blank", "noopener");
   });
   document.querySelector("#btnCopiaPreventivo")?.addEventListener("click", async () => {
     const testo = testoPreventivo(calcola());
     try {
       await navigator.clipboard.writeText(testo);
       const feedback = document.querySelector("#copyFeedback");
-      if (feedback) { feedback.hidden = false; setTimeout(() => { feedback.hidden = true; }, 2200); }
-    } catch { window.prompt("Copia il riepilogo:", testo); }
+      if (feedback) {
+        feedback.hidden = false;
+        setTimeout(() => { feedback.hidden = true; }, 2200);
+      }
+    } catch {
+      window.prompt("Copia il riepilogo:", testo);
+    }
   });
   calcola();
 }
