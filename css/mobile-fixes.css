@@ -1,0 +1,72 @@
+/* Correzioni mirate per leggibilità mobile */
+@media (max-width: 620px) {
+  /* Sezione servizi: testo più leggibile senza tornare alle card giganti */
+  #servizi .cards.three {
+    gap: 9px;
+  }
+
+  #servizi .card > div {
+    padding: 14px 11px 15px;
+  }
+
+  #servizi .card .icon {
+    font-size: 1.3rem;
+  }
+
+  #servizi .card h3 {
+    font-size: 1rem;
+    line-height: 1.22;
+    margin: 6px 0 7px;
+  }
+
+  #servizi .card p {
+    font-size: 0.82rem;
+    line-height: 1.42;
+  }
+
+  /* Cereali: nessun testo troncato con puntini */
+  #prodotti .product-grid article {
+    align-items: start;
+    min-height: 96px;
+    padding: 10px;
+  }
+
+  #prodotti .product-grid img {
+    width: 56px;
+    height: 56px;
+  }
+
+  #prodotti .product-grid h3 {
+    font-size: 0.96rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  #prodotti .product-grid p {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: initial;
+    font-size: 0.76rem;
+    line-height: 1.32;
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 390px) {
+  #servizi .card h3 {
+    font-size: 0.94rem;
+  }
+
+  #servizi .card p {
+    font-size: 0.78rem;
+  }
+
+  #prodotti .product-grid h3 {
+    font-size: 0.9rem;
+  }
+
+  #prodotti .product-grid p {
+    font-size: 0.72rem;
+  }
+}
