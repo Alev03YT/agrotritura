@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AgroTritura | Mangime fresco tritato su misura</title>
+  <meta name="description" content="Mangime fresco tritato su misura, granulometria personalizzata, mix dedicati e consegna in provincia di Novara e zone limitrofe.">
+  <meta name="theme-color" content="#173f2a">
+  <link rel="icon" href="favicon.jpg">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===== Configuratore AgroTritura ===== */
+    #configuratore { scroll-margin-top: 90px; }
+    .ag-config {
+      background: linear-gradient(145deg, #ffffff 0%, #f4f8f3 100%);
+      border: 1px solid rgba(23, 63, 42, .12);
+      border-radius: 28px;
+      padding: clamp(20px, 4vw, 42px);
+      box-shadow: 0 18px 55px rgba(23, 63, 42, .10);
+    }
+    .ag-config-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .ag-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid rgba(23, 63, 42, .10);
+    }
+    .ag-step-num {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #173f2a;
+      color: #fff;
+      font-weight: 800;
+    }
+    .ag-step b, .ag-step small { display: block; }
+    .ag-step small { color: #627168; margin-top: 2px; }
+    .ag-config-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.35fr);
+      gap: 22px;
+      align-items: start;
+    }
+    .ag-controls, .ag-result {
+      background: #fff;
+      border: 1px solid rgba(23, 63, 42, .10);
+      border-radius: 22px;
+      padding: clamp(18px, 3vw, 28px);
+    }
+    .ag-field { margin-bottom: 18px; }
+    .ag-field:last-child { margin-bottom: 0; }
+    .ag-field > span {
+      display: block;
+      font-weight: 800;
+      color: #173f2a;
+      margin-bottom: 9px;
+    }
+    .ag-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .ag-choice {
+      appearance: none;
+      width: 100%;
+      border: 1px solid #dbe5dd;
+      background: #f9fbf9;
+      color: #173f2a;
+      border-radius: 15px;
+      padding: 13px 12px;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      text-align: left;
+      transition: .2s ease;
+    }
+    .ag-choice:hover, .ag-choice.active {
+      transform: translateY(-1px);
+      border-color: #2f7a50;
+      background: #eaf5ed;
+      box-shadow: 0 8px 22px rgba(23, 63, 42, .10);
+    }
+    .ag-select, .ag-number {
+      width: 100%;
+      border: 1px solid #dbe5dd;
+      background: #fff;
+      color: #173f2a;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+    }
+    .ag-select:focus, .ag-number:focus {
+      border-color: #2f7a50;
+      box-shadow: 0 0 0 4px rgba(47, 122, 80, .12);
+    }
+    .ag-result-empty {
+      text-align: center;
+      padding: 34px 16px;
+      color: #627168;
+    }
+    .ag-result-empty .ag-empty-icon {
+      font-size: 42px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .ag-result[hidden] { display: none; }
+    .ag-result-head {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .ag-result-head h3 { margin: 4px 0 5px; font-size: clamp(1.35rem, 3vw, 2rem); }
+    .ag-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: #eaf5ed;
+      color: #1d6540;
+      font-size: .82rem;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .ag-composition {
+      display: grid;
+      gap: 9px;
+      margin: 16px 0 20px;
+    }
+    .ag-ingredient {
+      display: grid;
+      grid-template-columns: minmax(115px, .75fr) minmax(120px, 1.4fr) 48px;
+      gap: 10px;
+      align-items: center;
+    }
+    .ag-ingredient b { font-size: .92rem; }
+    .ag-track {
+      height: 10px;
+      background: #edf2ee;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .ag-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2f7a50, #76a867);
+    }
+    .ag-ingredient strong { text-align: right; color: #173f2a; }
+    .ag-info-box {
+      background: #f7faf7;
+      border: 1px solid #e2eae3;
+      border-radius: 17px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+    .ag-info-box h4 { margin: 0 0 7px; color: #173f2a; }
+    .ag-info-box p { margin: 0; color: #536258; line-height: 1.6; }
+    .ag-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      margin: 16px 0;
+    }
+    .ag-metric {
+      border-radius: 14px;
+      background: #f7faf7;
+      padding: 11px;
+      text-align: center;
+      border: 1px solid #e4ebe5;
+    }
+    .ag-metric span, .ag-metric b { display: block; }
+    .ag-metric span { font-size: .78rem; color: #6a766e; }
+    .ag-metric b { margin-top: 4px; color: #173f2a; }
+    .ag-consumption {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .ag-consumption div {
+      background: #173f2a;
+      color: #fff;
+      padding: 14px;
+      border-radius: 15px;
+    }
+    .ag-consumption span, .ag-consumption b { display: block; }
+    .ag-consumption span { opacity: .75; font-size: .78rem; }
+    .ag-consumption b { margin-top: 5px; font-size: 1.05rem; }
+    .ag-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .ag-details {
+      margin-top: 14px;
+      border-top: 1px solid #e6ece7;
+      padding-top: 14px;
+    }
+    .ag-details summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: #173f2a;
+    }
+    .ag-details-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .ag-details-list div {
+      padding: 12px;
+      border-radius: 13px;
+      background: #f7faf7;
+    }
+    .ag-details-list b, .ag-details-list small { display: block; }
+    .ag-details-list small { margin-top: 4px; color: #637168; line-height: 1.45; }
+    .ag-warning {
+      margin-top: 18px;
+      font-size: .82rem;
+      line-height: 1.5;
+      color: #6b726d;
+    }
+    @media (max-width: 820px) {
+      .ag-config-steps, .ag-config-grid { grid-template-columns: 1fr; }
+      .ag-config-steps { gap: 8px; }
+      .ag-step { padding: 11px; }
+      .ag-metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .ag-choice-grid, .ag-consumption { grid-template-columns: 1fr; }
+      .ag-ingredient { grid-template-columns: 1fr 48px; }
+      .ag-track { grid-column: 1 / -1; grid-row: 2; }
+      .ag-result-head { display: block; }
+      .ag-pill { margin-top: 8px; }
+      .ag-actions .btn { width: 100%; text-align: center; }
+    }
+  </style>
+
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" aria-label="AgroTritura home">
+        <img src="img/IMG-20260216-WA0000.jpg" alt="Logo AgroTritura">
+        <span><strong>AgroTritura</strong><small>Mangime fresco su misura</small></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Apri menu" aria-expanded="false">☰</button>
+      <nav class="main-nav" aria-label="Menu principale">
+        <a href="#servizi">Servizi</a><a href="#prodotti">Prodotti</a><a href="#configuratore">Trova il mix</a><a href="#prezzi">Prezzi</a><a href="#consegna">Consegna</a><a href="ordine.html">Traccia ordine</a><a class="nav-cta" href="#preventivo">Preventivo</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Mangime preparato fresco dopo l’ordine</span>
+          <h1>Tritatura professionale, mix personalizzati e consegna diretta</h1>
+          <p class="hero-copy">Prepariamo cereali e miscele con granulometria grossa, media o fine, in base agli animali e alle esigenze del tuo allevamento.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#preventivo">Richiedi un preventivo</a>
+            <a class="btn btn-light" href="https://wa.me/393341067510" target="_blank" rel="noopener">Scrivi su WhatsApp</a>
+          </div>
+          <div class="trust-row"><span>✓ Prezzi trasparenti</span><span>✓ Nessun costo nascosto</span><span>✓ Provincia di Novara</span></div>
+        </div>
+        <aside class="hero-card">
+          <span class="mini-label">Perché AgroTritura</span>
+          <ul>
+            <li><b>Fresco su richiesta</b><small>Il mangime viene lavorato dopo la conferma.</small></li>
+            <li><b>Granulometria su misura</b><small>Grossa, media o fine.</small></li>
+            <li><b>Servizio flessibile</b><small>Ritiro, consegna o lavorazione sul posto.</small></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="container stats-grid">
+        <div><strong>3</strong><span>granulometrie</span></div><div><strong>5+</strong><span>cereali e mix</span></div><div><strong>100%</strong><span>preventivo gratuito</span></div><div><strong>Diretta</strong><span>consegna al cliente</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="servizi">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Il nostro servizio</span><h2>Una soluzione semplice, pulita e pronta all’uso</h2><p>Dal cereale alla consegna finale, ogni fase viene organizzata in modo chiaro prima della conferma.</p></div>
+        <div class="cards three">
+          <article class="card"><img src="img/mulino_in_azione.jpg" alt="Mulino in lavorazione"><div><span class="icon">⚙️</span><h3>Tritatura professionale</h3><p>Lavorazione uniforme e regolabile secondo la specie animale e la razione.</p></div></article>
+          <article class="card"><img src="img/mix.jpg" alt="Mix di cereali"><div><span class="icon">🌾</span><h3>Mix personalizzati</h3><p>Composizioni dedicate in base a quantità, animali e obiettivo alimentare.</p></div></article>
+          <article class="card"><img src="img/consegna.jpg" alt="Consegna AgroTritura"><div><span class="icon">🚚</span><h3>Consegna organizzata</h3><p>Costo definito in anticipo in base alla distanza reale, senza sorprese.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="prodotti">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Cereali disponibili</span><h2>Scegli il prodotto e la tritatura più adatta</h2><p>L’avena non è disponibile al momento. Per mix particolari viene sempre confermata prima la disponibilità.</p></div>
+        <div class="product-grid">
+          <article><img src="img/mais.jpg" alt="Mais"><h3>Mais</h3><p>Base energetica versatile per numerose razioni.</p></article>
+          <article><img src="img/orzo.jpg" alt="Orzo"><h3>Orzo</h3><p>Cereale equilibrato adatto a diverse specie.</p></article>
+          <article><img src="img/frumento.jpg" alt="Frumento"><h3>Frumento</h3><p>Fonte energetica con tritatura uniforme.</p></article>
+          <article><img src="img/granaverde.jpg" alt="Grana verde"><h3>Grana verde</h3><p>Chicco verde di riso, disponibile su richiesta.</p></article>
+          <article><img src="img/mix.jpg" alt="Mix personalizzato"><h3>Mix personalizzato</h3><p>Miscela definita insieme in base alle esigenze.</p></article>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" id="configuratore">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Scelta guidata</span>
+          <h2>Trova il mix giusto per i tuoi animali</h2>
+          <p>Seleziona animale, obiettivo e numero di capi. Il configuratore propone una composizione indicativa, stima il consumo e prepara la richiesta su WhatsApp.</p>
+        </div>
+
+        <div class="ag-config">
+          <div class="ag-config-steps" aria-hidden="true">
+            <div class="ag-step"><span class="ag-step-num">1</span><span><b>Scegli l’animale</b><small>Galline o polli</small></span></div>
+            <div class="ag-step"><span class="ag-step-num">2</span><span><b>Indica l’obiettivo</b><small>Produzione, crescita o mantenimento</small></span></div>
+            <div class="ag-step"><span class="ag-step-num">3</span><span><b>Ricevi il consiglio</b><small>Composizione, consumo e richiesta</small></span></div>
+          </div>
+
+          <div class="ag-config-grid">
+            <div class="ag-controls">
+              <div class="ag-field">
+                <span>Che animale allevi?</span>
+                <div class="ag-choice-grid" id="agAnimalChoices">
+                  <button class="ag-choice" type="button" data-animal="ovaiole">🐔 Galline ovaiole</button>
+                  <button class="ag-choice" type="button" data-animal="polli">🐥 Polli da carne</button>
+                </div>
+              </div>
+
+              <div class="ag-field">
+                <span>Qual è il tuo obiettivo?</span>
+                <select class="ag-select" id="agGoal" disabled>
+                  <option value="">Prima scegli l’animale</option>
+                </select>
+              </div>
+
+              <div class="ag-field">
+                <span>Quanti animali hai?</span>
+                <input class="ag-number" id="agAnimals" type="number" min="1" max="5000" step="1" value="20" inputmode="numeric">
+              </div>
+
+              <div class="ag-info-box">
+                <h4>Come funziona</h4>
+                <p>Il risultato è una prima indicazione commerciale. Prima della preparazione verifichiamo insieme età, razza, stagione, disponibilità delle materie prime e alimentazione già utilizzata.</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="ag-result-empty" id="agEmpty">
+                <span class="ag-empty-icon">🌾</span>
+                <b>Il tuo consiglio apparirà qui</b>
+                <p>Scegli un animale e un obiettivo per visualizzare il mix.</p>
+              </div>
+
+              <article class="ag-result" id="agResult" hidden aria-live="polite">
+                <div class="ag-result-head">
+                  <div>
+                    <span class="mini-label">Composizione consigliata</span>
+                    <h3 id="agMixName">—</h3>
+                    <p id="agSubtitle">—</p>
+                  </div>
+                  <span class="ag-pill" id="agType">Miscela complementare</span>
+                </div>
+
+                <div class="ag-composition" id="agComposition"></div>
+
+                <div class="ag-info-box">
+                  <h4>Perché questa composizione?</h4>
+                  <p id="agWhy">—</p>
+                </div>
+
+                <div class="ag-metrics" id="agMetrics"></div>
+
+                <div class="ag-consumption">
+                  <div><span>Consumo giornaliero stimato</span><b id="agDaily">—</b></div>
+                  <div><span>Consumo mensile stimato</span><b id="agMonthly">—</b></div>
+                  <div><span>Quantità suggerita</span><b id="agSuggested">—</b></div>
+                </div>
+
+                <details class="ag-details">
+                  <summary>Scopri il ruolo di ogni ingrediente</summary>
+                  <div class="ag-details-list" id="agIngredientDetails"></div>
+                </details>
+
+                <div class="ag-actions">
+                  <a class="btn btn-primary" id="agWhatsapp" href="#" target="_blank" rel="noopener">Richiedi questo mix su WhatsApp</a>
+                  <a class="btn btn-outline" href="#preventivo">Apri il preventivo completo</a>
+                </div>
+
+                <p class="ag-warning">Le composizioni e i consumi sono indicativi. Non sostituiscono una razione formulata da un tecnico, soprattutto in presenza di animali giovani, problemi sanitari o produzioni intensive. Acqua fresca sempre disponibile.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" id="prezzi">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Listino indicativo</span><h2>Prezzi chiari, già comprensivi di tritatura</h2><p>Il prezzo definitivo viene confermato nel preventivo in base a disponibilità, quantità e composizione del mix.</p></div>
+        <div class="price-panel">
+          <div class="price-badge">Tritatura inclusa</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Prodotto</th><th>1–99 kg</th><th>Da 100 kg</th></tr></thead>
+            <tbody>
+              <tr><td><b>Mais tritato</b></td><td>0,69 €/kg</td><td class="best">0,63 €/kg</td></tr>
+              <tr><td><b>Orzo tritato</b></td><td>0,69 €/kg</td><td class="best">0,63 €/kg</td></tr>
+              <tr><td><b>Frumento tritato</b></td><td>0,71 €/kg</td><td class="best">0,65 €/kg</td></tr>
+              <tr><td><b>Grana verde tritata</b></td><td>0,72 €/kg</td><td class="best">0,66 €/kg</td></tr>
+              <tr><td><b>Mix personalizzato</b></td><td>da 0,75 €/kg</td><td class="best">da 0,69 €/kg</td></tr>
+            </tbody>
+          </table></div>
+          <p class="legal-note">I prezzi sono indicativi e possono variare in base alle materie prime e alla composizione richiesta. Il totale viene sempre comunicato prima della conferma.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark-section" id="consegna">
+      <div class="container">
+        <div class="section-head light"><span class="eyebrow">Trasporto sostenibile</span><h2>Consegna calcolata sui costi reali di percorrenza</h2><p>Le distanze si intendono di sola andata dalla sede di AgroTritura. Il costo include andata e ritorno, carburante, tempo e usura del mezzo.</p></div>
+        <div class="delivery-layout">
+          <div class="delivery-table">
+            <div><span>Ritiro presso AgroTritura</span><b>Gratis</b></div>
+            <div><span>Entro 15 km</span><b>15 €</b></div>
+            <div class="highlight"><span>Entro 15 km con ordine superiore a 100 €</span><b>Gratis</b></div>
+            <div><span>Da oltre 15 a 30 km</span><b>30 €</b></div>
+            <div><span>Da oltre 30 a 50 km</span><b>45 €</b></div>
+            <div><span>Da oltre 50 a 75 km</span><b>70 €</b></div>
+            <div><span>Da oltre 75 a 100 km</span><b>95 €</b></div>
+            <div><span>Oltre 100 km</span><b>Su preventivo</b></div>
+          </div>
+          <aside class="delivery-note"><span class="icon big">📍</span><h3>Come viene calcolata</h3><p>Inserisci la distanza di sola andata nel modulo. Il sito applica automaticamente la fascia corretta e mostra il costo totale stimato.</p><p class="small">Per lavorazione con mulino direttamente presso l’azienda viene preparato un preventivo dedicato.</p></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="preventivo">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Preventivo immediato</span><h2>Calcola una stima e inviala su WhatsApp</h2><p>La stima non costituisce conferma d’ordine. Verificheremo insieme disponibilità, indirizzo e dettagli finali.</p></div>
+        <div class="quote-layout">
+          <form id="preventivoForm" class="quote-form">
+            <div class="field-grid">
+              <label>Nome<input id="nome" name="nome" placeholder="Il tuo nome"></label>
+              <label>Telefono<input id="telefono" name="telefono" inputmode="tel" placeholder="Numero di telefono"></label>
+              <label>Prodotto<select id="cereale" name="cereale" required><option value="">Seleziona</option><option>Mais</option><option>Orzo</option><option>Frumento</option><option>Grana verde</option><option>Mix personalizzato</option><option>Altro / da definire</option></select></label>
+              <label>Quantità in kg<input id="quantita" name="quantita" type="number" min="1" step="1" placeholder="Es. 100" required></label>
+              <label>Modalità<select id="modalita" name="modalita"><option value="consegna">Consegna a domicilio</option><option value="ritiro">Ritiro presso AgroTritura</option><option value="sul-posto">Tritatura presso la tua azienda</option></select></label>
+              <label>Distanza sola andata<input id="distanza" name="distanza_km" type="number" min="0" step="0.1" placeholder="Es. 15"></label>
+            </div>
+            <label>Comune e indirizzo<input id="comune" name="comune" placeholder="Es. Borgomanero, via..."></label>
+            <label>Note<textarea id="note" name="note" rows="4" placeholder="Granulometria, animali, composizione del mix..."></textarea></label>
+            <div class="form-actions"><button class="btn btn-primary" type="submit">Invia richiesta su WhatsApp</button><button class="btn btn-outline" type="button" id="btnCopiaPreventivo">Copia riepilogo</button></div>
+            <p id="copyFeedback" class="feedback" hidden>Riepilogo copiato.</p>
+          </form>
+
+          <aside class="quote-summary" aria-live="polite">
+            <span class="mini-label">Riepilogo stimato</span>
+            <div class="summary-row"><span>Prezzo unitario</span><b id="qUnit">—</b></div>
+            <div class="summary-row"><span>Totale merce</span><b id="qGoods">—</b></div>
+            <div class="summary-row"><span>Trasporto</span><b id="qTransport">—</b></div>
+            <div class="summary-total"><span>Totale stimato</span><b id="qTotal">—</b></div>
+            <p id="qMessage" class="summary-message">Compila prodotto, quantità e modalità per visualizzare la stima.</p>
+            <small>Preventivo gratuito e senza impegno. Il prezzo finale viene confermato prima della lavorazione.</small>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section why">
+      <div class="container">
+        <div class="section-head"><span class="eyebrow">Affidabilità</span><h2>Perché scegliere AgroTritura</h2></div>
+        <div class="why-grid"><div>✓ <span><b>Preparazione fresca</b><small>Solo dopo l’ordine.</small></span></div><div>✓ <span><b>Cereali controllati</b><small>Qualità verificata prima della lavorazione.</small></span></div><div>✓ <span><b>Soluzioni su misura</b><small>Granulometria e mix personalizzabili.</small></span></div><div>✓ <span><b>Costi trasparenti</b><small>Merce e trasporto separati nel riepilogo.</small></span></div><div>✓ <span><b>Contatto diretto</b><small>Risposta rapida su WhatsApp o telefono.</small></span></div><div>✓ <span><b>Quantità flessibili</b><small>Piccoli ordini e forniture più grandi.</small></span></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid"><div><a class="brand footer-brand" href="#top"><img src="img/IMG-20260216-WA0000.jpg" alt=""><span><strong>AgroTritura</strong><small>Mangime fresco tritato su misura</small></span></a><p>Revislate, Gattico-Veruno (NO) · Provincia di Novara e zone limitrofe.</p></div><div><b>Contatti</b><a href="tel:+393341067510">+39 334 106 7510</a><a href="https://wa.me/393341067510" target="_blank" rel="noopener">WhatsApp</a><a href="ordine.html">Traccia il tuo ordine</a></div></div>
+    <div class="container copyright">© <span id="year"></span> AgroTritura. Tutti i diritti riservati.</div>
+  </footer>
+
+  <div class="mobile-bar"><a href="tel:+393341067510">📞 Chiama</a><a class="primary" href="https://wa.me/393341067510" target="_blank" rel="noopener">💬 WhatsApp</a></div>
+  <script src="js/main.js" defer></script>
+  <script src="js/whatsapp-message.js" defer></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const catalog = {
+        ovaiole: {
+          label: 'Galline ovaiole',
+          dailyGrams: 120,
+          goals: {
+            produzione: {
+              label: 'Sostenere la produzione di uova',
+              name: 'Mix Ovaiole Produzione',
+              subtitle: 'Base cerealicola con quota completa per galline nella fase di deposizione.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 35, 'Fornisce energia e rende la razione appetibile.'],
+                ['Frumento tritato', 20, 'Contribuisce all’apporto energetico della miscela.'],
+                ['Orzo tritato', 15, 'Aggiunge varietà e una quota di fibra.'],
+                ['Mangime ovaiole completo', 25, 'Apporta proteine, vitamine e minerali che i soli cereali non garantiscono.'],
+                ['Fonte di calcio / grit', 5, 'Contribuisce al corretto apporto minerale necessario alle ovaiole.']
+              ],
+              why: 'È pensata per evitare una razione composta esclusivamente da cereali: mantiene una buona base energetica e include una quota di mangime completo e una fonte minerale.',
+              metrics: { Energia: 88, Proteine: 72, Calcio: 92, Fibre: 58 }
+            },
+            guscio: {
+              label: 'Favorire gusci più robusti',
+              name: 'Mix Ovaiole Calcio',
+              subtitle: 'Composizione con maggiore attenzione alla componente minerale.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 30, 'Fonte energetica principale.'],
+                ['Frumento tritato', 18, 'Energia e appetibilità.'],
+                ['Orzo tritato', 17, 'Varietà cerealicola e fibra.'],
+                ['Mangime ovaiole completo', 28, 'Apporto di proteine, vitamine e minerali.'],
+                ['Fonte di calcio / grit', 7, 'Quota minerale da gestire con attenzione in base al prodotto utilizzato.']
+              ],
+              why: 'La quota di mangime completo e la componente minerale sono più presenti rispetto alla versione standard. Un guscio fragile può comunque dipendere anche da età, salute, stress, caldo o consumo insufficiente.',
+              metrics: { Energia: 80, Proteine: 74, Calcio: 100, Fibre: 60 }
+            },
+            mantenimento: {
+              label: 'Alimentazione quotidiana equilibrata',
+              name: 'Mix Ovaiole Quotidiano',
+              subtitle: 'Composizione versatile per una gestione regolare del gruppo.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 32, 'Energia e appetibilità.'],
+                ['Frumento tritato', 23, 'Base energetica complementare.'],
+                ['Orzo tritato', 20, 'Fibra e varietà.'],
+                ['Mangime ovaiole completo', 22, 'Completa la quota nutrizionale della base cerealicola.'],
+                ['Fonte di calcio / grit', 3, 'Supporto minerale da adattare alla gestione aziendale.']
+              ],
+              why: 'È una proposta semplice per l’uso quotidiano, con cereali diversificati e una quota completa. La quantità effettiva va adattata a pascolo, stagione e condizioni delle galline.',
+              metrics: { Energia: 82, Proteine: 68, Calcio: 78, Fibre: 66 }
+            },
+            muta: {
+              label: 'Supporto durante la muta',
+              name: 'Mix Ovaiole Muta',
+              subtitle: 'Composizione con maggiore attenzione alla quota proteica.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 25, 'Energia senza rendere eccessiva la quota cerealicola.'],
+                ['Frumento tritato', 20, 'Energia e appetibilità.'],
+                ['Orzo tritato', 15, 'Fibra e diversificazione.'],
+                ['Mangime completo più proteico', 37, 'Aumenta la quota proteica rispetto ai mix ordinari.'],
+                ['Fonte di calcio / grit', 3, 'Supporto minerale, da adeguare alla fase produttiva.']
+              ],
+              why: 'Durante la muta il fabbisogno cambia e la deposizione può ridursi. Questa proposta limita la prevalenza dei cereali e aumenta la parte completa/proteica.',
+              metrics: { Energia: 72, Proteine: 92, Calcio: 68, Fibre: 62 }
+            }
+          }
+        },
+        polli: {
+          label: 'Polli da carne',
+          dailyGrams: 125,
+          goals: {
+            crescita: {
+              label: 'Sostenere una crescita regolare',
+              name: 'Mix Polli Crescita',
+              subtitle: 'Base energetica con una quota completa adatta alla fase di crescita.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 38, 'Fonte energetica principale.'],
+                ['Frumento tritato', 20, 'Energia e appetibilità.'],
+                ['Orzo tritato', 12, 'Fibra e varietà cerealicola.'],
+                ['Mangime completo crescita', 30, 'Apporta proteine, vitamine e minerali necessari alla crescita.']
+              ],
+              why: 'I cereali da soli non sono sufficienti per sostenere correttamente la crescita. La quota di mangime completo riduce il rischio di una razione troppo povera di proteine e micronutrienti.',
+              metrics: { Energia: 90, Proteine: 84, Calcio: 62, Fibre: 52 }
+            },
+            finissaggio: {
+              label: 'Fase finale di ingrasso',
+              name: 'Mix Polli Finissaggio',
+              subtitle: 'Composizione più energetica per animali già sviluppati.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 45, 'Aumenta la densità energetica della razione.'],
+                ['Frumento tritato', 22, 'Energia e appetibilità.'],
+                ['Orzo tritato', 13, 'Aggiunge fibra e varietà.'],
+                ['Mangime completo finissaggio', 20, 'Mantiene una quota proteica e minerale nella fase finale.']
+              ],
+              why: 'È una miscela più energetica rispetto a quella di crescita, pensata per polli già ben sviluppati. Non è indicata per pulcini o animali nelle prime fasi.',
+              metrics: { Energia: 100, Proteine: 68, Calcio: 50, Fibre: 55 }
+            },
+            mantenimento: {
+              label: 'Gestione quotidiana non intensiva',
+              name: 'Mix Polli Quotidiano',
+              subtitle: 'Miscela equilibrata per gruppi allevati senza obiettivi di crescita rapida.',
+              type: 'Miscela complementare',
+              ingredients: [
+                ['Mais tritato', 35, 'Energia e appetibilità.'],
+                ['Frumento tritato', 22, 'Base energetica.'],
+                ['Orzo tritato', 18, 'Fibra e varietà.'],
+                ['Mangime completo polli', 25, 'Integra la parte cerealicola con nutrienti essenziali.']
+              ],
+              why: 'Mantiene una base cerealicola varia senza eliminare la quota completa. È indicativa per animali già sviluppati e allevati con ritmi non intensivi.',
+              metrics: { Energia: 84, Proteine: 74, Calcio: 58, Fibre: 64 }
+            }
+          }
+        }
+      };
+
+      const animalButtons = Array.from(document.querySelectorAll('#agAnimalChoices .ag-choice'));
+      const goalSelect = document.getElementById('agGoal');
+      const animalsInput = document.getElementById('agAnimals');
+      const empty = document.getElementById('agEmpty');
+      const result = document.getElementById('agResult');
+      let selectedAnimal = '';
+
+      function euroKg(value) {
+        return value.toLocaleString('it-IT', { maximumFractionDigits: 1 }) + ' kg';
+      }
+
+      function suggestedBag(monthly) {
+        const sizes = [25, 50, 75, 100, 125, 150, 200, 250, 300, 400, 500, 750, 1000];
+        return sizes.find(size => size >= monthly) || Math.ceil(monthly / 100) * 100;
+      }
+
+      function populateGoals() {
+        goalSelect.innerHTML = '<option value="">Seleziona l’obiettivo</option>';
+        if (!selectedAnimal) {
+          goalSelect.disabled = true;
+          return;
+        }
+        const goals = catalog[selectedAnimal].goals;
+        Object.entries(goals).forEach(([key, value]) => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = value.label;
+          goalSelect.appendChild(option);
+        });
+        goalSelect.disabled = false;
+      }
+
+      function updateResult() {
+        const goalKey = goalSelect.value;
+        if (!selectedAnimal || !goalKey) {
+          empty.hidden = false;
+          result.hidden = true;
+          return;
+        }
+
+        const animal = catalog[selectedAnimal];
+        const mix = animal.goals[goalKey];
+        const count = Math.max(1, parseInt(animalsInput.value || '1', 10));
+        const dailyKg = count * animal.dailyGrams / 1000;
+        const monthlyKg = dailyKg * 30;
+        const suggested = suggestedBag(monthlyKg);
+
+        document.getElementById('agMixName').textContent = mix.name;
+        document.getElementById('agSubtitle').textContent = mix.subtitle;
+        document.getElementById('agType').textContent = mix.type;
+        document.getElementById('agWhy').textContent = mix.why;
+        document.getElementById('agDaily').textContent = euroKg(dailyKg);
+        document.getElementById('agMonthly').textContent = euroKg(monthlyKg);
+        document.getElementById('agSuggested').textContent = suggested.toLocaleString('it-IT') + ' kg';
+
+        document.getElementById('agComposition').innerHTML = mix.ingredients.map(item => `
+          <div class="ag-ingredient">
+            <b>${item[0]}</b>
+            <div class="ag-track" aria-label="${item[0]} ${item[1]}%"><div class="ag-fill" style="width:${item[1]}%"></div></div>
+            <strong>${item[1]}%</strong>
+          </div>
+        `).join('');
+
+        document.getElementById('agIngredientDetails').innerHTML = mix.ingredients.map(item => `
+          <div><b>${item[0]} · ${item[1]}%</b><small>${item[2]}</small></div>
+        `).join('');
+
+        document.getElementById('agMetrics').innerHTML = Object.entries(mix.metrics).map(([name, value]) => `
+          <div class="ag-metric"><span>${name}</span><b>${value}%</b></div>
+        `).join('');
+
+        const message = [
+          'Ciao, ho utilizzato il Configuratore AgroTritura.',
+          '',
+          'Animale: ' + animal.label,
+          'Obiettivo: ' + mix.label,
+          'Numero animali: ' + count,
+          'Mix consigliato: ' + mix.name,
+          'Consumo mensile stimato: ' + euroKg(monthlyKg),
+          'Quantità richiesta indicativa: ' + suggested.toLocaleString('it-IT') + ' kg',
+          '',
+          'Vorrei verificare composizione, disponibilità e prezzo.'
+        ].join('\n');
+
+        document.getElementById('agWhatsapp').href =
+          'https://wa.me/393341067510?text=' + encodeURIComponent(message);
+
+        empty.hidden = true;
+        result.hidden = false;
+      }
+
+      animalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedAnimal = button.dataset.animal;
+          animalButtons.forEach(item => item.classList.toggle('active', item === button));
+          populateGoals();
+          goalSelect.value = '';
+          updateResult();
+        });
+      });
+
+      goalSelect.addEventListener('change', updateResult);
+      animalsInput.addEventListener('input', updateResult);
+    });
+  </script>
+
+</body>
+</html>
