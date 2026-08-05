@@ -1,0 +1,29 @@
+/* AgroTritura — homepage compatta e mobile-first */
+:root{--at-green:#173f2a;--at-soft:#eef5f0;--at-line:#dbe6dd}
+html{scroll-behavior:smooth}
+body.at-home-compact{padding-bottom:76px}
+.at-home-compact .section{padding-top:42px!important;padding-bottom:42px!important}
+.at-home-compact .at-process,.at-home-compact .at-advice-preview{display:none!important}
+.at-home-compact .at-trust-strip{margin-bottom:0!important}
+.at-compact-hub{padding:18px 0 6px}
+.at-compact-hub .container{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.at-hub-card{display:flex;align-items:center;gap:11px;padding:16px;border:1px solid var(--at-line);border-radius:18px;background:#fff;color:var(--at-green);text-decoration:none;font-weight:850;box-shadow:0 8px 22px rgba(23,63,42,.06)}
+.at-hub-card span{font-size:1.5rem}.at-hub-card small{display:block;color:#66736b;font-weight:650;margin-top:2px}
+.at-home-compact .at-collapsible{position:relative;overflow:hidden;max-height:330px;transition:max-height .3s ease}
+.at-home-compact .at-collapsible.at-open{max-height:4000px}
+.at-home-compact .at-collapsible:not(.at-open)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,#fff)}
+.at-section-toggle{display:block;margin:14px auto 0;border:0;border-radius:999px;padding:11px 18px;background:var(--at-soft);color:var(--at-green);font-weight:850;cursor:pointer}
+.at-home-compact #configuratore,.at-home-compact #preventivo{padding-top:48px!important;padding-bottom:48px!important}
+.at-home-compact .at-footer-panel{margin-top:26px}
+.at-bottom-nav{position:fixed;z-index:90;left:10px;right:10px;bottom:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:7px;border:1px solid rgba(23,63,42,.12);border-radius:18px;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);box-shadow:0 12px 35px rgba(23,63,42,.18)}
+.at-bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border-radius:12px;color:#173f2a;text-decoration:none;font-size:.72rem;font-weight:800}.at-bottom-nav a span{font-size:1.15rem}
+@media(max-width:900px){.at-compact-hub .container{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){
+  .at-home-compact .section{padding-top:30px!important;padding-bottom:30px!important}
+  .at-compact-hub{padding-top:12px}.at-compact-hub .container{gap:8px;padding-inline:12px}
+  .at-hub-card{padding:13px 11px;border-radius:15px;font-size:.86rem}.at-hub-card span{font-size:1.25rem}.at-hub-card small{font-size:.68rem}
+  .at-home-compact .at-collapsible{max-height:285px}
+  .at-home-compact #prodotti.at-collapsible{max-height:360px}
+  .at-home-compact .hero{min-height:auto!important;padding-top:34px!important;padding-bottom:34px!important}
+}
+@media(min-width:900px){.at-bottom-nav{display:none}body.at-home-compact{padding-bottom:0}}
