@@ -1,3 +1,4 @@
+@import url("home-compact.css");
 /* AgroTritura — rifiniture homepage e conversione */
 .at-trust-strip{background:#eef5f0;border-top:1px solid #dce8df;border-bottom:1px solid #dce8df}
 .at-trust-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px 0}
