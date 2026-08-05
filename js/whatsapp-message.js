@@ -17,6 +17,7 @@
     const budgetRaw = valueOf("#budget");
     const budgetTipo = valueOf("#budgetTipo");
     const priorita = valueOf("#prioritaBudget");
+    const quantitaIntento = valueOf("#quantitaIntento");
     const distanceInput = document.querySelector("#distanza");
     const kmMode = distanceInput?.dataset.autoCalculated === "true" ? "automatico" : "manuale";
 
@@ -31,6 +32,28 @@
       ? "Da definire"
       : formatMoney(dati.trasporto.costo);
 
+    let quantitaTesto = "Da calcolare in base al budget";
+    let verificaTesto = "Proposta da definire in base a budget, distanza e priorità";
+
+    if (quantitaRaw && !budgetRaw) {
+      quantitaTesto = quantitaRaw + " kg";
+      verificaTesto = "Quantità richiesta dal cliente";
+    } else if (quantitaRaw && budgetRaw && quantitaIntento === "minima") {
+      quantitaTesto = quantitaRaw + " kg minimi desiderati";
+      verificaTesto = `Verificare se almeno ${quantitaRaw} kg rientrano nel budget`;
+    } else if (quantitaRaw && budgetRaw && quantitaIntento === "indicativa") {
+      quantitaTesto = quantitaRaw + " kg indicativi";
+      verificaTesto = "La quantità può essere modificata per rispettare il budget";
+    } else if (budgetRaw && quantitaIntento === "calcola") {
+      quantitaTesto = "Da calcolare in base al budget";
+      verificaTesto = "Calcolare la quantità migliore senza superare il budget";
+    }
+
+    const prodottoTesto = dati.prodotto || "Da definire";
+    if (prodottoTesto === "Altro / da definire" && budgetRaw) {
+      verificaTesto += "; prodotto o mix da definire prima del calcolo finale";
+    }
+
     const righe = [
       "📄 DATI PER PREVENTIVO — AgroTritura",
       "",
@@ -40,9 +63,10 @@
       `- Comune/Indirizzo: ${indirizzo}`,
       "",
       "📦 Richiesta",
-      `- Prodotto: ${dati.prodotto || "Da definire"}`,
-      `- Quantità desiderata: ${quantitaRaw ? quantitaRaw + " kg" : "Da calcolare in base al budget"}`,
-      `- Modalità: ${consegna}`
+      `- Prodotto: ${prodottoTesto}`,
+      `- Quantità: ${quantitaTesto}`,
+      `- Modalità: ${consegna}`,
+      `- Verifica richiesta: ${verificaTesto}`
     ];
 
     if (budgetRaw) {
@@ -96,6 +120,7 @@
     if (!quantity && !budget) return "Inserisci almeno la quantità desiderata oppure il budget massimo.";
     if (budget && !valueOf("#budgetTipo")) return "Indica se il budget comprende anche la consegna.";
     if (budget && !valueOf("#prioritaBudget")) return "Seleziona la priorità della proposta.";
+    if (budget && !valueOf("#quantitaIntento")) return "Indica come dobbiamo considerare la quantità rispetto al budget.";
     return "";
   }
 
@@ -124,33 +149,43 @@
     const typeLabel = budgetType.closest("label");
     const priorityLabel = priority.closest("label");
 
-    if (budgetCopy) {
-      budgetCopy.textContent = "Compila la quantità desiderata oppure il budget. Non è necessario indicare entrambi.";
+    let intent = document.querySelector("#quantitaIntento");
+    let intentLabel = intent?.closest("label");
+    if (!intent && budgetBox) {
+      intentLabel = document.createElement("label");
+      intentLabel.hidden = true;
+      intentLabel.innerHTML = `Come considerare la quantità?
+        <select id="quantitaIntento" name="quantitaIntento">
+          <option value="">Seleziona</option>
+          <option value="calcola">Calcolate voi la quantità migliore</option>
+          <option value="minima">Voglio almeno la quantità indicata</option>
+          <option value="indicativa">La quantità indicata è solo orientativa</option>
+        </select>`;
+      budgetBox.querySelector(".at-budget-grid")?.appendChild(intentLabel);
+      intent = document.querySelector("#quantitaIntento");
     }
 
-    const error = document.createElement("p");
-    error.id = "atFormError";
-    error.className = "at-form-error";
-    error.hidden = true;
-    budgetBox?.appendChild(error);
+    if (budgetCopy) {
+      budgetCopy.textContent = "Compila la quantità desiderata oppure il budget. Se li inserisci entrambi, indica se la quantità è minima, orientativa o da calcolare.";
+    }
 
-    const style = document.createElement("style");
-    style.textContent = `
-      .at-form-error{margin:12px 0 0;padding:10px 12px;border-radius:11px;background:#fff0ee;color:#a3382f;font-weight:750}
-      .at-budget-box label[hidden]{display:none!important}
-    `;
-    document.head.appendChild(style);
+    let error = document.querySelector("#atFormError");
+    if (!error) {
+      error = document.createElement("p");
+      error.id = "atFormError";
+      error.className = "at-form-error";
+      error.hidden = true;
+      budgetBox?.appendChild(error);
+    }
 
-    function syncBudgetFields() {
-      const active = numberOf("#budget") > 0;
-      if (typeLabel) typeLabel.hidden = !active;
-      if (priorityLabel) priorityLabel.hidden = !active;
-      budgetType.required = active;
-      priority.required = active;
-      if (!active) {
-        budgetType.value = "";
-        priority.value = "";
-      }
+    if (!document.querySelector("#atBudgetClarityStyle")) {
+      const style = document.createElement("style");
+      style.id = "atBudgetClarityStyle";
+      style.textContent = `
+        .at-form-error{margin:12px 0 0;padding:10px 12px;border-radius:11px;background:#fff0ee;color:#a3382f;font-weight:750}
+        .at-budget-box label[hidden]{display:none!important}
+      `;
+      document.head.appendChild(style);
     }
 
     budgetType.innerHTML = `
@@ -164,7 +199,29 @@
       <option value="Scorta per circa un mese">Scorta per circa un mese</option>
       <option value="Decidilo tu">Decidilo tu</option>`;
 
+    function syncBudgetFields() {
+      const active = numberOf("#budget") > 0;
+      const hasQuantity = numberOf("#quantita") > 0;
+      if (typeLabel) typeLabel.hidden = !active;
+      if (priorityLabel) priorityLabel.hidden = !active;
+      if (intentLabel) intentLabel.hidden = !active;
+      budgetType.required = active;
+      priority.required = active;
+      if (intent) intent.required = active;
+
+      if (!active) {
+        budgetType.value = "";
+        priority.value = "";
+        if (intent) intent.value = "";
+      } else if (!hasQuantity && intent && !intent.value) {
+        intent.value = "calcola";
+      } else if (hasQuantity && intent?.value === "calcola") {
+        intent.value = "";
+      }
+    }
+
     budget.addEventListener("input", syncBudgetFields);
+    quantity.addEventListener("input", syncBudgetFields);
     syncBudgetFields();
 
     form.addEventListener("submit", event => {
