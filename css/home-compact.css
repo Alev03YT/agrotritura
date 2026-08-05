@@ -1,43 +1,113 @@
-/* AgroTritura — homepage compatta e mobile-first */
-:root{--at-green:#173f2a;--at-soft:#eef5f0;--at-line:#dbe6dd}
+/* AgroTritura — homepage guidata, professionale e mobile-first */
+:root{--at-green:#173f2a;--at-green-2:#2f7a50;--at-soft:#eef5f0;--at-line:#dbe6dd;--at-muted:#66736b}
 html{scroll-behavior:smooth}
-.section{padding-top:38px!important;padding-bottom:38px!important}
+body{background:#f7f9f7}
+main{display:flex;flex-direction:column}
+.hero{order:1}
+.at-trust-strip{order:2;margin-bottom:0!important}
+#servizi{order:3}
+#prodotti{order:4}
+#atWhyExpanded{order:5}
+#prezzi{order:6}
+#configuratore{order:7}
+#consegna{order:8}
+#preventivo{order:9}
+#atAdvicePreview{order:10}
+.at-footer-panel{order:11}
+footer{order:12}
+
+.section{padding-top:44px!important;padding-bottom:44px!important;position:relative}
+.section>.container{max-width:1120px}
 .at-process,.at-advice-preview{display:none!important}
-.at-trust-strip{margin-bottom:0!important}
-#configuratore,#preventivo{padding-top:44px!important;padding-bottom:44px!important}
-#atWhyExpanded{padding-top:34px!important;padding-bottom:34px!important}
+#configuratore,#preventivo{padding-top:54px!important;padding-bottom:54px!important}
+#preventivo{background:linear-gradient(180deg,#f0f6f2 0%,#fff 100%)}
+#preventivo>.container{position:relative}
+#preventivo>.container:before{content:"Ultimo passaggio";display:inline-flex;margin-bottom:12px;padding:7px 12px;border-radius:999px;background:#173f2a;color:#fff;font-size:.75rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+
+.section-head{margin-bottom:22px!important;max-width:760px}
+.section-head .eyebrow{display:inline-flex;align-items:center;gap:7px;margin-bottom:9px;padding:6px 10px;border-radius:999px;background:#eef5f0;color:#173f2a;font-weight:850;font-size:.74rem;letter-spacing:.035em;text-transform:uppercase}
+.section-head h2{margin-bottom:9px!important;line-height:1.1}
+.section-head p{max-width:680px;color:var(--at-muted);line-height:1.55}
+
+/* Indicazione progressiva del percorso cliente */
+#servizi:before,#prodotti:before,#prezzi:before,#configuratore:before,#consegna:before{position:absolute;top:16px;left:max(18px,calc((100% - 1120px)/2));font-size:.72rem;font-weight:900;color:#2f7a50;letter-spacing:.05em;text-transform:uppercase}
+#servizi:before{content:"1 · Scopri il servizio"}
+#prodotti:before{content:"2 · Scegli i prodotti"}
+#prezzi:before{content:"3 · Consulta prezzi e quantità"}
+#configuratore:before{content:"4 · Trova il mix adatto"}
+#consegna:before{content:"5 · Verifica consegna e ritiro"}
+
+/* Hero più pulita e orientata all’azione */
+.hero{min-height:min(720px,82vh)!important;display:flex!important;align-items:center!important}
+.hero .container{max-width:1080px}
+.hero h1{max-width:760px;letter-spacing:-.035em}
+.hero p{max-width:650px}
+.hero .hero-actions,.hero .actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero .btn{min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+
+.at-trust-strip{background:#eef5f0;border-top:1px solid #dce8df;border-bottom:1px solid #dce8df}
+.at-trust-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 0}
+.at-trust-item{display:flex;align-items:center;justify-content:center;gap:7px;color:#173f2a;font-weight:800;text-align:center}
+
+/* Card coerenti con futura app */
+#servizi article,#prodotti article,#atWhyExpanded .at-why-card{border:1px solid var(--at-line)!important;border-radius:20px!important;box-shadow:0 10px 28px rgba(23,63,42,.065)!important;transition:transform .2s ease,box-shadow .2s ease}
+#servizi article:hover,#prodotti article:hover,#atWhyExpanded .at-why-card:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(23,63,42,.1)!important}
+#servizi .services-grid,#servizi .grid{gap:12px!important}
+#prodotti .products-grid,#prodotti .grid{gap:13px!important}
+#prodotti article{padding:17px!important}
+.at-product-cta{width:100%;justify-content:center;margin-top:13px!important;padding:10px 12px!important}
+
+#atWhyExpanded{padding-top:38px!important;padding-bottom:38px!important;background:#fff}
 #atWhyExpanded .section-head p{max-width:760px}
 #atWhyExpanded .at-why-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-#atWhyExpanded .at-why-card{padding:14px;min-height:auto}
-#atWhyExpanded .at-why-card p{font-size:.88rem;line-height:1.4}
-#prodotti .products-grid,#prodotti .grid{gap:12px!important}
-#prodotti article{padding:15px!important}
-.at-footer-panel{margin-top:18px!important}
-.section-head{margin-bottom:20px!important}
-.section-head h2{margin-bottom:8px!important}
+#atWhyExpanded .at-why-card{padding:15px;min-height:auto}
+#atWhyExpanded .at-why-card p{font-size:.88rem;line-height:1.45}
+
+/* Prezzi e configuratore separati visivamente */
+#prezzi{background:#fff}
+#prezzi table{border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(23,63,42,.05)}
+#configuratore{background:linear-gradient(180deg,#f7faf7,#eef5f0)}
+#configuratore .ag-config{box-shadow:0 18px 48px rgba(23,63,42,.1)!important}
+
+/* Preventivo come destinazione finale */
+#preventivo form,#preventivo .form,#preventivoForm{border-radius:24px!important;box-shadow:0 20px 55px rgba(23,63,42,.11)!important}
+.at-budget-box{border-radius:18px!important;background:#f4f9f5!important}
+.at-footer-panel{margin-top:0!important}
+
+/* Barra percorso rapida: aspetto simile ad app */
+.at-journey-nav{position:sticky;top:64px;z-index:35;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--at-line);box-shadow:0 5px 18px rgba(23,63,42,.05)}
+.at-journey-nav .container{display:flex;gap:7px;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+.at-journey-nav .container::-webkit-scrollbar{display:none}
+.at-journey-nav a{flex:0 0 auto;text-decoration:none;color:#173f2a;background:#f2f7f3;border:1px solid #dbe6dd;border-radius:999px;padding:8px 11px;font-size:.77rem;font-weight:850}
+.at-journey-nav a:last-child{background:#173f2a;color:#fff;border-color:#173f2a}
+
+@media(max-width:820px){
+  #atWhyExpanded .at-why-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 
 @media(max-width:620px){
   body{padding-bottom:8px}
-  .section{padding-top:26px!important;padding-bottom:26px!important}
-  .hero{min-height:auto!important;padding-top:30px!important;padding-bottom:30px!important}
+  .section{padding-top:38px!important;padding-bottom:30px!important}
+  #servizi:before,#prodotti:before,#prezzi:before,#configuratore:before,#consegna:before{top:12px;left:14px;font-size:.64rem}
+  .hero{min-height:auto!important;padding-top:34px!important;padding-bottom:34px!important}
   .hero h1{font-size:clamp(2rem,10vw,3rem)!important;line-height:1.02!important}
   .hero p{font-size:.96rem!important;line-height:1.45!important;margin-bottom:18px!important}
-  .hero .hero-actions,.hero .actions{gap:8px!important}
-  .hero .btn{padding:11px 13px!important;font-size:.88rem!important}
+  .hero .hero-actions,.hero .actions{display:grid!important;grid-template-columns:1fr 1fr;width:100%;gap:8px!important}
+  .hero .btn{padding:11px 10px!important;font-size:.84rem!important;width:100%}
   .at-trust-grid{grid-template-columns:repeat(3,1fr)!important;gap:4px!important;padding:8px 0!important}
-  .at-trust-item{font-size:.68rem!important;line-height:1.2!important;justify-content:center!important;gap:4px!important}
-  .at-trust-item span{font-size:.78rem!important}
+  .at-trust-item{font-size:.67rem!important;line-height:1.2!important;justify-content:center!important;gap:4px!important}
   #servizi .services-grid,#servizi .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
   #servizi article{padding:12px!important}
-  #servizi article p{font-size:.8rem!important;line-height:1.35!important}
-  #prodotti .products-grid,#prodotti .grid{display:flex!important;overflow-x:auto!important;scroll-snap-type:x mandatory;padding-bottom:8px!important;gap:10px!important}
-  #prodotti article{flex:0 0 82%!important;scroll-snap-align:start!important}
-  #prezzi table{font-size:.78rem!important}
-  #prezzi th,#prezzi td{padding:8px 6px!important}
-  #atWhyExpanded .at-why-grid{display:flex!important;overflow-x:auto!important;scroll-snap-type:x mandatory;padding-bottom:8px!important}
-  #atWhyExpanded .at-why-card{flex:0 0 78%!important;scroll-snap-align:start!important}
-  .section-head{margin-bottom:14px!important}
+  #servizi article p{font-size:.79rem!important;line-height:1.35!important}
+  #prodotti .products-grid,#prodotti .grid{display:flex!important;overflow-x:auto!important;scroll-snap-type:x mandatory;padding-bottom:9px!important;gap:10px!important}
+  #prodotti article{flex:0 0 84%!important;scroll-snap-align:center!important}
+  #prezzi table{font-size:.76rem!important}
+  #prezzi th,#prezzi td{padding:8px 5px!important}
+  #atWhyExpanded .at-why-grid{display:flex!important;overflow-x:auto!important;scroll-snap-type:x mandatory;padding-bottom:9px!important}
+  #atWhyExpanded .at-why-card{flex:0 0 80%!important;scroll-snap-align:center!important}
+  .section-head{margin-bottom:15px!important}
   .section-head h2{font-size:1.55rem!important;line-height:1.12!important}
   .section-head p{font-size:.88rem!important;line-height:1.4!important}
-  .at-footer-panel{padding:22px 0!important}
+  #configuratore,#preventivo{padding-top:46px!important;padding-bottom:38px!important}
+  .at-journey-nav{top:56px}
 }
