@@ -1,0 +1,43 @@
+/* AgroTritura — rifiniture homepage e conversione */
+.at-trust-strip{background:#eef5f0;border-top:1px solid #dce8df;border-bottom:1px solid #dce8df}
+.at-trust-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:14px 0}
+.at-trust-item{display:flex;align-items:center;justify-content:center;gap:8px;color:#173f2a;font-weight:800;text-align:center}
+.at-trust-item span{font-size:1.05rem}
+.at-process{padding:54px 0;background:#fff}
+.at-process-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:24px}
+.at-process-card{position:relative;background:#f7faf7;border:1px solid #dfe8e1;border-radius:18px;padding:18px;min-height:145px}
+.at-process-num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#173f2a;color:#fff;font-weight:900;margin-bottom:12px}
+.at-process-card h3{margin:0 0 7px;color:#173f2a;font-size:1.02rem}
+.at-process-card p{margin:0;color:#647168;line-height:1.5;font-size:.9rem}
+.at-product-cta{display:inline-flex;margin-top:10px;text-decoration:none;font-weight:850;color:#173f2a;background:#edf5ef;border:1px solid #d5e3d8;border-radius:11px;padding:8px 10px}
+.at-budget-box{grid-column:1/-1;background:#f5faf6;border:1px solid #d8e6db;border-radius:17px;padding:16px;margin-top:4px}
+.at-budget-title{font-weight:900;color:#173f2a;margin-bottom:5px}
+.at-budget-copy{font-size:.86rem;color:#66736b;margin:0 0 12px}
+.at-budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.at-budget-grid label{margin:0}
+.at-footer-panel{background:#173f2a;color:#fff;padding:30px 0;margin-top:0}
+.at-footer-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:28px}
+.at-footer-panel h3,.at-footer-panel h4{margin:0 0 10px;color:#fff}
+.at-footer-panel p{margin:0;color:rgba(255,255,255,.76);line-height:1.55}
+.at-footer-links{display:grid;gap:8px}
+.at-footer-links a{color:#fff;text-decoration:none;font-weight:750}
+.at-footer-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.at-footer-actions a{display:inline-flex;text-decoration:none;border-radius:12px;padding:10px 12px;font-weight:850;background:#fff;color:#173f2a}
+.at-footer-actions a.secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.at-section-tight{padding-top:52px!important;padding-bottom:52px!important}
+@media(max-width:820px){
+ .at-process-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .at-footer-grid{grid-template-columns:1fr 1fr}
+ .at-footer-grid>div:first-child{grid-column:1/-1}
+}
+@media(max-width:560px){
+ .at-trust-grid{grid-template-columns:1fr;gap:7px;padding:11px 0}
+ .at-trust-item{justify-content:flex-start;font-size:.9rem}
+ .at-process{padding:38px 0}
+ .at-process-grid{grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}
+ .at-process-card{padding:14px;min-height:136px}
+ .at-process-card p{font-size:.82rem}
+ .at-budget-grid,.at-footer-grid{grid-template-columns:1fr}
+ .at-footer-grid>div:first-child{grid-column:auto}
+ .at-section-tight{padding-top:38px!important;padding-bottom:38px!important}
+}
