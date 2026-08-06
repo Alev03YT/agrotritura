@@ -1,50 +1,17 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>AgroTritura • Formulatore Mix</title>
-  <style>
-    :root{--g:#173f2a;--g2:#2f7a50;--bg:#f4f7f4;--line:#dfe7e1;--muted:#68736c;--red:#a43e35}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:#18221c}button,input,textarea{font:inherit}
-    .wrap{max-width:1250px;margin:auto;padding:22px}.head{margin-bottom:18px}.head h1{margin:0;color:var(--g)}.head p{color:var(--muted)}
-    .grid{display:grid;grid-template-columns:.9fr 1.15fr;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 8px 28px rgba(23,63,42,.06)}
-    label{display:block;font-weight:850;color:var(--g);margin-bottom:8px}textarea,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px;outline:0}textarea{min-height:260px;resize:vertical}
-    .btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.btn{border:0;border-radius:13px;padding:11px 15px;font-weight:850;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.primary{background:var(--g);color:#fff}.light{background:#eaf3ec;color:var(--g)}.danger{background:#fff0ee;color:var(--red)}
-    .hidden{display:none!important}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;background:#eaf3ec;color:var(--g);font-size:.82rem;font-weight:850}.result-head{display:flex;justify-content:space-between;gap:12px}.result-head h2{color:var(--g);margin:9px 0 3px}.total{font-size:1.75rem;font-weight:900;color:var(--g);text-align:right}
-    table{width:100%;border-collapse:collapse;margin-top:15px}th,td{padding:11px 7px;border-bottom:1px solid var(--line);text-align:left}th{font-size:.78rem;text-transform:uppercase;color:var(--muted)}th:last-child,td:last-child{text-align:right}.info{background:#f4f8f5;border-radius:15px;padding:14px;line-height:1.55;margin-top:14px}.error{color:#b42318;font-weight:750;margin-top:10px}.ok{color:#287348;font-weight:750;margin-top:10px}
-    .history{margin-top:18px}.history-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.history-head h2{color:var(--g);margin:0}.row{display:grid;grid-template-columns:110px minmax(170px,1fr) 90px auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.row-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.row .btn{padding:8px 10px;font-size:.82rem}.empty-history{color:var(--muted);padding:18px 0}
-    @media(max-width:850px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row-actions{grid-column:1/-1;justify-content:flex-start}}
-    @media(max-width:520px){.wrap{padding:12px}.result-head{display:block}.total{text-align:left;margin-top:10px}.row{grid-template-columns:1fr}.row-actions{grid-column:auto}.btns .btn{flex:1 1 145px}}
-    @media print{.no-print,.head,.history{display:none!important}.wrap{padding:0}.card{border:0;box-shadow:none}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>AgroTritura • Formulatore Mix</title>
+<style>
+:root{--g:#173f2a;--bg:#f4f7f4;--line:#dfe7e1;--muted:#68736c;--red:#a43e35}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:#18221c}button,input,textarea{font:inherit}.wrap{max-width:1250px;margin:auto;padding:22px}.head h1{margin:0;color:var(--g)}.head p{color:var(--muted)}.grid{display:grid;grid-template-columns:.9fr 1.15fr;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 8px 28px rgba(23,63,42,.06)}label{display:block;font-weight:850;color:var(--g);margin-bottom:8px}textarea,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px;outline:0}textarea{min-height:260px}.btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.btn{border:0;border-radius:13px;padding:11px 15px;font-weight:850;cursor:pointer;text-decoration:none}.primary{background:var(--g);color:#fff}.light{background:#eaf3ec;color:var(--g)}.danger{background:#fff0ee;color:var(--red)}.hidden{display:none!important}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;background:#eaf3ec;color:var(--g);font-size:.82rem;font-weight:850}.result-head{display:flex;justify-content:space-between;gap:12px}.result-head h2{color:var(--g);margin:9px 0 3px}.total{font-size:1.75rem;font-weight:900;color:var(--g)}table{width:100%;border-collapse:collapse;margin-top:15px}th,td{padding:11px 7px;border-bottom:1px solid var(--line);text-align:left}th:last-child,td:last-child{text-align:right}.info{background:#f4f8f5;border-radius:15px;padding:14px;line-height:1.55;margin-top:14px}.error{color:#b42318;font-weight:750}.ok{color:#287348;font-weight:750}.history{margin-top:18px}.row{display:grid;grid-template-columns:110px minmax(170px,1fr) 90px auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.row-actions{display:flex;gap:7px;flex-wrap:wrap}.row .btn{padding:8px 10px;font-size:.82rem}@media(max-width:850px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.result-head{display:block}}
+</style>
 </head>
-<body>
-<main class="wrap">
-  <div class="head"><h1>Formulatore mix e produzione</h1><p>Incolla il messaggio del configuratore, genera le quantità esatte, salva la formulazione e passala direttamente al preventivo.</p></div>
-  <div class="grid">
-    <section class="card no-print">
-      <label for="msg">Messaggio cliente</label>
-      <textarea id="msg" placeholder="Incolla qui il messaggio WhatsApp..."></textarea>
-      <div class="btns"><button id="generate" class="btn primary">Genera composizione</button><button id="example" class="btn light">Carica esempio</button><button id="clear" class="btn light">Pulisci</button></div>
-      <div id="error" class="error hidden"></div><div id="ok" class="ok hidden"></div>
-    </section>
-    <section class="card">
-      <div id="empty" style="text-align:center;padding:55px 10px;color:var(--muted)">⚖️<br><b>Nessuna composizione generata</b></div>
-      <div id="result" class="hidden">
-        <div class="result-head"><div><span id="animal" class="badge"></span><h2 id="mix"></h2><div id="goal" style="color:var(--muted)"></div></div><div><small style="color:var(--muted)">Totale</small><div id="total" class="total"></div></div></div>
-        <table><thead><tr><th>Ingrediente</th><th>%</th><th>Quantità</th></tr></thead><tbody id="ingredients"></tbody></table>
-        <div id="procedure" class="info"></div>
-        <div class="no-print" style="margin-top:14px"><label for="kg">Ricalcola quantità totale (kg)</label><input id="kg" type="number" min="1" step=".5"></div>
-        <div class="btns no-print"><button id="save" class="btn primary">Salva formulazione</button><button id="toQuote" class="btn primary">Passa al preventivo</button><button id="print" class="btn light">Stampa</button><button id="copy" class="btn light">Copia</button></div>
-      </div>
-    </section>
-  </div>
-  <section class="card history no-print">
-    <div class="history-head"><h2>Formulazioni salvate</h2><small id="historyCount" style="color:var(--muted)"></small></div>
-    <div id="history"></div>
-  </section>
+<body><main class="wrap">
+<div class="head"><h1>Formulatore mix e produzione</h1><p>Genera, salva e trasforma una formulazione in un preventivo completo.</p></div>
+<div class="grid"><section class="card"><label>Messaggio cliente</label><textarea id="msg" placeholder="Incolla il messaggio del configuratore..."></textarea><div class="btns"><button id="generate" class="btn primary">Genera composizione</button><button id="example" class="btn light">Carica esempio</button><button id="clear" class="btn light">Pulisci</button></div><div id="error" class="error hidden"></div><div id="ok" class="ok hidden"></div></section>
+<section class="card"><div id="empty" style="text-align:center;padding:55px 10px;color:var(--muted)">⚖️<br><b>Nessuna composizione generata</b></div><div id="result" class="hidden"><div class="result-head"><div><span id="animal" class="badge"></span><h2 id="mix"></h2><div id="goal" style="color:var(--muted)"></div></div><div><small>Totale</small><div id="total" class="total"></div></div></div><table><thead><tr><th>Ingrediente</th><th>%</th><th>Quantità</th></tr></thead><tbody id="ingredients"></tbody></table><div id="procedure" class="info"></div><label style="margin-top:14px">Ricalcola quantità totale (kg)<input id="kg" type="number" min="1" step=".5"></label><div class="btns"><button id="save" class="btn primary">Salva formulazione</button><button id="toQuote" class="btn primary">Crea preventivo</button><button id="print" class="btn light">Stampa</button><button id="copy" class="btn light">Copia</button></div></div></section></div>
+<section class="card history"><h2 style="color:var(--g);margin-top:0">Formulazioni salvate</h2><div id="history"></div></section>
 </main>
 <script>
 const RECIPES=[
@@ -56,32 +23,16 @@ const RECIPES=[
 {name:'Mix Polli Finissaggio',animal:'Polli da carne',goal:'Fase finale di ingrasso',i:[['Mais tritato',45],['Frumento tritato',22],['Orzo tritato',13],['Mangime completo finissaggio',20]]},
 {name:'Mix Polli Quotidiano',animal:'Polli da carne',goal:'Gestione quotidiana non intensiva',i:[['Mais tritato',35],['Frumento tritato',22],['Orzo tritato',18],['Mangime completo polli',25]]}
 ];
-let current=null;
-const $=s=>document.querySelector(s);
-const fmt=n=>Number(n).toLocaleString('it-IT',{maximumFractionDigits:2})+' kg';
-const storageKey='at_productions';
-function showOk(text){$('#ok').textContent=text;$('#ok').classList.remove('hidden');$('#error').classList.add('hidden')}
-function showError(text){$('#error').textContent=text;$('#error').classList.remove('hidden');$('#ok').classList.add('hidden')}
-function pick(t,l){return(t.match(new RegExp(l+'\\s*:\\s*(.+)','i'))||[])[1]?.trim()||''}
-function parse(){const t=$('#msg').value,m=pick(t,'Mix consigliato'),q=pick(t,'Quantità richiesta indicativa')||pick(t,'Quantità richiesta'),kg=parseFloat((q.replace(',','.').match(/\d+(?:\.\d+)?/)||[])[0]||0),r=RECIPES.find(x=>x.name.toLowerCase()===m.toLowerCase());if(!m||!kg)throw Error('Non trovo il mix o la quantità nel messaggio.');if(!r)throw Error('Ricetta non presente: '+m);return{r,kg,animal:pick(t,'Animale')||r.animal,goal:pick(t,'Obiettivo')||r.goal}}
-function calc(d,kg=d.kg){return{...d,kg,rows:d.r.i.map(x=>({name:x[0],pct:x[1],kg:kg*x[1]/100}))}}
-function render(){const p=current;$('#empty').classList.add('hidden');$('#result').classList.remove('hidden');$('#animal').textContent=p.animal;$('#mix').textContent=p.r.name;$('#goal').textContent=p.goal;$('#total').textContent=fmt(p.kg);$('#kg').value=p.kg;$('#ingredients').innerHTML=p.rows.map(x=>`<tr><td>${x.name}</td><td>${x.pct}%</td><td><b>${fmt(x.kg)}</b></td></tr>`).join('');$('#procedure').innerHTML='<b>Procedura</b><br>'+p.rows.map((x,n)=>`${n+1}. Pesa ${fmt(x.kg)} di ${x.name}.`).join('<br>')+'<br>'+(p.rows.length+1)+'. Miscela uniformemente e verifica il peso finale.'}
-function serialize(p){return{id:String(Date.now()),date:new Date().toISOString(),mix:p.r.name,animal:p.animal,goal:p.goal,kg:p.kg,rows:p.rows.map(x=>({name:x.name,pct:x.pct,kg:x.kg}))}}
-function restore(x){const r=RECIPES.find(item=>item.name===x.mix);if(!r)throw Error('La ricetta salvata non è più disponibile.');current=calc({r,kg:Number(x.kg),animal:x.animal||r.animal,goal:x.goal||r.goal},Number(x.kg));render();window.scrollTo({top:0,behavior:'smooth'});showOk('Formulazione aperta: '+x.mix)}
-function quoteMessage(p){return ['📄 FORMULAZIONE PER PREVENTIVO — AgroTritura','','📦 Richiesta','- Prodotto: Mix personalizzato',`- Quantità: ${p.kg} kg`,`- Nome formulazione: ${p.r.name}`,`- Animale: ${p.animal}`,`- Obiettivo: ${p.goal}`,'','🧩 Composizione',...p.rows.map(x=>`- ${x.name}: ${x.pct}% (${x.kg.toFixed(2).replace('.',',')} kg)`),'','💶 Dati da completare','- Budget massimo:','- Trasporto stimato A/R:','','📝 Note',`Formulazione preparata nel Formulatore Mix: ${p.r.name}`].join('\n')}
-function goToQuote(p){localStorage.setItem('at_quote_import',quoteMessage(p));window.location.href='preventivi-smart.html?source=formulatore'}
-$('#generate').onclick=()=>{try{current=calc(parse());render();showOk('Composizione generata correttamente.')}catch(e){showError(e.message)}};
-$('#example').onclick=()=>{$('#msg').value='Animale: Galline ovaiole\nObiettivo: Alimentazione quotidiana equilibrata\nNumero animali: 30\nMix consigliato: Mix Ovaiole Quotidiano\nConsumo mensile stimato: 108 kg\nQuantità richiesta indicativa: 125 kg';showOk('Esempio caricato.')};
-$('#clear').onclick=()=>location.reload();
-$('#kg').oninput=()=>{const v=parseFloat($('#kg').value);if(v>0&&current){current=calc(current,v);render()}};
-$('#print').onclick=()=>print();
-$('#copy').onclick=async()=>{if(!current)return;const text=[current.r.name,'Totale: '+fmt(current.kg),...current.rows.map(x=>x.name+': '+fmt(x.kg)+' ('+x.pct+'%)')].join('\n');try{await navigator.clipboard.writeText(text);showOk('Formulazione copiata.')}catch{prompt('Copia:',text)}};
-$('#toQuote').onclick=()=>{if(current)goToQuote(current)};
-function loadHistory(){const a=JSON.parse(localStorage.getItem(storageKey)||'[]');$('#historyCount').textContent=a.length+' salvate';$('#history').innerHTML=a.length?a.map(x=>`<div class="row"><div>${new Date(x.date).toLocaleDateString('it-IT')}</div><div><b>${x.mix}</b><small style="display:block;color:var(--muted)">${x.animal||''}</small></div><div>${fmt(x.kg)}</div><div class="row-actions"><button class="btn light" onclick="openSaved('${x.id}')">Apri</button><button class="btn primary" onclick="quoteSaved('${x.id}')">Preventivo</button><button class="btn danger" onclick="delSaved('${x.id}')">Elimina</button></div></div>`).join(''):'<div class="empty-history">Nessuna formulazione salvata.</div>'}
-$('#save').onclick=()=>{if(!current)return;const a=JSON.parse(localStorage.getItem(storageKey)||'[]');a.unshift(serialize(current));localStorage.setItem(storageKey,JSON.stringify(a));loadHistory();showOk('Formulazione salvata nello storico.')};
-window.openSaved=id=>{try{const x=JSON.parse(localStorage.getItem(storageKey)||'[]').find(v=>v.id===id);if(x)restore(x)}catch(e){showError(e.message)}};
-window.quoteSaved=id=>{const x=JSON.parse(localStorage.getItem(storageKey)||'[]').find(v=>v.id===id);if(!x)return;const r=RECIPES.find(item=>item.name===x.mix);if(!r)return showError('Ricetta non disponibile.');goToQuote(calc({r,kg:Number(x.kg),animal:x.animal||r.animal,goal:x.goal||r.goal},Number(x.kg)))};
-window.delSaved=id=>{const a=JSON.parse(localStorage.getItem(storageKey)||'[]').filter(x=>x.id!==id);localStorage.setItem(storageKey,JSON.stringify(a));loadHistory()};
-loadHistory();
-</script>
-</body></html>
+const PRICES={'Mais tritato':.75,'Frumento tritato':.78,'Orzo tritato':.76,'Mangime ovaiole completo':.95,'Mangime completo più proteico':1.00,'Mangime completo crescita':.95,'Mangime completo finissaggio':.95,'Mangime completo polli':.95,'Fonte di calcio / grit':.50};
+let current=null;const $=s=>document.querySelector(s);const fmt=n=>Number(n).toLocaleString('it-IT',{maximumFractionDigits:2})+' kg';const money=n=>Number(n).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+function ok(t){$('#ok').textContent=t;$('#ok').classList.remove('hidden');$('#error').classList.add('hidden')}function err(t){$('#error').textContent=t;$('#error').classList.remove('hidden');$('#ok').classList.add('hidden')}function pick(t,l){return(t.match(new RegExp(l+'\\s*:\\s*(.+)','i'))||[])[1]?.trim()||''}
+function parse(){const t=$('#msg').value,m=pick(t,'Mix consigliato'),q=pick(t,'Quantità richiesta indicativa')||pick(t,'Quantità richiesta'),kg=parseFloat((q.replace(',','.').match(/\d+(?:\.\d+)?/)||[])[0]||0),r=RECIPES.find(x=>x.name.toLowerCase()===m.toLowerCase());if(!m||!kg)throw Error('Non trovo mix o quantità.');if(!r)throw Error('Ricetta non presente: '+m);return{r,kg,animal:pick(t,'Animale')||r.animal,goal:pick(t,'Obiettivo')||r.goal}}
+function calc(d,kg=d.kg){return{...d,kg,rows:d.r.i.map(x=>({name:x[0],pct:x[1],kg:kg*x[1]/100,price:PRICES[x[0]]||.84}))}}
+function render(){const p=current;$('#empty').classList.add('hidden');$('#result').classList.remove('hidden');$('#animal').textContent=p.animal;$('#mix').textContent=p.r.name;$('#goal').textContent=p.goal;$('#total').textContent=fmt(p.kg);$('#kg').value=p.kg;$('#ingredients').innerHTML=p.rows.map(x=>`<tr><td>${x.name}</td><td>${x.pct}%</td><td><b>${fmt(x.kg)}</b></td></tr>`).join('');$('#procedure').innerHTML='<b>Procedura</b><br>'+p.rows.map((x,n)=>`${n+1}. Pesa ${fmt(x.kg)} di ${x.name}.`).join('<br>')+'<br>'+(p.rows.length+1)+'. Miscela uniformemente.'}
+function restore(x){const r=RECIPES.find(v=>v.name===x.mix);if(!r)throw Error('Ricetta non disponibile.');current=calc({r,kg:Number(x.kg),animal:x.animal||r.animal,goal:x.goal||r.goal},Number(x.kg));render();scrollTo({top:0,behavior:'smooth'});ok('Formulazione aperta.')}
+function quoteMessage(p){const lines=p.rows.map(x=>{const c=x.kg*x.price;return`- ${x.name}: ${x.kg.toFixed(2).replace('.',',')} kg × ${x.price.toFixed(2).replace('.',',')} €/kg = ${c.toFixed(2).replace('.',',')} € (${x.pct}%)`});const total=p.rows.reduce((s,x)=>s+x.kg*x.price,0);return ['📄 DATI PER PREVENTIVO — AgroTritura','','👤 Cliente','- Nome:','- Telefono:','- Comune/Indirizzo:','','📦 Formulazione',`- Nome mix: ${p.r.name}`,`- Animale: ${p.animal}`,`- Obiettivo: ${p.goal}`,`- Quantità totale: ${p.kg} kg`,'','🧩 Ingredienti',...lines,'',`💰 Totale prodotti: ${money(total)}`,'','🚚 Trasporto','- Trasporto stimato A/R: 0,00 €','','💶 Sconto','- Sconto manuale: 0%','','📝 Note','Preventivo generato dal Formulatore Mix AgroTritura'].join('\n')}
+function goQuote(p){localStorage.setItem('at_quote_import',quoteMessage(p));location.href='preventivi-smart.html?source=formulatore&v='+Date.now()}
+$('#generate').onclick=()=>{try{current=calc(parse());render();ok('Composizione generata.')}catch(e){err(e.message)}};$('#example').onclick=()=>{$('#msg').value='Animale: Galline ovaiole\nObiettivo: Alimentazione quotidiana equilibrata\nMix consigliato: Mix Ovaiole Quotidiano\nQuantità richiesta indicativa: 50 kg'};$('#clear').onclick=()=>location.reload();$('#kg').oninput=()=>{const v=parseFloat($('#kg').value);if(v>0&&current){current=calc(current,v);render()}};$('#print').onclick=()=>print();$('#copy').onclick=async()=>{if(!current)return;const t=quoteMessage(current);try{await navigator.clipboard.writeText(t);ok('Messaggio preventivo copiato.')}catch{prompt('Copia:',t)}};$('#toQuote').onclick=()=>current&&goQuote(current);
+function load(){const a=JSON.parse(localStorage.getItem('at_productions')||'[]');$('#history').innerHTML=a.length?a.map(x=>`<div class="row"><div>${new Date(x.date).toLocaleDateString('it-IT')}</div><div><b>${x.mix}</b></div><div>${fmt(x.kg)}</div><div class="row-actions"><button class="btn light" onclick="openSaved('${x.id}')">Apri</button><button class="btn primary" onclick="quoteSaved('${x.id}')">Preventivo</button><button class="btn danger" onclick="delSaved('${x.id}')">Elimina</button></div></div>`).join(''):'Nessuna formulazione salvata.'}
+$('#save').onclick=()=>{if(!current)return;const a=JSON.parse(localStorage.getItem('at_productions')||'[]');a.unshift({id:String(Date.now()),date:new Date().toISOString(),mix:current.r.name,animal:current.animal,goal:current.goal,kg:current.kg});localStorage.setItem('at_productions',JSON.stringify(a));load();ok('Formulazione salvata.')};window.openSaved=id=>{const x=JSON.parse(localStorage.getItem('at_productions')||'[]').find(v=>v.id===id);if(x)restore(x)};window.quoteSaved=id=>{const x=JSON.parse(localStorage.getItem('at_productions')||'[]').find(v=>v.id===id);if(!x)return;const r=RECIPES.find(v=>v.name===x.mix);if(r)goQuote(calc({r,kg:Number(x.kg),animal:x.animal||r.animal,goal:x.goal||r.goal},Number(x.kg)))};window.delSaved=id=>{localStorage.setItem('at_productions',JSON.stringify(JSON.parse(localStorage.getItem('at_productions')||'[]').filter(x=>x.id!==id)));load()};load();
+</script></body></html>
