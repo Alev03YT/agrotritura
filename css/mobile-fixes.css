@@ -1,13 +1,13 @@
-/* Correzioni mirate per leggibilità e compattezza mobile */
+/* AgroTritura — homepage mobile compatta con slider e configuratore progressivo */
 @media (max-width: 620px) {
-  #servizi .cards.three { gap: 9px; }
-  #servizi .card > div { padding: 14px 11px 15px; }
-  #servizi .card .icon { font-size: 1.3rem; }
-  #servizi .card h3 { font-size: 1rem; line-height: 1.22; margin: 6px 0 7px; }
-  #servizi .card p { font-size: .82rem; line-height: 1.42; }
+  #servizi .cards.three { gap:9px; }
+  #servizi .card > div { padding:14px 11px 15px; }
+  #servizi .card .icon { font-size:1.3rem; }
+  #servizi .card h3 { font-size:1rem; line-height:1.22; margin:6px 0 7px; }
+  #servizi .card p { font-size:.82rem; line-height:1.42; }
 
-  /* Slider generico: una card leggibile alla volta, swipe naturale */
-  .at-mobile-slider {
+  /* PRODOTTI — slider orizzontale, una card completa alla volta */
+  #prodotti .product-grid {
     display:flex!important;
     grid-template-columns:none!important;
     gap:12px!important;
@@ -17,85 +17,156 @@
     scroll-behavior:smooth;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
-    padding:2px 18px 12px 2px!important;
+    padding:2px 18px 14px 2px!important;
     margin-right:-18px;
   }
-  .at-mobile-slider::-webkit-scrollbar { display:none; }
-  .at-mobile-slider > article,
-  .at-mobile-slider > .at-advice-card {
-    flex:0 0 calc(86vw - 34px)!important;
-    width:calc(86vw - 34px)!important;
-    max-width:360px;
+  #prodotti .product-grid::-webkit-scrollbar { display:none; }
+  #prodotti .product-grid article {
+    flex:0 0 min(82vw,350px)!important;
+    width:min(82vw,350px)!important;
+    max-width:350px!important;
+    min-height:205px!important;
     scroll-snap-align:start;
     scroll-snap-stop:always;
-  }
-  .at-slider-dots { display:flex; justify-content:center; gap:6px; margin:2px 0 4px; }
-  .at-slider-dots span { width:7px; height:7px; border-radius:999px; background:#cfdbd2; transition:.2s ease; }
-  .at-slider-dots span.active { width:22px; background:#1f6542; }
-
-  /* Prodotti: card intera, niente testi o pulsanti tagliati */
-  #prodotti .product-grid article {
     display:grid!important;
-    grid-template-columns:88px minmax(0,1fr)!important;
-    grid-template-rows:auto auto auto;
+    grid-template-columns:82px minmax(0,1fr)!important;
+    grid-template-rows:auto auto 1fr auto!important;
     align-items:start!important;
-    min-height:210px!important;
-    padding:16px!important;
-    overflow:hidden;
+    padding:15px!important;
+    overflow:hidden!important;
   }
   #prodotti .product-grid img {
+    grid-column:1;
     grid-row:1 / span 2;
-    width:78px!important;
-    height:78px!important;
-    border-radius:16px;
+    width:72px!important;
+    height:72px!important;
+    border-radius:15px;
     object-fit:cover;
   }
   #prodotti .product-grid article > div:first-child {
+    grid-column:1;
     grid-row:1 / span 2;
-    width:78px;
-    min-height:78px;
-    padding:10px 0!important;
+    width:72px;
+    height:72px;
+    min-height:72px;
+    padding:0!important;
     display:grid;
     place-items:center;
+    font-size:2.7rem!important;
   }
-  #prodotti .product-grid h3 { font-size:1.08rem!important; line-height:1.22; margin:3px 0 6px!important; overflow-wrap:anywhere; }
-  #prodotti .product-grid p { display:block!important; overflow:visible!important; -webkit-line-clamp:unset!important; font-size:.88rem!important; line-height:1.4!important; margin:0!important; }
-  #prodotti .at-product-cta { grid-column:1 / -1; width:100%; justify-content:center; align-items:center; text-align:center; margin-top:14px!important; min-height:44px; }
+  #prodotti .product-grid h3 {
+    grid-column:2;
+    font-size:1.08rem!important;
+    line-height:1.2!important;
+    margin:2px 0 6px!important;
+    overflow-wrap:anywhere;
+  }
+  #prodotti .product-grid p {
+    grid-column:2;
+    display:block!important;
+    overflow:visible!important;
+    -webkit-line-clamp:unset!important;
+    font-size:.87rem!important;
+    line-height:1.38!important;
+    margin:0!important;
+  }
+  #prodotti .at-product-cta {
+    grid-column:1 / -1;
+    width:100%;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    min-height:44px;
+    margin-top:14px!important;
+    white-space:nowrap;
+  }
+  #prodotti .product-grid::after { content:''; flex:0 0 6px; }
 
-  /* Configuratore: i 3 step restano visibili, il modulo diventa un wizard a scorrimento */
-  #configuratore .ag-config { padding:14px!important; overflow:hidden; }
-  #configuratore .ag-config-steps { grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:6px!important; margin-bottom:12px!important; }
-  #configuratore .ag-step { display:block!important; padding:9px 6px!important; text-align:center; min-height:92px; }
+  /* TROVA IL MIX — i tre step restano, sotto si passa da animale a obiettivo con slide */
+  #configuratore .ag-config { padding:13px!important; overflow:hidden; }
+  #configuratore .ag-config-steps {
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+    margin-bottom:12px!important;
+  }
+  #configuratore .ag-step {
+    display:block!important;
+    padding:9px 5px!important;
+    text-align:center;
+    min-height:88px;
+  }
   #configuratore .ag-step-num { margin:0 auto 7px; width:30px; height:30px; flex-basis:30px; }
-  #configuratore .ag-step b { font-size:.76rem; line-height:1.15; }
-  #configuratore .ag-step small { font-size:.66rem; line-height:1.15; margin-top:4px; }
-  #configuratore .ag-config-grid { grid-template-columns:1fr!important; gap:10px!important; }
-  #configuratore .ag-controls { padding:0!important; overflow:hidden; border-radius:18px; }
-  .at-mix-wizard { width:100%; overflow:hidden; }
-  .at-mix-wizard-track { width:200%; display:flex; transform:translateX(0); transition:transform .38s cubic-bezier(.22,.8,.25,1); }
-  .at-mix-slide { flex:0 0 50%; width:50%; padding:16px; min-width:0; }
-  .at-mix-slide-title { display:flex; align-items:center; gap:10px; margin-bottom:14px; color:#173f2a; }
-  .at-mix-slide-title > span { width:32px; height:32px; flex:0 0 32px; display:grid; place-items:center; border-radius:50%; background:#173f2a; color:#fff; font-weight:900; }
-  .at-mix-slide-title b,.at-mix-slide-title small { display:block; }
-  .at-mix-slide-title b { font-size:1rem; }
-  .at-mix-slide-title small { margin-top:2px; color:#6b776f; font-size:.76rem; }
-  #configuratore .at-mix-slide .ag-field { margin-bottom:12px; }
-  #configuratore .at-mix-slide .ag-choice-grid { grid-template-columns:1fr 1fr!important; gap:8px; }
-  #configuratore .at-mix-slide .ag-choice { text-align:center!important; padding:12px 8px!important; font-size:.9rem; }
-  #configuratore .at-mix-slide .ag-info-box { margin:10px 0!important; padding:12px!important; font-size:.78rem; }
-  .at-mix-back { width:100%; border:1px solid #d5e2d8; background:#eef5f0; color:#173f2a; border-radius:12px; padding:11px; font-weight:850; margin-top:4px; }
+  #configuratore .ag-step b { font-size:.74rem; line-height:1.13; }
+  #configuratore .ag-step small { font-size:.63rem; line-height:1.12; margin-top:4px; }
+  #configuratore .ag-config-grid { grid-template-columns:1fr!important; gap:10px!important; overflow:hidden; }
+  #configuratore .ag-controls {
+    width:200%!important;
+    max-width:none!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-rows:auto auto auto!important;
+    column-gap:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    border-radius:18px;
+    transition:transform .38s cubic-bezier(.22,.8,.25,1);
+    transform:translateX(0);
+  }
+  #configuratore .ag-controls:has(#agAnimalChoices .ag-choice.active) { transform:translateX(-50%); }
+  #configuratore .ag-controls > .ag-field:nth-child(1) { grid-column:1; grid-row:1 / span 3; margin:0!important; padding:18px!important; align-self:start; }
+  #configuratore .ag-controls > .ag-field:nth-child(2) { grid-column:2; grid-row:1; margin:0!important; padding:18px 18px 7px!important; }
+  #configuratore .ag-controls > .ag-field:nth-child(3) { grid-column:2; grid-row:2; margin:0!important; padding:7px 18px!important; }
+  #configuratore .ag-controls > .ag-info-box { grid-column:2; grid-row:3; margin:7px 18px 18px!important; padding:12px!important; align-self:start; }
+  #configuratore .ag-choice-grid { grid-template-columns:1fr 1fr!important; gap:8px!important; }
+  #configuratore .ag-choice { text-align:center!important; padding:13px 7px!important; font-size:.9rem!important; min-height:72px; }
+  #configuratore .ag-field > span { font-size:1rem; margin-bottom:10px; }
+  #configuratore .ag-select,#configuratore .ag-number { padding:12px!important; }
+  #configuratore .ag-info-box h4 { font-size:.9rem; }
+  #configuratore .ag-info-box p { font-size:.76rem; line-height:1.4; }
   #configuratore .ag-result { padding:16px!important; }
 
-  /* Consigli finali: una guida alla volta */
-  .at-advice-grid.at-mobile-slider > .at-advice-card { min-height:235px; padding:20px!important; }
+  /* CONSIGLI — slider orizzontale, niente lunga colonna */
+  .at-advice-grid {
+    display:flex!important;
+    grid-template-columns:none!important;
+    gap:12px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:2px 18px 14px 2px!important;
+    margin-right:-18px;
+  }
+  .at-advice-grid::-webkit-scrollbar { display:none; }
+  .at-advice-grid > .at-advice-card {
+    flex:0 0 min(82vw,350px)!important;
+    width:min(82vw,350px)!important;
+    min-height:235px;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    padding:20px!important;
+  }
   .at-advice-card h3 { font-size:1.25rem!important; }
   .at-advice-card p { font-size:.95rem!important; line-height:1.45!important; }
+  .at-advice-grid::after { content:''; flex:0 0 6px; }
+
+  /* Piccolo suggerimento visivo per far capire che le righe scorrono */
+  #prodotti .section-head::after,.at-advice-preview .section-head::after {
+    content:'Scorri lateralmente →';
+    display:inline-block;
+    margin-top:8px;
+    color:#2d7650;
+    font-size:.76rem;
+    font-weight:850;
+  }
 }
 
-@media (max-width: 390px) {
+@media (max-width:390px) {
   #servizi .card h3 { font-size:.94rem; }
   #servizi .card p { font-size:.78rem; }
-  .at-mobile-slider > article,.at-mobile-slider > .at-advice-card { flex-basis:calc(90vw - 30px)!important; width:calc(90vw - 30px)!important; }
+  #prodotti .product-grid article,.at-advice-grid>.at-advice-card { flex-basis:86vw!important; width:86vw!important; }
   #configuratore .ag-step small { display:none; }
-  #configuratore .ag-step { min-height:72px; }
+  #configuratore .ag-step { min-height:70px; }
 }
