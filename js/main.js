@@ -1,5 +1,6 @@
 // AgroTritura — interazioni, preventivo, geolocalizzazione, prezzi e trasporto
 const mobileFixes=document.createElement('link');mobileFixes.rel='stylesheet';mobileFixes.href='css/mobile-fixes.css';document.head.appendChild(mobileFixes);
+const mixUiFixes=document.createElement('script');mixUiFixes.src='js/mix-ui-fixes.js?v=2';mixUiFixes.defer=true;document.head.appendChild(mixUiFixes);
 const PHONE='393341067510';const ORIGIN={lat:45.69063,lon:8.55019};
 const PREZZI_BASE={'Mais':.75,'Orzo':.76,'Frumento':.78,'Grana verde':.80,'Mangime ovaiole completo':.89,'Fonte di calcio / grit':.45,'Mix personalizzato':.84};
 const SCONTI=[{min:500,percentuale:6},{min:250,percentuale:4},{min:100,percentuale:2},{min:0,percentuale:0}];
