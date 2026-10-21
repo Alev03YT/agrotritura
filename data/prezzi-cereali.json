@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T16:37:29.961280+02:00",
+  "updatedAt": "2026-10-21T20:52:40.472273+02:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
@@ -16,7 +16,7 @@
       "name": "Orzo intero",
       "unit": "€/t",
       "currentPrice": 246.0,
-      "previousPrice": 243.0,
+      "previousPrice": 246.0,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     },
@@ -25,7 +25,7 @@
       "name": "Avena intera",
       "unit": "€/t",
       "currentPrice": 276.5,
-      "previousPrice": 274.5,
+      "previousPrice": 276.5,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     },
@@ -34,7 +34,7 @@
       "name": "Frumento intero",
       "unit": "€/t",
       "currentPrice": 264.5,
-      "previousPrice": 262.5,
+      "previousPrice": 264.5,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
     },
