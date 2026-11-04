@@ -406,6 +406,9 @@
         let json;
         try{ json = JSON.parse(text); }catch{ throw new Error("Risposta non JSON dal server: " + text.slice(0,200)); }
         if(!json.ok) throw new Error(json.error || "Errore");
+        if (json.hello && Array.isArray(json.actions) && !json.order && !json.data?.order) {
+          throw new Error("Il servizio ha restituito soltanto il menu delle API: salvataggio dell’ordine NON confermato. Controlla l’azione e il collegamento Apps Script.");
+        }
 
         // La risposta Apps Script può confermare il salvataggio senza restituire
         // un oggetto "order". In tal caso usiamo i campi inviati per il riepilogo.
