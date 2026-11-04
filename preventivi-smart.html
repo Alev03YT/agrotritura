@@ -51,6 +51,6 @@ function render(goodsBudget,baseAvg,avg,kg,transport,minKg,composition){const go
 $('#analyze').onclick=()=>{try{parse()}catch(e){err(e.message)}};$('#calculate').onclick=()=>{try{calculate()}catch(e){err(e.message)}};$('#clear').onclick=()=>location.reload();$('#example').onclick=()=>{$('#msg').value='📄 DATI PER PREVENTIVO — AgroTritura\n\n👤 Cliente\n- Nome: Alessandro Valerio\n- Telefono: 3341067510\n- Comune/Indirizzo: Via Giovan Battista Gambaro 10b Galliate\n\n📦 Richiesta\n- Prodotto: Mix personalizzato\n- Quantità: 100 kg minimi desiderati\n\n💶 Budget disponibile\n- Budget massimo: 150 €\n- Il budget comprende: prodotti e consegna\n\n🚚 Trasporto / Distanza\n- Trasporto stimato A/R: 45,00 €\n\n📝 Note\nMais, Orzo, Frumento, Mangime ovaiole completo, Fonte di calcio / grit';ok('Esempio caricato. Premi “Analizza richiesta”.')};$('#copy').onclick=async()=>{const t=$('#copy').dataset.text||'';if(!t)return err('Calcola prima il preventivo.');try{await navigator.clipboard.writeText(t);ok('Risposta copiata.')}catch{prompt('Copia:',t)}};$('#product').onchange=()=>{if(!importedFixed)setupMix('')};const imported=localStorage.getItem('at_quote_import');if(imported){$('#msg').value=imported;localStorage.removeItem('at_quote_import');setTimeout(()=>{try{parse()}catch(e){err(e.message)}},50)}
 })();
 </script>
-<script src="js/preventivi-pdf.js?v=2"></script>
+<script src="js/preventivi-pdf.js?v=3"></script>
 <script src="js/importa-richiesta-whatsapp.js?v=2"></script>
 </body></html>
