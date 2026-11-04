@@ -118,7 +118,7 @@
 
     function renderStep5(order){
       const st = normalizeStatus(order.status);
-      const updated = order.updated_at || "";
+      const updated = order.updated_at || "Data non disponibile";
 
       const trackingBtn = order.tracking_url
         ? `<div class="actions">
@@ -143,7 +143,7 @@
     }
 
     function renderStep6(order){
-      const updated = order.updated_at || "";
+      const updated = order.updated_at || "Data non disponibile";
 	  const noteText = (order.note !== undefined && order.note !== null && String(order.note).trim() !== "")
       ? String(order.note).trim()
       : "Grazie! Se hai bisogno di un nuovo ordine, scrivici su WhatsApp.";
@@ -222,7 +222,27 @@
         const json = await jsonpRequest(url, cb);
         if(!json || !json.ok) throw new Error((json && json.error) ? json.error : "Ordine non trovato");
 
-        const order = json.order || {};
+        // Compatibilità con le diverse strutture JSON restituite da Apps Script.
+        // Un "ok" senza dati di ordine NON significa che lo stato sia "Ricevuto".
+        const candidates = [
+          json.order, json.data?.order, json.result?.order,
+          json.data, json.result, json.record, json
+        ];
+        const record = candidates.find(item =>
+          item && typeof item === "object" && !Array.isArray(item) &&
+          String(item.status ?? item.stato ?? item.order_status ?? "").trim()
+        );
+        if (!record) {
+          throw new Error("Il servizio ha risposto, ma non ha fornito lo stato dell’ordine. Verifica il collegamento con Google Apps Script.");
+        }
+        const order = {
+          ...record,
+          order_id: String(record.order_id || record.orderId || record.id || id).trim(),
+          status: String(record.status ?? record.stato ?? record.order_status).trim(),
+          updated_at: record.updated_at || record.updatedAt || record.last_updated || record.timestamp || "",
+          tracking_url: record.tracking_url || record.trackingUrl || "",
+          note: record.note || record.notes || ""
+        };
         const st = normalizeStatus(order.status);
 
         if(st === "Consegnato"){
