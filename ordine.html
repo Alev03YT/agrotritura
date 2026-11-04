@@ -234,7 +234,7 @@
       }
 
       const cb = "__jsonp_cb_" + Math.random().toString(36).slice(2);
-      const url = `${API_BASE}?order_id=${encodeURIComponent(id)}&callback=${encodeURIComponent(cb)}&t=${Date.now()}`;
+      const url = `${API_BASE}?action=status&order_id=${encodeURIComponent(id)}&callback=${encodeURIComponent(cb)}&t=${Date.now()}`;
 
       let diagnostic = "";
       try{
