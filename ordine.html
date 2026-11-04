@@ -217,6 +217,35 @@
       }).join("\n");
     }
 
+    // Legge esclusivamente il menu pubblico di azioni del servizio.
+    // Non esegue nessuna operazione di scrittura e non rivela dati del cliente.
+    function supportedActions(response) {
+      if (!Array.isArray(response?.actions)) return [];
+      return response.actions.map(item => {
+        if (typeof item === "string") return item.trim();
+        if (!item || typeof item !== "object") return "";
+        return String(item.action || item.name || item.id || item.key || "").trim();
+      }).filter(name => /^[a-z][a-z0-9_.:-]{0,48}$/i.test(name));
+    }
+
+    function chooseLookup(actions) {
+      // Non indovinare comandi che potrebbero scrivere/cancellare ordini.
+      const safe = actions.filter(name =>
+        !/(create|update|delete|remove|save|write|insert|set|cancel|reset|post|put)/i.test(name)
+      );
+      const patterns = [
+        /^(get|find|lookup|track|read)[_.:-]?(order|ordine)([_.:-]?(status|stato))?$/i,
+        /^(order|ordine)[_.:-]?(get|find|lookup|track|read|status|stato)$/i,
+        /^(getorderstatus|getorder|orderstatus|trackorder|lookuporder|findorder|readorder)$/i,
+        /^(get|find|lookup|track|read)$/i
+      ];
+      for (const pattern of patterns) {
+        const match = safe.find(name => pattern.test(name));
+        if (match) return match;
+      }
+      return "";
+    }
+
     async function fetchOrder(){
       const id = document.getElementById("orderId").value.trim();
       const out = document.getElementById("out");
@@ -233,12 +262,30 @@
         return;
       }
 
-      const cb = "__jsonp_cb_" + Math.random().toString(36).slice(2);
-      const url = `${API_BASE}?action=status&order_id=${encodeURIComponent(id)}&callback=${encodeURIComponent(cb)}&t=${Date.now()}`;
-
       let diagnostic = "";
       try{
+        // L'azione "status" non è supportata dal servizio corrente.
+        // Ricaviamo un'eventuale azione di sola lettura dal menu API.
+        const helpCb = "__jsonp_help_" + Math.random().toString(36).slice(2);
+        const helpUrl = API_BASE + "?callback=" + encodeURIComponent(helpCb) + "&t=" + Date.now();
+        const help = await jsonpRequest(helpUrl, helpCb);
+        const actions = supportedActions(help);
+        const readAction = chooseLookup(actions);
+        if (!readAction) {
+          diagnostic = actions.length
+            ? "Azioni disponibili: " + actions.join(", ")
+            : "Il menu API non contiene nomi di azioni riconoscibili. " + responseShape(help);
+          throw new Error("Il servizio non espone una funzione riconoscibile per cercare gli ordini.");
+        }
+        const cb = "__jsonp_cb_" + Math.random().toString(36).slice(2);
+        const url = API_BASE + "?action=" + encodeURIComponent(readAction) +
+          "&order_id=" + encodeURIComponent(id) +
+          "&callback=" + encodeURIComponent(cb) + "&t=" + Date.now();
         const json = await jsonpRequest(url, cb);
+        if (json?.actions && !json?.order) {
+          diagnostic = "Azione tentata: " + readAction +
+            ". Azioni disponibili: " + actions.join(", ");
+        }
         if(!json || !json.ok) throw new Error((json && json.error) ? json.error : "Ordine non trovato");
 
         // Compatibilità con le diverse strutture JSON restituite da Apps Script.
@@ -290,7 +337,7 @@
     out6.innerHTML = renderStep6(order);
     }
       }catch(e){
-        out.innerHTML = `<p class="err">❌ ${esc(e.message)}</p>${diagnostic?`<div style="margin-top:12px;padding:12px;background:#f1f5f2;border-radius:12px"><b>Diagnostica risposta (solo nomi dei campi)</b><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.5">${esc(diagnostic)}</pre><small>Invia uno screenshot di questo riquadro: non contiene i dati personali dell’ordine.</small></div>`:""}`;
+        out.innerHTML = `<p class="err">❌ ${esc(e.message)}</p>${diagnostic?`<div style="margin-top:12px;padding:12px;background:#f1f5f2;border-radius:12px"><b>Diagnostica servizio (solo nomi delle azioni)</b><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.5">${esc(diagnostic)}</pre><small>Nessun dato personale dell’ordine viene mostrato.</small></div>`:""}`;
       }
     }
 
