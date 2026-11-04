@@ -199,6 +199,24 @@
       });
     }
 
+
+    // Diagnostica non invasiva: visualizza SOLO i nomi e i tipi dei campi
+    // restituiti da Apps Script. Nessun dato personale o token viene mostrato.
+    function responseShape(data, depth=0){
+      if(data===null) return "null";
+      if(Array.isArray(data)) return "lista ("+data.length+" elementi)";
+      if(typeof data!=="object") return typeof data;
+      const keys=Object.keys(data).slice(0,15);
+      if(!keys.length)return "oggetto vuoto";
+      return keys.map(k=>{
+        const value=data[k];
+        const type=(value && typeof value==="object" && depth<2)
+          ? responseShape(value,depth+1)
+          : (Array.isArray(value)?"lista ("+value.length+" elementi)":value===null?"null":typeof value);
+        return k+": "+type;
+      }).join("\n");
+    }
+
     async function fetchOrder(){
       const id = document.getElementById("orderId").value.trim();
       const out = document.getElementById("out");
@@ -218,6 +236,7 @@
       const cb = "__jsonp_cb_" + Math.random().toString(36).slice(2);
       const url = `${API_BASE}?order_id=${encodeURIComponent(id)}&callback=${encodeURIComponent(cb)}&t=${Date.now()}`;
 
+      let diagnostic = "";
       try{
         const json = await jsonpRequest(url, cb);
         if(!json || !json.ok) throw new Error((json && json.error) ? json.error : "Ordine non trovato");
@@ -233,7 +252,8 @@
           String(item.status ?? item.stato ?? item.order_status ?? "").trim()
         );
         if (!record) {
-          throw new Error("Il servizio ha risposto, ma non ha fornito lo stato dell’ordine. Verifica il collegamento con Google Apps Script.");
+          diagnostic = responseShape(json);
+          throw new Error("Il servizio non ha restituito lo stato dell’ordine.");
         }
         const order = {
           ...record,
@@ -270,7 +290,7 @@
     out6.innerHTML = renderStep6(order);
     }
       }catch(e){
-        out.innerHTML = `<p class="err">❌ ${esc(e.message)}</p>`;
+        out.innerHTML = `<p class="err">❌ ${esc(e.message)}</p>${diagnostic?`<div style="margin-top:12px;padding:12px;background:#f1f5f2;border-radius:12px"><b>Diagnostica risposta (solo nomi dei campi)</b><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.5">${esc(diagnostic)}</pre><small>Invia uno screenshot di questo riquadro: non contiene i dati personali dell’ordine.</small></div>`:""}`;
       }
     }
 
