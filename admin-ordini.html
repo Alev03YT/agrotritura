@@ -255,6 +255,21 @@
       <div id="msgTrack" class="statusBox">⬜ Risultato: in attesa…</div>
     </div>
 
+    <div class="panel">
+      <h2 class="sectionTitle">4) Documento per ordine consegnato</h2>
+      <p class="hint">Recupera un ordine già consegnato e prepara un promemoria stampabile A4 o una bozza di ricevuta per sola prestazione occasionale. Il prezzo va inserito perché non è salvato negli ordini.</p>
+      <div class="grid2">
+        <div>
+          <label for="docManualId">Codice ordine consegnato</label>
+          <input id="docManualId" placeholder="AT-YYYY-MM-DD-XXXXXX">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn gray" type="button" id="btnDocManual">📄 Prepara documento / PDF</button>
+      </div>
+      <div class="hint" id="docHint">Il documento viene generato solo per ordini verificati come Consegnato. Non sostituisce i documenti fiscali obbligatori.</div>
+    </div>
+
   </div>
 
   <script>
@@ -422,6 +437,18 @@
         const updatedAt = responseOrder.updated_at || json.updated_at || json.data?.updated_at;
         msgEl.className = "statusBox ok";
         msgEl.textContent = `✅ Salvato: ${action}.${updatedAt ? " Aggiornato: " + updatedAt : " Confermato dal server (data non disponibile)."}`;
+        // Il documento viene preparato soltanto dopo il salvataggio di uno stato Consegnato.
+        // Non apriamo finestre automaticamente e non inviamo dati anagrafici nell'URL.
+        if (String(savedOrder.status || "").toLowerCase().includes("consegn") && savedOrder.order_id) {
+          const link = document.createElement("a");
+          link.href = "documenti-ordini.html?order_id=" + encodeURIComponent(savedOrder.order_id);
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.className = "btn gray";
+          link.style.cssText = "display:inline-flex;margin-top:12px;font-size:16px;text-decoration:none;min-width:0";
+          link.textContent = "📄 Prepara documento di consegna / PDF";
+          msgEl.appendChild(document.createElement("div")).appendChild(link);
+        }
 // ✅ WhatsApp precompilato (1 tap invio)
 try{
   const st = String(savedOrder.status || "").trim();
@@ -438,6 +465,19 @@ try{
         return false;
       }
     }
+
+    document.getElementById("btnDocManual").addEventListener("click", ()=>{
+      if(!isUnlocked()){ showGate(true); return; }
+      const id = document.getElementById("docManualId").value.trim()
+        || document.getElementById("order_id_3").value.trim()
+        || document.getElementById("order_id_2").value.trim()
+        || document.getElementById("order_id").value.trim();
+      if(!/^[a-zA-Z0-9_-]{5,65}$/.test(id)){
+        document.getElementById("docHint").textContent = "⚠️ Inserisci un codice ordine valido.";
+        return;
+      }
+      window.open("documenti-ordini.html?order_id=" + encodeURIComponent(id), "_blank", "noopener");
+    });
 
     document.getElementById("gen").addEventListener("click", ()=>{
       if(!isUnlocked()){ showGate(true); return; }
