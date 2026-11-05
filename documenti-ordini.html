@@ -78,7 +78,7 @@ header.site,.panel,.noPrint{display:none!important}
 <div class="container layout">
 <section class="panel">
   <a href="admin-ordini.html">← Torna agli ordini</a>
-  <h2>1. Recupera l'ordine consegnato</h2>
+  <h2>1. Recupera l'ordine</h2>
   <label for="orderId">Codice ordine</label><input id="orderId" placeholder="AT-2026-11-04-XXXXXX" autocomplete="off">
   <div class="btnRow"><button type="button" id="load" class="main">Carica ordine</button></div>
   <div class="status" id="statusBox">Inserisci un codice per caricare i dati dell'ordine.</div>
@@ -92,7 +92,9 @@ header.site,.panel,.noPrint{display:none!important}
   </select>
   <div class="notice warning" id="occasionWarning" hidden><b>Attenzione:</b> questa è soltanto una bozza per prestazioni di lavoro autonomo realmente occasionali, NON per la vendita di cereali o mangimi. Va verificata con un commercialista prima dell'uso fiscale. La ritenuta del 20% si applica soltanto se il committente è un sostituto d'imposta.</div>
   <h2>3. Dati del documento</h2>
-  <label for="dateDoc">Data documento / consegna</label><input type="date" id="dateDoc">
+  <label for="dateDoc">Data di preparazione del documento</label><input type="date" id="dateDoc">
+  <label for="deliveryDate" id="deliveryDateLabel">Data prevista di consegna</label><input type="date" id="deliveryDate">
+  <p class="small" id="deliveryHelp">Se la merce non è ancora stata consegnata, indica la data concordata. Il foglio resterà contrassegnato come preparatorio.</p>
   <label for="seller">Emittente / attività</label><input id="seller" value="AgroTritura" maxlength="120">
   <label for="sellerLocation">Sede / località</label><input id="sellerLocation" value="Gattico-Veruno (NO)" maxlength="180">
   <label for="sellerTax">Codice fiscale / Partita IVA (se applicabile)</label><input id="sellerTax" placeholder="Da compilare con dati reali" maxlength="30">
@@ -114,7 +116,7 @@ header.site,.panel,.noPrint{display:none!important}
     <p class="small">Il sistema calcola una semplice simulazione del 20% e segnala il bollo. Non gestisce contributi INPS, versamenti F24, assolvimento del bollo o invio SDI.</p>
   </div>
   <div class="btnRow"><button class="secondary" id="preview" type="button">Aggiorna anteprima</button><button class="main" id="print" type="button" disabled>Stampa / Salva PDF</button></div>
-  <p class="small">Per salvare il PDF, scegli “Salva come PDF” nella finestra di stampa del telefono o del computer. Non viene inviata alcuna ricevuta automaticamente al cliente e il documento non viene registrato nel foglio Google.</p>
+  <p class="small">Per salvare il PDF, scegli “Salva come PDF” nella finestra di stampa del telefono o del computer. Il documento non viene registrato nel foglio Google e non modifica lo stato dell'ordine. Prima della consegna è un promemoria preparatorio da firmare solo al momento della consegna.</p>
 </section>
 <div class="previewWrap"><div id="paper" class="paper"><h2 class="docTitle">Documento non ancora pronto</h2><p>Carica un ordine consegnato e completa i campi richiesti.</p></div></div>
 </div>
@@ -126,6 +128,7 @@ header.site,.panel,.noPrint{display:none!important}
   const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const euro = (n) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(n);
   let verifiedOrder = "";
+  let verifiedStatus = "";
   function setStatus(msg, error){
     $("statusBox").textContent = msg; $("statusBox").className = error ? "status error" : "status";
   }
@@ -157,7 +160,7 @@ header.site,.panel,.noPrint{display:none!important}
   }
   function currentId(){return $("orderId").value.trim();}
   async function loadOrder(){
-    verifiedOrder="";$("print").disabled=true;
+    verifiedOrder="";verifiedStatus="";$("print").disabled=true;
     const id=currentId();
     if(!/^[a-zA-Z0-9_-]{5,65}$/.test(id)){setStatus("Inserisci un codice ordine valido.",true);return;}
     setStatus("Caricamento dell'ordine in corso…",false);
@@ -166,16 +169,22 @@ header.site,.panel,.noPrint{display:none!important}
       const cb="__agroDoc"+Math.random().toString(36).slice(2);
       const url=API_BASE+"?order_id="+encodeURIComponent(id)+"&callback="+encodeURIComponent(cb)+"&t="+Date.now();
       const record=orderFrom(await jsonp(url,cb));
-      if(normalize(record.status??record.stato??record.order_status)!=="consegnato")
-        throw new Error("Il documento è disponibile solo per ordini con stato Consegnato.");
+      const returnedStatus=String(record.status??record.stato??record.order_status??"").trim();
+      const status=normalize(returnedStatus);
+      if(!status) throw new Error("Il servizio non ha restituito uno stato valido.");
       const returnedId=String(record.order_id??record.id??id).trim();
       if(returnedId && returnedId.toLowerCase()!==id.toLowerCase())
         throw new Error("Il codice restituito non corrisponde all'ordine richiesto.");
       verifiedOrder=id;
+      verifiedStatus=status;
       $("customer").value=String(record.customer??record.customer_name??record.cliente??"");
       $("product").value=String(record.product??record.prodotto??"");
       $("quantity").value=String(record.quantity??record.quantita??"");
-      setStatus("✓ Ordine "+id+" confermato come Consegnato. Compila i campi mancanti e prepara il documento.",false);
+      $("deliveryDateLabel").textContent=status==="consegnato"?"Data effettiva di consegna (se nota)":"Data prevista di consegna";
+      $("deliveryHelp").textContent=status==="consegnato"
+        ?"Inserisci la data reale della consegna, se conosciuta. Non verrà inventata dal sistema."
+        :"Il documento sarà indicato chiaramente come preparatorio e non attesterà una consegna già avvenuta.";
+      setStatus("✓ Ordine "+id+" trovato (stato: "+returnedStatus+"). "+(status==="consegnato"?"Puoi preparare il promemoria di consegna.":"Puoi stamparlo prima della consegna: indica la data prevista e il documento rimarrà preparatorio."),false);
       render();
     }catch(e){setStatus(e.message,true);render();}
     finally{$("load").disabled=false;}
@@ -192,6 +201,8 @@ header.site,.panel,.noPrint{display:none!important}
   }
   function render(){
     const occasional=$("docType").value==="occasional";
+    const delivered=verifiedStatus==="consegnato";
+    const deliveryDate=$("deliveryDate").value;
     const id=currentId(), grossValue=$("gross").value, gross=Number(grossValue);
     const hasGross=grossValue!==""&&Number.isFinite(gross)&&gross>=0;
     const buyer=$("customer").value.trim(), product=$("product").value.trim(), quantity=$("quantity").value.trim();
@@ -203,23 +214,30 @@ header.site,.panel,.noPrint{display:none!important}
     const stamp=occasional&&hasGross&&gross>77.47;
     const payStatus=$("payment").value==="paid"?"Pagamento ricevuto":($("payment").value==="unpaid"?"Pagamento da ricevere":"Pagamento non attestato");
     const legalReady=occasional?$("legalCheck").checked&&$("payment").value==="paid"&&sellerTax!==""&&buyerTax!==""&&$("receiptNo").value.trim()!=="":true;
-    const ready=verifiedOrder===id&&id!==""&&buyer!==""&&product!==""&&quantity!==""&&seller!==""&&$("dateDoc").value!==""&&(!occasional||(hasGross&&legalReady));
+    const ready=verifiedOrder===id&&id!==""&&buyer!==""&&product!==""&&quantity!==""&&seller!==""&&$("dateDoc").value!==""&&
+      (occasional?(delivered&&hasGross&&legalReady):delivered||deliveryDate!=="");
     $("print").disabled=!ready;
-    const title=occasional?"BOZZA · Ricevuta prestazione occasionale":"Promemoria di consegna";
-    const sub=occasional?"Documento da verificare prima di qualsiasi impiego fiscale":"Documento informativo · Non valido come documento fiscale";
+    const title=occasional?"BOZZA · Ricevuta prestazione occasionale":(delivered?"Promemoria di consegna":"Promemoria di consegna programmata");
+    const sub=occasional?"Documento da verificare prima di qualsiasi impiego fiscale":
+      delivered?"Documento informativo · Non valido come documento fiscale":
+      "DOCUMENTO PREPARATORIO · NON ATTESTA L’AVVENUTA CONSEGNA · Non fiscale";
     const docRef=occasional?$("receiptNo").value.trim()||"Da numerare":"Rif. "+id;
-    const detailAmount=hasGross?euro(gross):"Non indicato";
+    const deliveryLabel=delivered?"Data effettiva consegna":"Consegna prevista";
+    const displayedDelivery=deliveryDate?dateStr(deliveryDate):(delivered?"Non specificata":"Da concordare");
+    const shownStatus=verifiedStatus?(delivered?"Consegnato":"Non ancora consegnato"):"Da verificare";
     $("paper").innerHTML=
-      '<div class="brandline"><div><div class="brandName">AGROTRITURA</div><div class="brandPayoff">Mangime su misura</div><div class="small">www.agrotritura.it</div></div><div class="docTag">'+(occasional?"BOZZA FISCALE<br>VERIFICA OBBLIGATORIA":"USO INFORMATIVO<br>NON FISCALE")+'</div></div>'+
+      '<div class="brandline"><div><div class="brandName">AGROTRITURA</div><div class="brandPayoff">Mangime su misura</div><div class="small">www.agrotritura.it</div></div><div class="docTag">'+(occasional?"BOZZA FISCALE<br>VERIFICA OBBLIGATORIA":(delivered?"USO INFORMATIVO<br>NON FISCALE":"CONSEGNA PROGRAMMATA<br>NON FISCALE"))+'</div></div>'+
       '<div class="docTitle">'+esc(title)+'</div><div class="docSub">'+esc(sub)+'</div>'+
-      '<div class="meta"><div class="metaItem"><span>Numero / riferimento</span><strong>'+esc(docRef)+'</strong></div><div class="metaItem"><span>Data</span><strong>'+esc(docDate)+'</strong></div>'+
+      '<div class="meta"><div class="metaItem"><span>Numero / riferimento</span><strong>'+esc(docRef)+'</strong></div><div class="metaItem"><span>Data preparazione documento</span><strong>'+esc(docDate)+'</strong></div>'+
+      '<div class="metaItem"><span>'+esc(deliveryLabel)+'</span><strong>'+esc(displayedDelivery)+'</strong></div><div class="metaItem"><span>Stato</span><strong>'+esc(shownStatus)+'</strong></div>'+
       '<div class="metaItem"><span>Emittente</span><strong>'+esc(seller)+'</strong>'+esc(place)+(sellerTax?'<br>CF/P. IVA: '+esc(sellerTax):'')+'</div>'+
       '<div class="metaItem"><span>Cliente</span><strong>'+esc(buyer||"Da completare")+'</strong>'+(buyerTax?'CF/P. IVA: '+esc(buyerTax):'')+'</div></div>'+
       '<h3>Riepilogo '+(occasional?"della prestazione":"della consegna")+'</h3>'+
       '<table class="detail"><thead><tr><th>Descrizione</th><th>Quantità</th></tr></thead><tbody><tr><td>'+esc(product||"Da completare")+'</td><td>'+esc(quantity||"—")+'</td></tr></tbody></table>'+
       (hasGross?'<div class="total"><div><span>Importo lordo '+(occasional?"prestazione":"indicato")+'</span><strong>'+euro(gross)+'</strong></div>'+
         (occasional?'<div><span>Ritenuta d’acconto '+(withholding?"20%":"0%")+'</span><strong>− '+euro(tax)+'</strong></div><div class="net"><span>Netto teorico</span><strong>'+euro(net)+'</strong></div>':'')+'</div>':'<div class="paperNote">Importo non presente nei dati dell’ordine; nessuna attestazione economica.</div>')+
-      '<div class="paperNote"><b>Stato ordine:</b> Consegnato · '+esc(payStatus)+'</div>'+
+      '<div class="paperNote"><b>Stato ordine:</b> '+esc(shownStatus)+' · '+esc(payStatus)+'</div>'+
+      (!occasional&&!delivered?'<div class="paperNote"><b>DOCUMENTO PREPARATORIO:</b> la consegna è prevista per '+esc(displayedDelivery)+'. La presente stampa non certifica la ricezione della merce. Le firme si appongono soltanto al momento della consegna effettiva.</div>':'')+
       (occasional?'<div class="paperNote">La ritenuta è calcolata solo a scopo di verifica. '+(stamp?'Importo oltre 77,47 €: verificare assolvimento dell’imposta di bollo da 2 €.':'Verificare l’applicabilità dell’imposta di bollo.')+' Non sono calcolati eventuali contributi previdenziali.</div>':'')+
       (notes?'<div class="paperNote"><b>Note:</b> '+esc(notes)+'</div>':'')+
       '<div class="sig"><div>Firma di chi consegna (facoltativa)</div><div>Firma per presa in consegna (facoltativa)</div></div>'+
@@ -235,7 +253,7 @@ header.site,.panel,.noPrint{display:none!important}
     if(el.id!=="docType")el.addEventListener("change",render);
   });
   $("print").addEventListener("click",()=>{
-    if(!render()){setStatus("Verifica i dati: ordine consegnato, data, cliente, prodotto e quantità sono obbligatori. Per la bozza occasionale servono anche i dati fiscali, l'importo e la verifica professionale.",true);return;}
+    if(!render()){setStatus("Verifica i dati: servono un ordine valido, data del documento, cliente, prodotto e quantità. Per ordini non consegnati indica la data prevista. La bozza occasionale è disponibile solo dopo la consegna e con gli ulteriori dati richiesti.",true);return;}
     window.print();
   });
   const today=new Date();const yyyy=today.getFullYear();const mm=String(today.getMonth()+1).padStart(2,"0");const dd=String(today.getDate()).padStart(2,"0");
