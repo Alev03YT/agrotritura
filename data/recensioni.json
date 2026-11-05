@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "name": "Nelson Varanda",
+      "rating": 5,
+      "text": "Benissimo, servizio top",
+      "date": "2026-11-07",
+      "approved": true
+    }
+  ]
+}
