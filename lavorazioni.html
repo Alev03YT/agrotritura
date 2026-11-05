@@ -26,14 +26,14 @@ footer{text-align:center;padding:22px;color:#718071;font-size:13px}
 #zoom img{max-width:min(92vw,1200px);max-height:80vh;display:block;object-fit:contain}
 #zoom button{display:block;margin:0 0 10px auto;background:#fff;color:#173e29;border:0;border-radius:8px;padding:8px 16px;cursor:pointer}
 @media(max-width:600px){.work{padding:15px}.hero{padding:23px}.bags{grid-template-columns:1fr}.photos img{aspect-ratio:3/4}}
-</style></head><body>
+</style><link rel="stylesheet" href="css/photo-zoom.css?v=2"></head><body>
 <header><div class="wrap"><div class="brand">🌾 AgroTritura</div><nav><a href="index.html">Home</a> · <a href="recensioni.html">Recensioni</a> · <a href="ordine.html">Traccia ordine</a></nav></div></header>
 <main class="wrap">
 <section class="hero"><span style="font-size:12px;letter-spacing:2px;text-transform:uppercase">Dietro ogni lavorazione</span><h1>Dal sacco al campione</h1><p>Per ogni lavorazione documentata mostriamo i sacchi preparati e i rispettivi campioni. Qui compaiono soltanto fotografie autorizzate e selezionate per la pubblicazione.</p></section>
 <div id="works"><div class="empty">Caricamento delle lavorazioni…</div></div>
 </main>
-<dialog id="zoom"><button type="button" id="closeZoom">Chiudi ✕</button><img id="zoomImage" alt="Foto ingrandita"></dialog>
 <footer>AgroTritura · <a href="index.html">Richiedi un preventivo</a> · <a href="recensioni.html">Lascia una recensione</a></footer>
+<script src="js/photo-zoom.js?v=2"></script>
 <script>
 (async function(){
 const $=id=>document.getElementById(id),root=$("works"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -55,8 +55,8 @@ try{
      const grid=document.createElement("div");grid.className="photos";
      for(const [photo,cap] of [[b.bagPhoto,"Foto del sacco"],[b.samplePhoto,"Campione prelevato"]]){
        const val=String(photo);if(!/^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=]+$/i.test(val) && !/^https:\/\/[^\s<>"']{1,3000}$/i.test(val))continue;
-       const figure=document.createElement("figure"),img=document.createElement("img");img.loading="lazy";img.src=val;img.alt=cap;img.onclick=()=>{$("zoomImage").src=val;$("zoom").showModal();};
-       const caption=document.createElement("figcaption");caption.textContent=cap;figure.append(img,caption);grid.appendChild(figure);
+       const figure=document.createElement("figure"),img=document.createElement("img");img.loading="lazy";img.src=val;img.alt=cap;img.onclick=()=>window.AgroPhotoZoom.open(val,cap);
+       const caption=document.createElement("figcaption");caption.textContent=cap;const zoomButton=document.createElement("button");zoomButton.type="button";zoomButton.className="at-photo-open";zoomButton.textContent="🔍 Ingrandisci "+cap.toLowerCase();zoomButton.setAttribute("aria-label","Apri e ingrandisci: "+cap);zoomButton.onclick=()=>window.AgroPhotoZoom.open(val,cap);figure.append(img,caption,zoomButton);grid.appendChild(figure);
      }
      item.appendChild(grid);bags.appendChild(item);
    }
@@ -66,6 +66,4 @@ try{
  if(!root.children.length)root.innerHTML='<div class="empty"><strong>Le prime lavorazioni fotografiche arriveranno qui.</strong><p>AgroTritura sta preparando la galleria di sacchi e campioni. Nessuna fotografia dei clienti viene pubblicata senza autorizzazione.</p></div>';
 }catch(e){root.innerHTML='<div class="empty">La galleria non è disponibile al momento.</div>';}
 })();
-document.getElementById("closeZoom").onclick=()=>document.getElementById("zoom").close();
-document.getElementById("zoom").onclick=e=>{if(e.target.id==="zoom")e.target.close();};
 </script></body></html>
