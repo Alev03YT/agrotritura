@@ -124,9 +124,9 @@ function renderBags(){
     const section=document.createElement("section");section.className="bag";
     section.innerHTML='<div class="bagHead"><h3>Sacco '+(i+1)+'</h3><button class="warn" type="button" data-delete>Rimuovi</button></div>'+
     '<div class="row"><div><label>Identificativo del sacco</label><input data-field="code" maxlength="50" placeholder="Es. SAC-01"></div><div><label>Peso del sacco</label><input data-field="weight" maxlength="30" placeholder="Es. 25 kg"></div></div>'+
-    '<label>Annotazioni del campione / lotto</label><input data-field="notes" maxlength="160" placeholder="Es. macinatura media, lotto 1"></div>'+
-    '<div class="photoGrid"><div class="photo"><b>📦 Foto sacco finito</b><div data-prev="bagPhoto"></div><input data-pick="bagPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><button class="outline" data-clear="bagPhoto" type="button">Rimuovi foto</button></div>'+
-    '<div class="photo"><b>🌾 Foto campione prelevato</b><div data-prev="samplePhoto"></div><input data-pick="samplePhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><button class="outline" data-clear="samplePhoto" type="button">Rimuovi foto</button></div></div>';
+    '<label>Annotazioni del campione / lotto</label><input data-field="notes" maxlength="160" placeholder="Es. macinatura media, lotto 1">'+
+    '<div class="photoGrid"><div class="photo"><b>📦 Foto sacco finito</b><div data-prev="bagPhoto"></div><input data-pick="bagPhoto" type="file" accept="image/jpeg,image/png,image/webp"><button class="outline" data-clear="bagPhoto" type="button">Rimuovi foto</button></div>'+
+    '<div class="photo"><b>🌾 Foto campione prelevato</b><div data-prev="samplePhoto"></div><input data-pick="samplePhoto" type="file" accept="image/jpeg,image/png,image/webp"><button class="outline" data-clear="samplePhoto" type="button">Rimuovi foto</button></div></div>';
     section.querySelector('[data-field="code"]').value=bag.code||"";
     section.querySelector('[data-field="weight"]').value=bag.weight||"";
     section.querySelector('[data-field="notes"]').value=bag.notes||"";
