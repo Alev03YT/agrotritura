@@ -256,18 +256,18 @@
     </div>
 
     <div class="panel">
-      <h2 class="sectionTitle">4) Documento per ordine consegnato</h2>
-      <p class="hint">Recupera un ordine già consegnato e prepara un promemoria stampabile A4 o una bozza di ricevuta per sola prestazione occasionale. Il prezzo va inserito perché non è salvato negli ordini.</p>
+      <h2 class="sectionTitle">4) Documenti ordine e consegna</h2>
+      <p class="hint">Recupera un ordine anche prima della consegna, con data prevista e firme in bianco. Il prezzo va inserito perché non è salvato negli ordini.</p>
       <div class="grid2">
         <div>
-          <label for="docManualId">Codice ordine consegnato</label>
+          <label for="docManualId">Codice ordine</label>
           <input id="docManualId" placeholder="AT-YYYY-MM-DD-XXXXXX">
         </div>
       </div>
       <div class="actions">
         <button class="btn gray" type="button" id="btnDocManual">📄 Prepara documento / PDF</button>
       </div>
-      <div class="hint" id="docHint">Il documento viene generato solo per ordini verificati come Consegnato. Non sostituisce i documenti fiscali obbligatori.</div>
+      <div class="hint" id="docHint">Per ordini ancora da consegnare il foglio è marcato come preparatorio e non attesta la ricezione. Non sostituisce i documenti fiscali obbligatori.</div>
     </div>
 
   </div>
@@ -439,14 +439,14 @@
         msgEl.textContent = `✅ Salvato: ${action}.${updatedAt ? " Aggiornato: " + updatedAt : " Confermato dal server (data non disponibile)."}`;
         // Il documento viene preparato soltanto dopo il salvataggio di uno stato Consegnato.
         // Non apriamo finestre automaticamente e non inviamo dati anagrafici nell'URL.
-        if (String(savedOrder.status || "").toLowerCase().includes("consegn") && savedOrder.order_id) {
+        if (savedOrder.order_id) {
           const link = document.createElement("a");
           link.href = "documenti-ordini.html?order_id=" + encodeURIComponent(savedOrder.order_id);
           link.target = "_blank";
           link.rel = "noopener";
           link.className = "btn gray";
           link.style.cssText = "display:inline-flex;margin-top:12px;font-size:16px;text-decoration:none;min-width:0";
-          link.textContent = "📄 Prepara documento di consegna / PDF";
+          link.textContent = "📄 Prepara documento ordine / PDF";
           msgEl.appendChild(document.createElement("div")).appendChild(link);
         }
 // ✅ WhatsApp precompilato (1 tap invio)
