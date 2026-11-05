@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Le recensioni dei clienti AgroTritura e un modulo per condividere la propria esperienza.">
+<meta name="theme-color" content="#173f2a"><link rel="icon" href="favicon.jpg">
+<title>Recensioni clienti | AgroTritura</title>
+<style>
+:root{--g:#174b37;--ink:#1a2a20;--muted:#6b776e;--soft:#f4f7f3;--line:#dce6df}
+*{box-sizing:border-box}body{margin:0;background:var(--soft);color:var(--ink);font:15px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#143d2d;color:white;padding:16px 18px}header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.wrap{max-width:1040px;margin:auto}a{color:#1a6446}header a{color:#e2f6e9;text-decoration:none;font-weight:700}
+.brand{font-size:20px;font-weight:900}
+main{padding:28px 18px 60px}
+.hero{background:linear-gradient(120deg,#173f2e,#3b7953);border-radius:22px;padding:32px;color:white}
+.hero p{color:#dbede0;max-width:600px}.hero h1{font-size:clamp(28px,4vw,42px);margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:23px}
+.card{background:white;border:1px solid var(--line);border-radius:18px;padding:23px;box-shadow:0 10px 26px #1238210a}
+h2{font-size:22px;color:var(--g);margin:0 0 10px}
+label{display:block;font-weight:750;font-size:13px;margin:12px 0 5px}
+input,select,textarea{width:100%;font:inherit;padding:11px;border:1px solid #bdd0c3;border-radius:10px;background:white;color:var(--ink)}
+textarea{min-height:120px;resize:vertical}
+button{border:0;border-radius:11px;padding:13px 18px;background:var(--g);color:#fff;font:inherit;font-weight:800;cursor:pointer}
+button:disabled{opacity:.5}
+.review{padding:17px;border:1px solid var(--line);border-radius:14px;margin-top:14px}
+.stars{color:#b17818;letter-spacing:2px;font-size:18px}
+.review p{margin:8px 0 11px;white-space:pre-wrap;overflow-wrap:anywhere}
+.review small,.muted{color:var(--muted);font-size:13px}
+.empty{border:1px dashed #afcaba;border-radius:13px;padding:23px;background:#f8fbf8;color:#637568}
+.check{display:flex;gap:10px;align-items:start;font-size:13px;margin:15px 0}
+.check input{width:18px;height:18px;flex:none;margin:4px 0 0}
+.status{font-size:13px;color:#7d3d1e;margin-top:10px;min-height:20px}
+footer{text-align:center;padding:20px;color:#738075;font-size:13px}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.card{padding:18px}.hero{padding:24px}}
+</style></head><body>
+<header><div class="wrap"><div class="brand">🌾 AgroTritura <small style="font-size:12px;font-weight:450"> · Mangime su misura</small></div><nav><a href="index.html">Home</a> · <a href="lavorazioni.html">Le nostre lavorazioni</a> · <a href="ordine.html">Traccia ordine</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><span style="letter-spacing:2px;text-transform:uppercase;font-size:12px">Esperienze vere</span><h1>Le parole dei nostri clienti</h1>
+<p>Recensioni autentiche pubblicate solo dopo verifica e autorizzazione. Nessuna valutazione inventata o inserita automaticamente.</p></section>
+<div class="grid">
+<section class="card">
+ <h2>Recensioni pubblicate</h2><p class="muted">Esperienze condivise direttamente dai clienti AgroTritura.</p>
+ <div id="reviews"><p class="muted">Caricamento…</p></div>
+</section>
+<section class="card">
+ <h2>Raccontaci la tua esperienza</h2>
+ <p>Hai ordinato dei cereali o una miscela personalizzata? Compila il messaggio: si aprirà WhatsApp con la tua recensione, che potremo pubblicare solo dopo la tua autorizzazione.</p>
+ <form id="reviewForm">
+ <label for="name">Nome o pseudonimo da mostrare</label><input id="name" maxlength="60" placeholder="Es. Marco P." required>
+ <label for="rating">Valutazione</label><select id="rating" required>
+ <option value="5">★★★★★ — 5 stelle</option><option value="4">★★★★☆ — 4 stelle</option><option value="3">★★★☆☆ — 3 stelle</option><option value="2">★★☆☆☆ — 2 stelle</option><option value="1">★☆☆☆☆ — 1 stella</option></select>
+ <label for="message">La tua recensione</label><textarea id="message" minlength="12" maxlength="1100" placeholder="Come ti sei trovato con il servizio?" required></textarea>
+ <label class="check"><input id="consent" type="checkbox" required><span>Autorizzo AgroTritura a pubblicare il testo, la valutazione e il nome/pseudonimo indicati sopra sul sito. Posso richiederne la rimozione tramite i contatti del sito.</span></label>
+ <button type="submit">💬 Invia recensione su WhatsApp</button>
+ <div class="status" id="status" role="status"></div>
+ <p class="muted">L'invio avviene su WhatsApp: il messaggio non viene pubblicato automaticamente. È necessaria la conferma d'invio nell'app.</p>
+ </form>
+</section>
+</div>
+</main><footer>© AgroTritura · <a href="index.html">Torna al sito</a></footer>
+<script>
+(async function(){
+ const root=document.getElementById("reviews");
+ const esc=s=>String(s||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+ try{
+  const response=await fetch("data/recensioni.json?v=1",{cache:"no-store"});if(!response.ok)throw Error("Contenuto non disponibile");
+  const data=await response.json();const rows=Array.isArray(data.reviews)?data.reviews.filter(r=>r&&r.approved===true).slice(0,100):[];
+  root.replaceChildren();
+  if(!rows.length){root.innerHTML='<div class="empty">Non ci sono ancora recensioni pubblicate. Se hai già acquistato da AgroTritura, puoi lasciare la prima!</div>';}
+  for(const r of rows){const stars=Math.max(1,Math.min(5,Number(r.rating)||5));
+   const el=document.createElement("article");el.className="review";
+   el.innerHTML='<div class="stars" aria-label="'+stars+' stelle">'+"★".repeat(stars)+"☆".repeat(5-stars)+'</div><p>'+esc(String(r.text||"").slice(0,1500))+'</p><strong>'+esc(String(r.name||"Cliente AgroTritura").slice(0,60))+'</strong><br><small>'+esc(String(r.date||"").slice(0,10))+'</small>';
+   root.appendChild(el);
+  }
+ }catch(e){root.innerHTML='<div class="empty">Le recensioni non sono disponibili in questo momento.</div>';}
+})();
+document.getElementById("reviewForm").addEventListener("submit",function(e){
+ e.preventDefault();if(!this.reportValidity())return;
+ const name=document.getElementById("name").value.trim(),rating=Number(document.getElementById("rating").value),review=document.getElementById("message").value.trim();
+ if(name.length<2||review.length<12){document.getElementById("status").textContent="Inserisci un nome e una recensione di almeno 12 caratteri.";return;}
+ const text="Ciao AgroTritura! Vorrei inviare una recensione del mio ordine.\n\nNome da mostrare: "+name+"\nValutazione: "+rating+"/5\nRecensione: "+review+
+ "\n\nAutorizzo la pubblicazione sul sito di questo testo, del nome/pseudonimo e della valutazione. Attendo la verifica prima della pubblicazione.";
+ document.getElementById("status").textContent="Si apre WhatsApp: premi Invia per confermare la recensione.";
+ window.open("https://wa.me/393341067510?text="+encodeURIComponent(text),"_blank","noopener,noreferrer");
+});
+</script></body></html>
