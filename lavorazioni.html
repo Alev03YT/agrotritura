@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Le lavorazioni AgroTritura: foto dei sacchi preparati e dei rispettivi campioni di cereali tritati.">
+<meta name="theme-color" content="#173f2a"><link rel="icon" href="favicon.jpg">
+<title>Lavorazioni e campioni | AgroTritura</title>
+<style>
+:root{--g:#174b37;--ink:#18271e;--muted:#66766a;--soft:#f4f7f3;--line:#dce6df}
+*{box-sizing:border-box}body{margin:0;background:var(--soft);color:var(--ink);font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#143d2d;color:#fff;padding:16px 18px}header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.wrap{max-width:1100px;margin:auto}a{color:#20613f}header a{color:#e2f6e9;text-decoration:none;font-weight:700}.brand{font-size:20px;font-weight:900}
+main{padding:28px 18px 64px}.hero{background:linear-gradient(120deg,#153d2e,#397953);color:white;border-radius:22px;padding:32px}
+.hero h1{font-size:clamp(27px,4vw,41px);margin:0 0 7px}.hero p{max-width:650px;color:#d8eddf;margin:0}
+#works{margin-top:22px;display:grid;gap:18px}
+.work{background:white;border:1px solid var(--line);border-radius:17px;padding:23px;box-shadow:0 7px 25px #12382112}
+.work h2{margin:0 0 5px;font-size:21px;color:var(--g)}
+.meta{font-size:13px;color:var(--muted);margin:0 0 18px}
+.bags{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.bag{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fafdfa}
+.bag h3{margin:0 0 10px;font-size:15px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photos figure{margin:0;min-width:0}.photos img{width:100%;aspect-ratio:4/5;object-fit:cover;background:#eaf0e8;border-radius:10px;cursor:zoom-in}
+.photos figcaption{font-size:12px;margin-top:6px;color:#56705d;text-align:center}
+.empty{padding:33px;background:white;border:1px dashed #b4cbb9;border-radius:15px;color:#617268}
+footer{text-align:center;padding:22px;color:#718071;font-size:13px}
+#zoom{border:0;padding:14px;border-radius:12px;max-width:95vw;max-height:95vh;background:#142e23}
+#zoom img{max-width:min(92vw,1200px);max-height:80vh;display:block;object-fit:contain}
+#zoom button{display:block;margin:0 0 10px auto;background:#fff;color:#173e29;border:0;border-radius:8px;padding:8px 16px;cursor:pointer}
+@media(max-width:600px){.work{padding:15px}.hero{padding:23px}.bags{grid-template-columns:1fr}.photos img{aspect-ratio:3/4}}
+</style></head><body>
+<header><div class="wrap"><div class="brand">🌾 AgroTritura</div><nav><a href="index.html">Home</a> · <a href="recensioni.html">Recensioni</a> · <a href="ordine.html">Traccia ordine</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><span style="font-size:12px;letter-spacing:2px;text-transform:uppercase">Dietro ogni lavorazione</span><h1>Dal sacco al campione</h1><p>Per ogni lavorazione documentata mostriamo i sacchi preparati e i rispettivi campioni. Qui compaiono soltanto fotografie autorizzate e selezionate per la pubblicazione.</p></section>
+<div id="works"><div class="empty">Caricamento delle lavorazioni…</div></div>
+</main>
+<dialog id="zoom"><button type="button" id="closeZoom">Chiudi ✕</button><img id="zoomImage" alt="Foto ingrandita"></dialog>
+<footer>AgroTritura · <a href="index.html">Richiedi un preventivo</a> · <a href="recensioni.html">Lascia una recensione</a></footer>
+<script>
+(async function(){
+const $=id=>document.getElementById(id),root=$("works"),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+try{
+ const response=await fetch("data/lavorazioni.json?v=1",{cache:"no-store"});if(!response.ok)throw Error("Dati non disponibili");
+ const data=await response.json();const rows=Array.isArray(data.works)?data.works.slice(0,70):[];
+ root.replaceChildren();
+ for(const w of rows){
+   if(!w||!Array.isArray(w.bags))continue;
+   const section=document.createElement("article");section.className="work";
+   const title=document.createElement("h2");title.textContent=String(w.title||"Lavorazione personalizzata").slice(0,100);
+   const meta=document.createElement("p");meta.className="meta";
+   meta.textContent=[w.mix,w.quantity,w.date].filter(Boolean).join(" · ");
+   const bags=document.createElement("div");bags.className="bags";
+   for(const b of w.bags.slice(0,120)){
+     if(!b?.bagPhoto||!b?.samplePhoto)continue;
+     const item=document.createElement("div");item.className="bag";
+     const h=document.createElement("h3");h.textContent="Sacco "+(b.code||"").toString().slice(0,50)+(b.weight?" · "+String(b.weight).slice(0,30):"");item.appendChild(h);
+     const grid=document.createElement("div");grid.className="photos";
+     for(const [photo,cap] of [[b.bagPhoto,"Foto del sacco"],[b.samplePhoto,"Campione prelevato"]]){
+       const val=String(photo);if(!/^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=]+$/i.test(val) && !/^https:\/\/[^\s<>"']{1,3000}$/i.test(val))continue;
+       const figure=document.createElement("figure"),img=document.createElement("img");img.loading="lazy";img.src=val;img.alt=cap;img.onclick=()=>{$("zoomImage").src=val;$("zoom").showModal();};
+       const caption=document.createElement("figcaption");caption.textContent=cap;figure.append(img,caption);grid.appendChild(figure);
+     }
+     item.appendChild(grid);bags.appendChild(item);
+   }
+   if(!bags.children.length)continue;
+   section.append(title,meta,bags);root.appendChild(section);
+ }
+ if(!root.children.length)root.innerHTML='<div class="empty"><strong>Le prime lavorazioni fotografiche arriveranno qui.</strong><p>AgroTritura sta preparando la galleria di sacchi e campioni. Nessuna fotografia dei clienti viene pubblicata senza autorizzazione.</p></div>';
+}catch(e){root.innerHTML='<div class="empty">La galleria non è disponibile al momento.</div>';}
+})();
+document.getElementById("closeZoom").onclick=()=>document.getElementById("zoom").close();
+document.getElementById("zoom").onclick=e=>{if(e.target.id==="zoom")e.target.close();};
+</script></body></html>
