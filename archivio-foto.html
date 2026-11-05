@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>AgroTritura • Archivio fotografico ordini</title>
+<style>
+:root{--g:#174b38;--g2:#236348;--bg:#f3f6f3;--ink:#19261d;--muted:#62716a;--line:#dce6de;--orange:#ce8b2a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(120deg,#103b2c,#25684b);color:#fff;padding:23px 18px}header h1{margin:0;font-size:23px}header p{margin:4px 0 0;opacity:.87}
+main{max-width:1250px;margin:auto;padding:18px;display:grid;grid-template-columns:310px minmax(0,1fr);gap:16px;align-items:start}
+aside,.panel,.info{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 8px 26px #112c1910;padding:18px}
+h2{font-size:18px;color:var(--g);margin:0 0 12px}h3{font-size:16px;margin:0 0 10px}
+a{color:var(--g);text-decoration:none;font-weight:750}a:hover{text-decoration:underline}
+button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:750;cursor:pointer;background:var(--g);color:white}
+button.outline{background:white;color:var(--g);border:1px solid #a9c2b3}
+button.warn{background:#fff3ef;color:#903423;border:1px solid #e8c5bc}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,textarea{width:100%;border-radius:10px;border:1px solid #cbd8d0;padding:11px;font:inherit;background:white;color:var(--ink)}
+input[type=checkbox]{width:auto;min-width:18px;height:18px}label{display:block;font-size:13px;font-weight:750;margin:13px 0 5px}
+textarea{min-height:68px;resize:vertical}
+.top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:16px}
+.btns{display:flex;flex-wrap:wrap;gap:9px}.btns>*{flex:1}
+.note{font-size:13px;background:#fff8e8;border-left:4px solid var(--orange);padding:12px;margin:14px 0;border-radius:8px}
+.subtle{color:var(--muted);font-size:13px}
+#records{display:grid;gap:8px;max-height:460px;overflow:auto}
+.record{padding:12px;text-align:left;border:1px solid var(--line);background:#f8faf8;border-radius:11px;color:var(--ink);width:100%;font-size:13px}
+.record strong,.record small{display:block}.record small{color:#64766a;margin-top:3px}.record.active{border-color:var(--g);background:#eaf3eb}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.bags{display:grid;gap:16px;margin-top:16px}.bag{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fbfcfb}
+.bagHead{display:flex;justify-content:space-between;align-items:center;gap:10px}.bagHead h3{margin:0}
+.photoGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.photo{border:1px dashed #b0c8b6;border-radius:12px;padding:10px;min-width:0;background:white}
+.photo b{display:block;font-size:13px;margin-bottom:6px}
+.photo img{width:100%;height:185px;object-fit:contain;background:#f2f4f2;border-radius:8px;margin:8px 0}
+.photo input{font-size:12px;padding:7px}
+.photo .missing{display:grid;place-items:center;height:185px;border-radius:8px;background:#f1f5f1;color:#718477;text-align:center;padding:12px}
+label.check{display:flex;gap:9px;align-items:start;font-weight:550;font-size:13px}
+#msg{padding:11px;border-radius:9px;background:#eaf4ee;margin-top:10px;font-size:13px}
+#msg.error{background:#feeae6;color:#8e2f24}
+.status{display:inline-block;border-radius:999px;background:#e7f2eb;color:#1f6b44;padding:3px 9px;font-size:12px;font-weight:800}
+.info{margin-top:14px;padding:12px}
+#locked{max-width:620px;margin:50px auto;padding:26px}
+.hidden{display:none!important}
+@media(max-width:820px){main{display:block}aside{margin-bottom:16px}.photoGrid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+@media(max-width:500px){header h1{font-size:19px}.photo img,.photo .missing{height:165px}}
+</style>
+</head>
+<body>
+<header><div style="max-width:1250px;margin:auto">
+<h1>📸 AgroTritura · Archivio ordini e campioni</h1>
+<p>Un fascicolo per cliente e ordine · Ogni sacco ha la sua foto e la foto del campione</p>
+</div></header>
+<div id="locked" class="panel hidden"><h2>Area gestionale</h2><p>Apri questa sezione dal <a href="pannello.html">Control Center AgroTritura</a>.</p><p class="subtle">L'accesso al pannello è una protezione d'interfaccia, non un sistema di autenticazione server.</p></div>
+<main id="app" class="hidden">
+<aside>
+ <div class="top"><a href="pannello.html">← Pannello</a><span class="status" id="counter">0 ordini</span></div>
+ <h2>Ordini archiviati</h2>
+ <label for="search">Cerca codice o cliente</label><input id="search" placeholder="Cerca…">
+ <div id="records" style="margin-top:12px"></div>
+ <div class="btns" style="margin-top:14px"><button id="new" type="button">+ Nuova scheda</button></div>
+ <div class="note"><b>Le immagini sono private e locali.</b> Rimangono nel browser di questo dispositivo: non si sincronizzano tra telefono e PC e non vengono caricate su Google Sheets. Effettua regolarmente il backup.</div>
+ <h3>Backup e ripristino</h3>
+ <div class="btns"><button class="outline" id="export" type="button">↓ Esporta backup</button><button class="outline" id="import" type="button">↑ Importa backup</button></div>
+ <input id="backupFile" accept=".json,application/json" type="file" hidden>
+ <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+ <h3>Vetrina pubblica (facoltativa)</h3>
+ <p class="subtle">Esporta soltanto gli ordini per i quali hai il consenso alla pubblicazione. Non vengono esportati nomi, telefoni o codici ordine.</p>
+ <button class="outline" id="publish" type="button" style="width:100%">↓ Esporta vetrina autorizzata</button>
+ <p class="subtle">Il file esportato va pubblicato manualmente nel repository come <code>data/lavorazioni.json</code>. Non avviene nessuna pubblicazione automatica.</p>
+</aside>
+<section class="panel">
+  <div class="top"><div><h2 style="margin:0">Scheda fotografica</h2><span class="subtle" id="summary">Crea una scheda per iniziare.</span></div><div class="btns"><button id="save" type="button">💾 Salva scheda</button><button class="warn" id="remove" type="button">Elimina</button></div></div>
+  <div class="row"><div><label for="orderId">Codice ordine *</label><input id="orderId" placeholder="AT-YYYY-MM-DD-XXXXXX"></div><div><label for="client">Cliente (solo archivio locale)</label><input id="client" maxlength="130" placeholder="Nome o riferimento interno"></div></div>
+  <div class="btns" style="margin-top:10px"><button class="outline" id="lookup" type="button">↻ Recupera dati dal sistema ordini</button></div>
+  <div class="row"><div><label for="date">Data lavorazione</label><input id="date" type="date"></div><div><label for="mix">Miscela / prodotto</label><input id="mix" maxlength="200" placeholder="Es. Mix Ovaiole"></div></div>
+  <div class="row"><div><label for="quantity">Quantità totale</label><input id="quantity" maxlength="100" placeholder="Es. 100 kg"></div><div><label for="publicAlias">Titolo pubblico anonimo</label><input id="publicAlias" maxlength="100" placeholder="Es. Mix Ovaiole 100 kg"></div></div>
+  <label for="notes">Note di lavorazione (private)</label><textarea id="notes" maxlength="1200" placeholder="Composizione, granulometria, lotto, note di preparazione…"></textarea>
+  <label class="check"><input id="consent" type="checkbox">Ho ottenuto e documentato il consenso del cliente per pubblicare queste foto, senza dati personali identificativi. <b>Disattivato per impostazione predefinita.</b></label>
+  <div class="top" style="margin-top:23px"><h2 style="margin:0">Sacchi e campioni</h2><button id="addBag" type="button">+ Aggiungi sacco</button></div>
+  <p class="subtle">Per ogni sacco: codice/numero, peso, foto del sacco finito e foto del campione prelevato. Le immagini vengono ridimensionate prima del salvataggio.</p>
+  <div class="bags" id="bags"></div>
+  <div id="msg" role="status" aria-live="polite">Inserisci i dati e premi Salva scheda.</div>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const session=(()=>{try{return JSON.parse(sessionStorage.getItem("at_cc_session")||"null")}catch{return null}})();
+if(!session || !Array.isArray(session.tools) || !(session.tools.includes("foto")||session.tools.includes("ordini"))){
+  $("locked").classList.remove("hidden");return;
+}
+$("app").classList.remove("hidden");
+const API="https://script.google.com/macros/s/AKfycbxvrgdzM5t1Zg-pS00iopBEpw3OBZj_-y14QjaurcRHnrrlXJd3T5i2i8z7qPrS98hK/exec";
+const DBNAME="AgroTritura-ArchivioFoto-v1",STORE="orders";
+let db,record=null,dirty=false,originalId="",all=[];
+const previews=[];
+function msg(t,error=false){$("msg").textContent=t;$("msg").className=error?"error":"";}
+function revoke(){for(const u of previews)URL.revokeObjectURL(u);previews.length=0;}
+function newRecord(){return {id:"",client:"",date:new Date().toISOString().slice(0,10),mix:"",quantity:"",publicAlias:"",notes:"",consent:false,bags:[],updatedAt:""};}
+function getDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:"id"})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+function queryDB(mode,action){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,mode);const st=tx.objectStore(STORE);const req=action(st);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
+function textField(id){return $(id).value.trim();}
+function setFields(item){
+  $("orderId").value=item.id||"";$("client").value=item.client||"";
+  $("date").value=item.date||"";$("mix").value=item.mix||"";
+  $("quantity").value=item.quantity||"";$("publicAlias").value=item.publicAlias||"";
+  $("notes").value=item.notes||"";$("consent").checked=!!item.consent;
+  renderBags();summarize();
+}
+function collect(){
+  record.id=textField("orderId");record.client=textField("client");record.date=textField("date");
+  record.mix=textField("mix");record.quantity=textField("quantity");record.publicAlias=textField("publicAlias");
+  record.notes=textField("notes");record.consent=$("consent").checked;
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
+function summarize(){const total=record?.bags?.length||0,complete=record?.bags?.filter(b=>b.bagPhoto&&b.samplePhoto).length||0;$("summary").textContent=total+" sacchi · "+complete+" coppie foto complete"+(dirty?" · Modifiche non salvate":"");}
+function fieldChange(){if(!record)return;collect();dirty=true;summarize();}
+function blobUrl(blob){if(!blob)return null;const u=URL.createObjectURL(blob);previews.push(u);return u;}
+function renderBags(){
+  revoke();const root=$("bags");root.replaceChildren();
+  (record?.bags||[]).forEach((bag,i)=>{
+    const section=document.createElement("section");section.className="bag";
+    section.innerHTML='<div class="bagHead"><h3>Sacco '+(i+1)+'</h3><button class="warn" type="button" data-delete>Rimuovi</button></div>'+
+    '<div class="row"><div><label>Identificativo del sacco</label><input data-field="code" maxlength="50" placeholder="Es. SAC-01"></div><div><label>Peso del sacco</label><input data-field="weight" maxlength="30" placeholder="Es. 25 kg"></div></div>'+
+    '<label>Annotazioni del campione / lotto</label><input data-field="notes" maxlength="160" placeholder="Es. macinatura media, lotto 1"></div>'+
+    '<div class="photoGrid"><div class="photo"><b>📦 Foto sacco finito</b><div data-prev="bagPhoto"></div><input data-pick="bagPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><button class="outline" data-clear="bagPhoto" type="button">Rimuovi foto</button></div>'+
+    '<div class="photo"><b>🌾 Foto campione prelevato</b><div data-prev="samplePhoto"></div><input data-pick="samplePhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><button class="outline" data-clear="samplePhoto" type="button">Rimuovi foto</button></div></div>';
+    section.querySelector('[data-field="code"]').value=bag.code||"";
+    section.querySelector('[data-field="weight"]').value=bag.weight||"";
+    section.querySelector('[data-field="notes"]').value=bag.notes||"";
+    for(const field of ["code","weight","notes"]){section.querySelector('[data-field="'+field+'"]').addEventListener("input",e=>{bag[field]=e.target.value;dirty=true;summarize();});}
+    section.querySelector("[data-delete]").onclick=()=>{if(confirm("Rimuovere questo sacco e le due foto dalla scheda?")){record.bags.splice(i,1);dirty=true;renderBags();summarize();}};
+    for(const key of ["bagPhoto","samplePhoto"]){
+      const wrap=section.querySelector('[data-prev="'+key+'"]'),blob=bag[key];
+      if(blob instanceof Blob){const img=document.createElement("img");img.src=blobUrl(blob);img.alt=key==="bagPhoto"?"Sacco completo":"Campione del sacco";wrap.appendChild(img);}
+      else{const empty=document.createElement("div");empty.className="missing";empty.textContent=key==="bagPhoto"?"Nessuna foto del sacco":"Nessuna foto del campione";wrap.appendChild(empty);}
+      section.querySelector('[data-pick="'+key+'"]').addEventListener("change",async e=>{
+        const file=e.target.files?.[0];if(!file)return;
+        try{bag[key]=await compressed(file);dirty=true;renderBags();summarize();msg("Foto acquisita: premi Salva scheda per conservarla.");}
+        catch(err){msg("Errore durante la lettura della foto: "+err.message,true);}
+      });
+      section.querySelector('[data-clear="'+key+'"]').onclick=()=>{bag[key]=null;dirty=true;renderBags();summarize();};
+    }
+    root.appendChild(section);
+  });
+  if(!record?.bags?.length){const empty=document.createElement("p");empty.className="subtle";empty.textContent="Nessun sacco inserito. Premi «Aggiungi sacco».";
+    root.appendChild(empty);}
+}
+function compressed(file,maxSize=1200,quality=.75){
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw new Error("Usa una foto JPG, PNG o WEBP.");
+  if(file.size>25*1024*1024)throw new Error("Foto troppo grande (massimo 25 MB).");
+  return new Promise((resolve,reject)=>{
+    const image=new Image(),uri=URL.createObjectURL(file);
+    image.onload=()=>{URL.revokeObjectURL(uri);try{
+      const factor=Math.min(1,maxSize/Math.max(image.naturalWidth,image.naturalHeight));
+      const w=Math.max(1,Math.round(image.naturalWidth*factor)),h=Math.max(1,Math.round(image.naturalHeight*factor));
+      const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;canvas.getContext("2d").drawImage(image,0,0,w,h);
+      canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Compressione non riuscita")),"image/jpeg",quality);
+    }catch(e){reject(e);}};
+    image.onerror=()=>{URL.revokeObjectURL(uri);reject(new Error("File immagine non leggibile"));};
+    image.src=uri;
+  });
+}
+async function refreshList(){
+  all=(await queryDB("readonly",st=>st.getAll())).sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+  $("counter").textContent=all.length+" ordini";
+  drawList();
+}
+function drawList(){
+  const q=textField("search").toLowerCase(),items=all.filter(x=>(x.id+" "+x.client+" "+x.mix).toLowerCase().includes(q)),root=$("records");
+  root.replaceChildren();
+  for(const x of items){const b=document.createElement("button");b.type="button";b.className="record"+(record?.id===x.id?" active":"");
+    const strong=document.createElement("strong");strong.textContent=x.id;
+    const small=document.createElement("small");const complete=x.bags.filter(b=>b.bagPhoto&&b.samplePhoto).length;
+    small.textContent=(x.client||"Cliente non indicato")+" · "+complete+"/"+x.bags.length+" sacchi completi";
+    b.append(strong,small);b.onclick=()=>selectRecord(x.id);root.appendChild(b);}
+  if(!items.length){const p=document.createElement("p");p.className="subtle";p.textContent="Nessun ordine corrispondente.";root.appendChild(p);}
+}
+function askUnsaved(){return !dirty||confirm("Ci sono modifiche non salvate. Vuoi abbandonarle?");}
+async function selectRecord(id){if(!askUnsaved())return;const x=await queryDB("readonly",st=>st.get(id));if(!x)return;record=x;originalId=x.id;dirty=false;setFields(record);drawList();msg("Scheda caricata. Le foto restano in questo dispositivo.");}
+async function startNew(){if(!askUnsaved())return;record=newRecord();originalId="";dirty=false;setFields(record);drawList();msg("Nuova scheda: inserisci un codice ordine.");}
+async function saveRecord(){
+  if(!record)return;
+  collect();if(!/^[A-Za-z0-9_-]{5,65}$/.test(record.id)){msg("Inserisci un codice ordine valido.",true);return;}
+  if(!record.bags.length){msg("Aggiungi almeno un sacco prima di salvare.",true);return;}
+  if(originalId&&originalId!==record.id){msg("Non è possibile rinominare un ordine esistente. Crea una nuova scheda.",true);return;}
+  if(!originalId&&all.some(x=>x.id===record.id)&&!confirm("Esiste già una scheda per questo codice. Sovrascriverla?"))return;
+  record.updatedAt=new Date().toISOString();
+  try{await queryDB("readwrite",st=>st.put(record));originalId=record.id;dirty=false;await refreshList();summarize();msg("✓ Scheda salvata sul dispositivo. Ricorda di esportare un backup.");}
+  catch(e){msg("Errore di salvataggio (spazio del browser?): "+e.message,true);}
+}
+async function deleteRecord(){
+  if(!record?.id||!originalId){msg("Nessuna scheda salvata da eliminare.",true);return;}
+  if(!confirm("Eliminare definitivamente la scheda "+originalId+" con tutte le foto locali?"))return;
+  await queryDB("readwrite",st=>st.delete(originalId));record=newRecord();originalId="";dirty=false;setFields(record);await refreshList();msg("Scheda eliminata.");
+}
+function callbackJSONP(url,cb){return new Promise((resolve,reject)=>{
+  const s=document.createElement("script");const t=setTimeout(()=>end(new Error("Servizio ordini non raggiungibile")),10000);let done=false;
+  function end(err,data){if(done)return;done=true;clearTimeout(t);delete window[cb];s.remove();err?reject(err):resolve(data);}
+  window[cb]=data=>end(null,data);s.onerror=()=>end(new Error("Errore di connessione"));
+  s.src=url;document.body.appendChild(s);
+});}
+async function lookup(){
+  if(!record)return;const id=textField("orderId");if(!/^[A-Za-z0-9_-]{5,65}$/.test(id)){msg("Inserisci prima un codice ordine.",true);return;}
+  try{const cb="__atPhoto"+Math.random().toString(36).slice(2),data=await callbackJSONP(API+"?order_id="+encodeURIComponent(id)+"&callback="+encodeURIComponent(cb)+"&t="+Date.now(),cb);
+    if(!data||data.ok===false)throw new Error(data?.error||"Ordine non trovato");
+    const x=[data.order,data.data?.order,data.result?.order,data.data,data].find(o=>o&&typeof o==="object"&&(o.status||o.stato));
+    if(!x)throw new Error("Risposta dell'API senza ordine.");
+    const returned=String(x.order_id||x.id||id);if(returned.toLowerCase()!==id.toLowerCase())throw new Error("Ordine diverso da quello richiesto");
+    record.id=id;record.client=String(x.customer||x.cliente||"").slice(0,130);
+    record.mix=String(x.product||x.prodotto||"").slice(0,200);
+    record.quantity=String(x.quantity||x.quantita||"").slice(0,100);
+    dirty=true;setFields(record);summarize();msg("✓ Dati recuperati (stato: "+String(x.status||x.stato)+"). Aggiungi foto e salva.");
+  }catch(e){msg(e.message,true);}
+}
+function blobToData(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob);});}
+function dataToBlob(uri){const m=/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(uri||"");if(!m)throw new Error("Formato immagine backup non valido.");const b=atob(m[2]);const out=new Uint8Array(b.length);for(let i=0;i<b.length;i++)out[i]=b.charCodeAt(i);return new Blob([out],{type:"image/"+m[1]});}
+async function serialRecord(x,publicView=false){
+  const bags=[];
+  for(const b of x.bags||[]){
+    bags.push({code:String(b.code||"").slice(0,50),weight:String(b.weight||"").slice(0,30),notes:publicView?"":String(b.notes||"").slice(0,160),
+     bagPhoto:b.bagPhoto instanceof Blob?await blobToData(b.bagPhoto):null,
+     samplePhoto:b.samplePhoto instanceof Blob?await blobToData(b.samplePhoto):null});
+  }
+  if(publicView)return {title:String(x.publicAlias||"Lavorazione personalizzata").slice(0,100),date:x.date||"",mix:x.mix||"",quantity:x.quantity||"",bags};
+  return {id:x.id,client:x.client||"",date:x.date||"",mix:x.mix||"",quantity:x.quantity||"",
+    publicAlias:x.publicAlias||"",notes:x.notes||"",consent:!!x.consent,updatedAt:x.updatedAt||"",bags};
+}
+function download(name,data){const u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);}
+async function exportBackup(){try{const rows=await queryDB("readonly",st=>st.getAll()),data=[];for(const r of rows)data.push(await serialRecord(r));download("AgroTritura-backup-foto-"+new Date().toISOString().slice(0,10)+".json",{version:1,kind:"agrotritura-private-photo-backup",exportedAt:new Date().toISOString(),orders:data});msg("✓ Backup esportato. Conservalo in un posto sicuro: contiene foto e nomi dei clienti.");}catch(e){msg("Backup non riuscito: "+e.message,true);}}
+async function importBackup(file){
+  if(!file)return;if(file.size>120*1024*1024){msg("Backup troppo grande (max 120 MB).",true);return;}
+  try{const obj=JSON.parse(await file.text());if(obj?.kind!=="agrotritura-private-photo-backup"||obj.version!==1||!Array.isArray(obj.orders)||obj.orders.length>500)throw new Error("Backup non valido o troppo grande.");
+    if(!confirm("Importare "+obj.orders.length+" schede? Quelle con lo stesso codice verranno sovrascritte."))return;
+    for(const raw of obj.orders){if(!/^[A-Za-z0-9_-]{5,65}$/.test(raw.id)||!Array.isArray(raw.bags)||raw.bags.length>150)throw new Error("Scheda o sacchi non validi");
+      const x={...newRecord(),...raw,bags:[]};
+      for(const b of raw.bags){x.bags.push({code:String(b.code||""),weight:String(b.weight||""),notes:String(b.notes||""),
+      bagPhoto:b.bagPhoto?dataToBlob(b.bagPhoto):null,samplePhoto:b.samplePhoto?dataToBlob(b.samplePhoto):null});}
+      await queryDB("readwrite",st=>st.put(x));
+    }
+    await refreshList();msg("✓ Backup importato: "+obj.orders.length+" schede.");
+  }catch(e){msg("Impossibile importare il backup: "+e.message,true);}
+}
+async function exportPublic(){
+ try{
+   const rows=(await queryDB("readonly",st=>st.getAll())).filter(x=>x.consent&&x.bags?.some(b=>b.bagPhoto&&b.samplePhoto));
+   if(!rows.length){msg("Nessuna scheda autorizzata con almeno un sacco e campione completi.",true);return;}
+   const works=[];for(const x of rows)works.push(await serialRecord(x,true));
+   download("lavorazioni.json",{version:1,works});
+   msg("✓ Vetrina esportata ("+works.length+" lavorazioni). Controlla le foto per etichette e dati personali PRIMA di caricare il file su GitHub in data/lavorazioni.json.");
+ }catch(e){msg("Esportazione non riuscita: "+e.message,true);}
+}
+$("new").onclick=startNew;$("save").onclick=saveRecord;$("remove").onclick=deleteRecord;
+$("addBag").onclick=()=>{if(!record)startNew();record.bags.push({code:"SAC-"+String(record.bags.length+1).padStart(2,"0"),weight:"",notes:"",bagPhoto:null,samplePhoto:null});dirty=true;renderBags();summarize();};
+$("lookup").onclick=lookup;$("search").oninput=drawList;
+for(const id of ["orderId","client","date","mix","quantity","publicAlias","notes","consent"]){$(id).addEventListener("input",fieldChange);$(id).addEventListener("change",fieldChange);}
+$("export").onclick=exportBackup;$("import").onclick=()=>$("backupFile").click();
+$("backupFile").addEventListener("change",e=>{importBackup(e.target.files?.[0]);e.target.value="";});
+$("publish").onclick=exportPublic;
+window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue="";}});
+(async()=>{try{db=await getDB();await refreshList();await startNew();const from=new URLSearchParams(location.search).get("order_id");if(from){$("orderId").value=from;fieldChange();await lookup();}}catch(e){msg("Archivio browser non disponibile: "+e.message,true);}})();
+})();
+</script>
+</body></html>
