@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#164735">
+<title>AgroTritura | Documenti consegna</title>
+<style>
+:root{--green:#174b39;--green2:#0d3427;--gold:#c68421;--ink:#1d2b23;--muted:#60716a;--bg:#f2f5f2;--line:#dce5df;--red:#8f2424}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header.site{background:linear-gradient(115deg,#0e3729,#236349);color:#fff;padding:24px 16px}
+.container{max-width:1140px;margin:auto}
+.site h1{margin:0;font-size:24px;letter-spacing:.2px}.site p{margin:5px 0 0;color:#d7e9df}
+a{color:#15533e}
+.layout{display:grid;grid-template-columns:minmax(300px,390px) minmax(0,1fr);gap:18px;margin:20px auto 40px;padding:0 16px;align-items:start}
+.panel,.previewWrap{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 25px #112c1910}
+.panel{padding:18px}
+.panel h2{font-size:17px;margin:5px 0 13px;color:var(--green)}
+label{font-size:13px;font-weight:750;display:block;margin:12px 0 5px}
+input,textarea,select{width:100%;font:inherit;border:1px solid #cbd8ce;border-radius:10px;padding:10px 12px;background:#fff;color:#17241d}
+textarea{min-height:72px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #a7c9b5}
+button{font:inherit;font-weight:750;border:0;border-radius:10px;cursor:pointer;padding:12px 16px}
+button.main{background:var(--green);color:#fff}
+button.secondary{border:1px solid #c9d8cf;background:#edf4ee;color:var(--green)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.btnRow{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.btnRow>*{flex:1}
+.notice{border-left:4px solid #d08d2a;background:#fff7e7;padding:12px;border-radius:7px;font-size:13px;margin:14px 0}
+.warning{border-left-color:#b44e43;background:#fff0eb}
+.status{font-size:13px;padding:10px 12px;background:#edf4ee;border-radius:9px;margin:11px 0}
+.status.error{background:#fff0eb;color:#8f2424}
+.small{font-size:12px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:19px 0}
+.checkRow{display:flex;gap:9px;align-items:flex-start;margin-top:12px;font-size:13px}
+.checkRow input{width:18px;min-width:18px;margin:3px 0 0}
+.previewWrap{padding:16px;overflow:auto}
+.paper{width:210mm;min-height:268mm;margin:auto;background:#fff;color:#14251c;border:1px solid #e1e8e2;box-shadow:0 3px 12px #00000012;padding:17mm 15mm 15mm}
+.brandline{display:flex;justify-content:space-between;gap:15px;align-items:start;border-bottom:3px solid var(--green);padding-bottom:14px}
+.brandName{font-size:27px;font-weight:900;letter-spacing:1px;color:var(--green)}
+.brandPayoff{font-size:12px;color:#557061;text-transform:uppercase;letter-spacing:2px}
+.docTag{background:#e6f1e9;color:var(--green);border-radius:9px;padding:8px 11px;text-align:right;font-size:11px;font-weight:800;max-width:215px}
+.docTitle{font-size:22px;font-weight:850;margin:24px 0 5px}
+.docSub{font-size:12px;color:#6a786f}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+.metaItem{border:1px solid #e0e8e1;border-radius:9px;padding:10px 12px;min-height:75px}
+.metaItem span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#627b6a}
+.metaItem strong{display:block;font-size:13px;overflow-wrap:anywhere;margin-top:3px}
+h3{color:var(--green);font-size:12px;text-transform:uppercase;letter-spacing:1.5px;margin:25px 0 9px}
+.detail{width:100%;border-collapse:collapse;table-layout:fixed}
+.detail th{background:#f1f5f1;color:#4c6856;font-size:11px;text-transform:uppercase;text-align:left;padding:10px}
+.detail td{padding:14px 10px;border-bottom:1px solid #dce6dc;vertical-align:top;overflow-wrap:anywhere}
+.detail th:last-child,.detail td:last-child{text-align:right;width:22%}
+.total{margin:25px 0 14px auto;max-width:350px}
+.total div{display:flex;justify-content:space-between;border-bottom:1px solid #dde6df;padding:9px 2px}
+.total .net{background:#eaf4ec;border-radius:7px;padding:11px;color:var(--green);font-weight:850;font-size:18px}
+.paperNote{margin-top:17px;color:#586a5f;font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere}
+.sig{margin-top:40px;display:flex;gap:35px;justify-content:space-between}
+.sig>div{flex:1;border-top:1px solid #718779;padding-top:7px;font-size:11px;color:#607465}
+.footer{font-size:10px;color:#65756a;border-top:1px solid #e2e7e1;padding-top:11px;margin-top:36px}
+mark{background:#fff0cb;padding:0 3px}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.previewWrap{overflow-x:auto}.paper{width:100%;min-height:0;padding:26px}}
+@media(max-width:620px){.paper{padding:17px}.brandName{font-size:21px}.meta{grid-template-columns:1fr}.site h1{font-size:21px}.docTitle{font-size:19px}}
+@page{size:A4;margin:0}
+@media print{
+html,body{margin:0!important;padding:0!important;background:#fff!important}
+header.site,.panel,.noPrint{display:none!important}
+.layout{display:block!important;margin:0!important;padding:0!important}
+.previewWrap{border:0!important;box-shadow:none!important;border-radius:0!important;padding:0!important;margin:0!important;overflow:visible!important}
+.paper{width:210mm!important;min-height:297mm!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:17mm 15mm 13mm!important;break-inside:avoid}
+.docTag,.total .net,.detail th{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}}
+</style>
+</head>
+<body>
+<header class="site"><div class="container"><h1>🌾 AgroTritura · Documenti consegna</h1><p>Generatore da ordini consegnati — stampa su A4 / salva PDF</p></div></header>
+<div class="container layout">
+<section class="panel">
+  <a href="admin-ordini.html">← Torna agli ordini</a>
+  <h2>1. Recupera l'ordine consegnato</h2>
+  <label for="orderId">Codice ordine</label><input id="orderId" placeholder="AT-2026-11-04-XXXXXX" autocomplete="off">
+  <div class="btnRow"><button type="button" id="load" class="main">Carica ordine</button></div>
+  <div class="status" id="statusBox">Inserisci un codice per caricare i dati dell'ordine.</div>
+  <div class="notice"><b>Nota fiscale:</b> il documento di consegna non è una ricevuta fiscale, una fattura o un documento commerciale. La vendita di mangimi non comporta automaticamente una ritenuta d'acconto.</div>
+
+  <h2>2. Tipo di documento</h2>
+  <label for="docType">Documento da preparare</label>
+  <select id="docType">
+    <option value="delivery">Promemoria di consegna (non fiscale)</option>
+    <option value="occasional">BOZZA ricevuta per prestazione occasionale (solo servizi)</option>
+  </select>
+  <div class="notice warning" id="occasionWarning" hidden><b>Attenzione:</b> questa è soltanto una bozza per prestazioni di lavoro autonomo realmente occasionali, NON per la vendita di cereali o mangimi. Va verificata con un commercialista prima dell'uso fiscale. La ritenuta del 20% si applica soltanto se il committente è un sostituto d'imposta.</div>
+  <h2>3. Dati del documento</h2>
+  <label for="dateDoc">Data documento / consegna</label><input type="date" id="dateDoc">
+  <label for="seller">Emittente / attività</label><input id="seller" value="AgroTritura" maxlength="120">
+  <label for="sellerLocation">Sede / località</label><input id="sellerLocation" value="Gattico-Veruno (NO)" maxlength="180">
+  <label for="sellerTax">Codice fiscale / Partita IVA (se applicabile)</label><input id="sellerTax" placeholder="Da compilare con dati reali" maxlength="30">
+  <label for="customer">Cliente</label><input id="customer" placeholder="Nome cliente" maxlength="150">
+  <label for="customerTax">CF / Partita IVA del cliente (se richiesto)</label><input id="customerTax" placeholder="Dati del cliente" maxlength="30">
+  <label for="product">Prodotto consegnato / descrizione servizio</label><textarea id="product" maxlength="600"></textarea>
+  <label for="quantity">Quantità consegnata</label><input id="quantity" maxlength="100" placeholder="Es. 25 kg">
+  <label for="gross">Importo lordo in euro (non presente nell'ordine)</label><input id="gross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Es. 25,00">
+  <label for="payment">Pagamento</label>
+  <select id="payment"><option value="not-stated">Non attestato</option><option value="paid">Confermato come ricevuto</option><option value="unpaid">Da incassare</option></select>
+  <label for="notes">Note (facoltative)</label><textarea id="notes" maxlength="1000" placeholder="Es. consegna effettuata a domicilio, composizione mix..."></textarea>
+
+  <div id="occasionalFields" hidden>
+    <hr>
+    <label for="receiptNo">Numero ricevuta occasionale (progressivo a cura tua)</label><input id="receiptNo" maxlength="40" placeholder="Es. 1/2026">
+    <label for="clientKind">Il cliente è un sostituto d'imposta?</label>
+    <select id="clientKind"><option value="private">No, cliente privato (0%)</option><option value="withholding">Sì, sostituto d'imposta (20%)</option></select>
+    <div class="checkRow"><input id="legalCheck" type="checkbox"><label for="legalCheck" style="margin:0;font-weight:600">Confermo che si tratta esclusivamente di un servizio realmente occasionale, che il pagamento è stato ricevuto e che ho verificato con un professionista inquadramento fiscale, eventuale bollo e INPS. Non sto documentando una vendita di mangimi.</label></div>
+    <p class="small">Il sistema calcola una semplice simulazione del 20% e segnala il bollo. Non gestisce contributi INPS, versamenti F24, assolvimento del bollo o invio SDI.</p>
+  </div>
+  <div class="btnRow"><button class="secondary" id="preview" type="button">Aggiorna anteprima</button><button class="main" id="print" type="button" disabled>Stampa / Salva PDF</button></div>
+  <p class="small">Per salvare il PDF, scegli “Salva come PDF” nella finestra di stampa del telefono o del computer. Non viene inviata alcuna ricevuta automaticamente al cliente e il documento non viene registrato nel foglio Google.</p>
+</section>
+<div class="previewWrap"><div id="paper" class="paper"><h2 class="docTitle">Documento non ancora pronto</h2><p>Carica un ordine consegnato e completa i campi richiesti.</p></div></div>
+</div>
+<script>
+(function(){
+  "use strict";
+  const API_BASE = "https://script.google.com/macros/s/AKfycbxvrgdzM5t1Zg-pS00iopBEpw3OBZj_-y14QjaurcRHnrrlXJd3T5i2i8z7qPrS98hK/exec";
+  const $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const euro = (n) => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(n);
+  let verifiedOrder = "";
+  function setStatus(msg, error){
+    $("statusBox").textContent = msg; $("statusBox").className = error ? "status error" : "status";
+  }
+  function normalize(s){
+    return String(s||"").toLowerCase().trim().includes("consegn") ? "consegnato" : String(s||"").toLowerCase().trim();
+  }
+  function jsonp(url,callbackName){
+    return new Promise(function(resolve,reject){
+      const script=document.createElement("script");
+      let done=false;
+      const timeout=setTimeout(function(){finish(new Error("Tempo scaduto interrogando il servizio ordini."));},11000);
+      function finish(err,data){
+        if(done)return;done=true;clearTimeout(timeout);
+        try{delete window[callbackName];}catch(_){window[callbackName]=undefined;}
+        script.remove();
+        if(err)reject(err);else resolve(data);
+      }
+      window[callbackName]=function(data){finish(null,data);};
+      script.onerror=function(){finish(new Error("Il servizio ordini non è raggiungibile."));};
+      script.src=url;document.body.appendChild(script);
+    });
+  }
+  function orderFrom(json){
+    if(!json || json.ok===false)throw new Error(json?.error || "Ordine non trovato.");
+    const candidates=[json.order,json.data?.order,json.result?.order,json.data,json.result,json.record,json];
+    const order=candidates.find(x=>x&&typeof x==="object"&&!Array.isArray(x)&&String(x.status??x.stato??x.order_status??"").trim());
+    if(!order)throw new Error("Il servizio non ha restituito lo stato dell'ordine.");
+    return order;
+  }
+  function currentId(){return $("orderId").value.trim();}
+  async function loadOrder(){
+    verifiedOrder="";$("print").disabled=true;
+    const id=currentId();
+    if(!/^[a-zA-Z0-9_-]{5,65}$/.test(id)){setStatus("Inserisci un codice ordine valido.",true);return;}
+    setStatus("Caricamento dell'ordine in corso…",false);
+    $("load").disabled=true;
+    try{
+      const cb="__agroDoc"+Math.random().toString(36).slice(2);
+      const url=API_BASE+"?order_id="+encodeURIComponent(id)+"&callback="+encodeURIComponent(cb)+"&t="+Date.now();
+      const record=orderFrom(await jsonp(url,cb));
+      if(normalize(record.status??record.stato??record.order_status)!=="consegnato")
+        throw new Error("Il documento è disponibile solo per ordini con stato Consegnato.");
+      const returnedId=String(record.order_id??record.id??id).trim();
+      if(returnedId && returnedId.toLowerCase()!==id.toLowerCase())
+        throw new Error("Il codice restituito non corrisponde all'ordine richiesto.");
+      verifiedOrder=id;
+      $("customer").value=String(record.customer??record.customer_name??record.cliente??"");
+      $("product").value=String(record.product??record.prodotto??"");
+      $("quantity").value=String(record.quantity??record.quantita??"");
+      setStatus("✓ Ordine "+id+" confermato come Consegnato. Compila i campi mancanti e prepara il documento.",false);
+      render();
+    }catch(e){setStatus(e.message,true);render();}
+    finally{$("load").disabled=false;}
+  }
+  function applyMode(){
+    const occasional=$("docType").value==="occasional";
+    $("occasionWarning").hidden=!occasional;
+    $("occasionalFields").hidden=!occasional;
+    render();
+  }
+  function dateStr(s){
+    if(!s)return "Da confermare";
+    const d=new Date(s+"T12:00:00");return Number.isNaN(d.getTime())?s:d.toLocaleDateString("it-IT");
+  }
+  function render(){
+    const occasional=$("docType").value==="occasional";
+    const id=currentId(), grossValue=$("gross").value, gross=Number(grossValue);
+    const hasGross=grossValue!==""&&Number.isFinite(gross)&&gross>=0;
+    const buyer=$("customer").value.trim(), product=$("product").value.trim(), quantity=$("quantity").value.trim();
+    const seller=$("seller").value.trim(), place=$("sellerLocation").value.trim(), sellerTax=$("sellerTax").value.trim();
+    const buyerTax=$("customerTax").value.trim(), notes=$("notes").value.trim(), docDate=dateStr($("dateDoc").value);
+    const withholding=occasional&&$("clientKind").value==="withholding";
+    const tax=withholding&&hasGross?Math.round(gross*0.2*100)/100:0;
+    const net=hasGross?Math.round((gross-tax)*100)/100:0;
+    const stamp=occasional&&hasGross&&gross>77.47;
+    const payStatus=$("payment").value==="paid"?"Pagamento ricevuto":($("payment").value==="unpaid"?"Pagamento da ricevere":"Pagamento non attestato");
+    const legalReady=occasional?$("legalCheck").checked&&$("payment").value==="paid"&&sellerTax!==""&&buyerTax!==""&&$("receiptNo").value.trim()!=="":true;
+    const ready=verifiedOrder===id&&id!==""&&buyer!==""&&product!==""&&quantity!==""&&seller!==""&&$("dateDoc").value!==""&&(!occasional||(hasGross&&legalReady));
+    $("print").disabled=!ready;
+    const title=occasional?"BOZZA · Ricevuta prestazione occasionale":"Promemoria di consegna";
+    const sub=occasional?"Documento da verificare prima di qualsiasi impiego fiscale":"Documento informativo · Non valido come documento fiscale";
+    const docRef=occasional?$("receiptNo").value.trim()||"Da numerare":"Rif. "+id;
+    const detailAmount=hasGross?euro(gross):"Non indicato";
+    $("paper").innerHTML=
+      '<div class="brandline"><div><div class="brandName">AGROTRITURA</div><div class="brandPayoff">Mangime su misura</div><div class="small">www.agrotritura.it</div></div><div class="docTag">'+(occasional?"BOZZA FISCALE<br>VERIFICA OBBLIGATORIA":"USO INFORMATIVO<br>NON FISCALE")+'</div></div>'+
+      '<div class="docTitle">'+esc(title)+'</div><div class="docSub">'+esc(sub)+'</div>'+
+      '<div class="meta"><div class="metaItem"><span>Numero / riferimento</span><strong>'+esc(docRef)+'</strong></div><div class="metaItem"><span>Data</span><strong>'+esc(docDate)+'</strong></div>'+
+      '<div class="metaItem"><span>Emittente</span><strong>'+esc(seller)+'</strong>'+esc(place)+(sellerTax?'<br>CF/P. IVA: '+esc(sellerTax):'')+'</div>'+
+      '<div class="metaItem"><span>Cliente</span><strong>'+esc(buyer||"Da completare")+'</strong>'+(buyerTax?'CF/P. IVA: '+esc(buyerTax):'')+'</div></div>'+
+      '<h3>Riepilogo '+(occasional?"della prestazione":"della consegna")+'</h3>'+
+      '<table class="detail"><thead><tr><th>Descrizione</th><th>Quantità</th></tr></thead><tbody><tr><td>'+esc(product||"Da completare")+'</td><td>'+esc(quantity||"—")+'</td></tr></tbody></table>'+
+      (hasGross?'<div class="total"><div><span>Importo lordo '+(occasional?"prestazione":"indicato")+'</span><strong>'+euro(gross)+'</strong></div>'+
+        (occasional?'<div><span>Ritenuta d’acconto '+(withholding?"20%":"0%")+'</span><strong>− '+euro(tax)+'</strong></div><div class="net"><span>Netto teorico</span><strong>'+euro(net)+'</strong></div>':'')+'</div>':'<div class="paperNote">Importo non presente nei dati dell’ordine; nessuna attestazione economica.</div>')+
+      '<div class="paperNote"><b>Stato ordine:</b> Consegnato · '+esc(payStatus)+'</div>'+
+      (occasional?'<div class="paperNote">La ritenuta è calcolata solo a scopo di verifica. '+(stamp?'Importo oltre 77,47 €: verificare assolvimento dell’imposta di bollo da 2 €.':'Verificare l’applicabilità dell’imposta di bollo.')+' Non sono calcolati eventuali contributi previdenziali.</div>':'')+
+      (notes?'<div class="paperNote"><b>Note:</b> '+esc(notes)+'</div>':'')+
+      '<div class="sig"><div>Firma di chi consegna (facoltativa)</div><div>Firma per presa in consegna (facoltativa)</div></div>'+
+      '<div class="footer">'+(occasional?'BOZZA DI LAVORO — NON UTILIZZARE COME DOCUMENTO FISCALE SENZA VALIDAZIONE PROFESSIONALE.':'Questo promemoria non sostituisce fattura, documento commerciale o altre formalità fiscali eventualmente dovute.')+'<br>AgroTritura · www.agrotritura.it · Rif. ordine: '+esc(verifiedOrder||id||"—")+'</div>';
+    return ready;
+  }
+  $("load").addEventListener("click",loadOrder);
+  $("orderId").addEventListener("keydown",e=>{if(e.key==="Enter")loadOrder();});
+  $("docType").addEventListener("change",applyMode);
+  $("preview").addEventListener("click",render);
+  document.querySelectorAll("input,textarea,select").forEach(el=>{
+    el.addEventListener("input",render);
+    if(el.id!=="docType")el.addEventListener("change",render);
+  });
+  $("print").addEventListener("click",()=>{
+    if(!render()){setStatus("Verifica i dati: ordine consegnato, data, cliente, prodotto e quantità sono obbligatori. Per la bozza occasionale servono anche i dati fiscali, l'importo e la verifica professionale.",true);return;}
+    window.print();
+  });
+  const today=new Date();const yyyy=today.getFullYear();const mm=String(today.getMonth()+1).padStart(2,"0");const dd=String(today.getDate()).padStart(2,"0");
+  $("dateDoc").value=yyyy+"-"+mm+"-"+dd;
+  const fromUrl=new URLSearchParams(location.search).get("order_id");
+  if(fromUrl){$("orderId").value=fromUrl;loadOrder();}else{render();}
+})();
+</script>
+</body></html>
