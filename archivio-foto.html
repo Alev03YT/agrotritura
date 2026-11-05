@@ -45,6 +45,7 @@ label.check{display:flex;gap:9px;align-items:start;font-weight:550;font-size:13p
 @media(max-width:820px){main{display:block}aside{margin-bottom:16px}.photoGrid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
 @media(max-width:500px){header h1{font-size:19px}.photo img,.photo .missing{height:165px}}
 </style>
+<link rel="stylesheet" href="css/photo-zoom.css?v=2">
 </head>
 <body>
 <header><div style="max-width:1250px;margin:auto">
@@ -78,11 +79,12 @@ label.check{display:flex;gap:9px;align-items:start;font-weight:550;font-size:13p
   <label for="notes">Note di lavorazione (private)</label><textarea id="notes" maxlength="1200" placeholder="Composizione, granulometria, lotto, note di preparazione…"></textarea>
   <label class="check"><input id="consent" type="checkbox">Ho ottenuto e documentato il consenso del cliente per pubblicare queste foto, senza dati personali identificativi. <b>Disattivato per impostazione predefinita.</b></label>
   <div class="top" style="margin-top:23px"><h2 style="margin:0">Sacchi e campioni</h2><button id="addBag" type="button">+ Aggiungi sacco</button></div>
-  <p class="subtle">Per ogni sacco: codice/numero, peso, foto del sacco finito e foto del campione prelevato. Le immagini vengono ridimensionate prima del salvataggio.</p>
+  <p class="subtle">Per ogni sacco: codice/numero, peso, foto del sacco finito e foto del campione prelevato. Le nuove foto vengono conservate fino a 2200 pixel sul lato maggiore per ingrandimenti più nitidi. Le foto già caricate manterranno la loro risoluzione originale in archivio.</p>
   <div class="bags" id="bags"></div>
   <div id="msg" role="status" aria-live="polite">Inserisci i dati e premi Salva scheda.</div>
 </section>
 </main>
+<script src="js/photo-zoom.js?v=2"></script>
 <script>
 (function(){
 "use strict";
@@ -134,7 +136,19 @@ function renderBags(){
     section.querySelector("[data-delete]").onclick=()=>{if(confirm("Rimuovere questo sacco e le due foto dalla scheda?")){record.bags.splice(i,1);dirty=true;renderBags();summarize();}};
     for(const key of ["bagPhoto","samplePhoto"]){
       const wrap=section.querySelector('[data-prev="'+key+'"]'),blob=bag[key];
-      if(blob instanceof Blob){const img=document.createElement("img");img.src=blobUrl(blob);img.alt=key==="bagPhoto"?"Sacco completo":"Campione del sacco";wrap.appendChild(img);}
+      if(blob instanceof Blob){
+        const img=document.createElement("img");
+        const src=blobUrl(blob);
+        const label=(key==="bagPhoto"?"Foto sacco":"Foto campione")+" · "+(bag.code||"Sacco "+(i+1));
+        img.src=src;img.alt=label;img.style.cursor="zoom-in";
+        img.addEventListener("click",()=>window.AgroPhotoZoom.open(src,label));
+        const zoomBtn=document.createElement("button");
+        zoomBtn.type="button";zoomBtn.className="at-photo-open";
+        zoomBtn.textContent="🔍 Apri e ingrandisci";
+        zoomBtn.setAttribute("aria-label","Ingrandisci "+label);
+        zoomBtn.addEventListener("click",()=>window.AgroPhotoZoom.open(src,label));
+        wrap.append(img,zoomBtn);
+      }
       else{const empty=document.createElement("div");empty.className="missing";empty.textContent=key==="bagPhoto"?"Nessuna foto del sacco":"Nessuna foto del campione";wrap.appendChild(empty);}
       section.querySelector('[data-pick="'+key+'"]').addEventListener("change",async e=>{
         const file=e.target.files?.[0];if(!file)return;
@@ -148,7 +162,7 @@ function renderBags(){
   if(!record?.bags?.length){const empty=document.createElement("p");empty.className="subtle";empty.textContent="Nessun sacco inserito. Premi «Aggiungi sacco».";
     root.appendChild(empty);}
 }
-function compressed(file,maxSize=1200,quality=.75){
+function compressed(file,maxSize=2200,quality=.86){
   if(!/^image\/(png|jpeg|webp)$/.test(file.type))throw new Error("Usa una foto JPG, PNG o WEBP.");
   if(file.size>25*1024*1024)throw new Error("Foto troppo grande (massimo 25 MB).");
   return new Promise((resolve,reject)=>{
