@@ -1,0 +1,118 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>AgroTritura | Gestione recensioni</title>
+<style>
+:root{--g:#174b38;--ink:#19261d;--line:#dce6df;--bg:#f3f6f3;--muted:#66786a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(110deg,#103b2c,#28684c);padding:24px 18px;color:white}
+header h1{margin:0;font-size:23px}header p{margin:4px 0 0;opacity:.8}
+main{max-width:1120px;padding:18px;margin:auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(290px,.9fr);gap:17px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:19px;box-shadow:0 9px 27px #103b2010}
+h2{font-size:18px;margin:0 0 13px;color:var(--g)}h3{font-size:16px;margin:0 0 8px}
+a{color:#226342;font-weight:700}
+label{display:block;font-weight:750;font-size:13px;margin:12px 0 5px}
+input,select,textarea{font:inherit;border:1px solid #c5d4c8;border-radius:10px;padding:11px;width:100%;background:#fff}
+textarea{min-height:116px;resize:vertical}
+button{border:0;border-radius:10px;padding:12px 15px;background:var(--g);color:#fff;font:inherit;font-weight:760;cursor:pointer}
+button.outline{border:1px solid #b6ceb9;background:#eef5ef;color:var(--g)}
+button.danger{background:#fff1ec;color:#8e3226;border:1px solid #ebc9bd}
+.buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.buttons>*{flex:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;gap:10px;align-items:start;font-size:13px;font-weight:560;margin:14px 0}
+.check input{width:19px;height:19px;margin:2px 0 0}
+.note{font-size:13px;border-left:4px solid #c78a2b;padding:12px;background:#fff8e9;margin:13px 0;border-radius:6px}
+.review{border:1px solid var(--line);border-radius:12px;padding:13px;margin:10px 0;background:#fbfcfb}
+.review strong,.review small{display:block}
+.review small{color:var(--muted);font-size:12px}
+.review p{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;background:#e3f3e7;color:#1d693e;font-size:11px;font-weight:800}
+.badge.pending{background:#fff2dd;color:#8b5c14}
+.muted{color:var(--muted);font-size:13px}
+#msg{background:#eaf4ed;padding:11px;border-radius:8px;font-size:13px;margin-top:14px}
+#locked{max-width:570px;margin:50px auto}
+.hidden{display:none!important}
+@media(max-width:780px){main{grid-template-columns:1fr}.two{grid-template-columns:1fr}header h1{font-size:19px}}
+</style></head><body>
+<header><div style="max-width:1120px;margin:auto"><h1>⭐ AgroTritura · Gestione recensioni</h1><p>Raccolta e approvazione delle testimonianze autentiche</p></div></header>
+<section id="locked" class="panel hidden"><h2>Area gestionale</h2><p>Per accedere entra dal <a href="pannello.html">Control Center</a>.</p></section>
+<main id="app" class="hidden">
+<section class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Inserisci o modera una recensione</h2><a href="recensioni.html" target="_blank" rel="noopener">Vedi sito ↗</a></div>
+<div class="note"><b>Funzionamento:</b> il cliente invia la recensione via WhatsApp dalla pagina pubblica. Dopo averla ricevuta, copiala qui fedelmente. <b>Non inventare recensioni.</b> Richiedi l'autorizzazione prima di pubblicare.</div>
+<input id="editId" type="hidden">
+<div class="two"><div><label for="name">Nome o pseudonimo autorizzato</label><input id="name" maxlength="60" placeholder="Es. Marco P."></div>
+<div><label for="rating">Valutazione</label><select id="rating"><option value="5">★★★★★ · 5 stelle</option><option value="4">★★★★☆ · 4 stelle</option><option value="3">★★★☆☆ · 3 stelle</option><option value="2">★★☆☆☆ · 2 stelle</option><option value="1">★☆☆☆☆ · 1 stella</option></select></div></div>
+<label for="date">Data recensione</label><input id="date" type="date">
+<label for="review">Testo originale del cliente</label><textarea id="review" maxlength="1300" placeholder="Incolla qui le parole del cliente…"></textarea>
+<label class="check"><input id="consent" type="checkbox"><span>Il cliente ha autorizzato la pubblicazione del testo, del nome/pseudonimo e del voto sul sito AgroTritura.</span></label>
+<label class="check"><input id="approved" type="checkbox"><span>Recensione verificata e approvata per la pubblicazione.</span></label>
+<div class="buttons"><button id="save" type="button">💾 Salva</button><button id="reset" class="outline" type="button">Nuova recensione</button></div>
+<div id="msg" role="status">Le recensioni vengono salvate solo nel browser finché non esporti e pubblichi il file JSON.</div>
+</section>
+<section class="panel"><h2>Recensioni registrate</h2><div id="list"></div>
+<h3>Backup e pubblicazione</h3>
+<p class="muted">Per visualizzarle online devi esportare il file delle recensioni approvate e caricarlo nel repository GitHub come <code>data/recensioni.json</code>. Non viene pubblicato automaticamente.</p>
+<div class="buttons"><button id="exportPublic" type="button">↓ Esporta recensioni pubbliche</button></div>
+<div class="buttons"><button id="backup" class="outline" type="button">↓ Backup privato</button><button id="import" class="outline" type="button">↑ Ripristina backup</button></div>
+<input id="file" type="file" accept=".json,application/json" hidden>
+<p class="muted">Per raccogliere nuove recensioni puoi inviare al cliente <a href="recensioni.html">la pagina pubblica</a> dopo la consegna. Usa dati autorizzati: le valutazioni non vanno modificate per migliorarne il tono.</p>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const session=(()=>{try{return JSON.parse(sessionStorage.getItem("at_cc_session")||"null")}catch{return null}})();
+if(!session||!Array.isArray(session.tools)||!(session.tools.includes("recensioni")||session.tools.includes("ordini"))){$("locked").classList.remove("hidden");return;}
+$("app").classList.remove("hidden");
+const KEY="agrotritura-review-drafts-v1";
+const today=()=>new Date().toISOString().slice(0,10);
+function records(){try{const parsed=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(parsed)?parsed:[]}catch{return [];}}
+function store(rows){localStorage.setItem(KEY,JSON.stringify(rows));renderList();}
+function message(s){$("msg").textContent=s;}
+function reset(){$("editId").value="";$("name").value="";$("rating").value="5";$("date").value=today();$("review").value="";$("consent").checked=false;$("approved").checked=false;message("Pronto per una nuova recensione.");}
+function esc(s){return String(s||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
+function renderList(){
+ const root=$("list"),list=records().slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));root.replaceChildren();
+ if(!list.length){root.innerHTML='<p class="muted">Non hai ancora registrato recensioni.</p>';return;}
+ for(const r of list){
+   const item=document.createElement("article");item.className="review";
+   const status=r.approved&&r.consent?"Pronta per export":"In attesa";
+   item.innerHTML='<span class="badge '+(status==="In attesa"?"pending":"")+'">'+esc(status)+'</span><strong>'+esc(r.name||"—")+' · '+Number(r.rating)+'/5</strong>'+
+    '<small>'+esc(r.date||"")+'</small><p>'+esc(String(r.text||"").slice(0,1300))+'</p>';
+   const line=document.createElement("div");line.className="buttons";
+   const edit=document.createElement("button");edit.className="outline";edit.textContent="Modifica";edit.onclick=()=>editRecord(r.id);
+   const remove=document.createElement("button");remove.className="danger";remove.textContent="Elimina";remove.onclick=()=>{if(confirm("Eliminare questa recensione locale?")){store(records().filter(x=>x.id!==r.id));if($("editId").value===r.id)reset();}};
+   line.append(edit,remove);item.appendChild(line);root.appendChild(item);
+ }
+}
+function editRecord(id){const r=records().find(x=>x.id===id);if(!r)return;
+ $("editId").value=r.id;$("name").value=r.name;$("rating").value=String(r.rating);
+ $("date").value=r.date;$("review").value=r.text;$("consent").checked=!!r.consent;$("approved").checked=!!r.approved;
+ window.scrollTo({top:0,behavior:"smooth"});message("Modifica la recensione e premi Salva.");}
+function save(){
+ const name=$("name").value.trim(),text=$("review").value.trim(),date=$("date").value;
+ const rating=Number($("rating").value);
+ if(name.length<2||text.length<12||!date||rating<1||rating>5){message("Inserisci nome, valutazione, data e almeno 12 caratteri di testo.");return;}
+ if($("approved").checked&&!$("consent").checked){message("Non puoi approvare una recensione senza il consenso del cliente.");return;}
+ const rows=records(),id=$("editId").value||("r-"+Date.now()+"-"+Math.random().toString(36).slice(2,7));
+ const item={id,name,rating,text,date,consent:$("consent").checked,approved:$("approved").checked};
+ const ix=rows.findIndex(r=>r.id===id);if(ix>=0)rows[ix]=item;else rows.push(item);
+ try{store(rows);reset();message("✓ Recensione salvata su questo dispositivo.");}catch(e){message("Errore memoria browser: "+e.message);}
+}
+function download(name,obj){const u=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);}
+$("save").onclick=save;$("reset").onclick=reset;
+$("exportPublic").onclick=()=>{
+ const approved=records().filter(x=>x.approved&&x.consent).map(({name,rating,text,date})=>({name,rating,text,date,approved:true}));
+ download("recensioni.json",{version:1,reviews:approved});message("Esportate "+approved.length+" recensioni approvate. Carica il file in data/recensioni.json per mostrarle sul sito.");
+};
+$("backup").onclick=()=>{download("AgroTritura-backup-recensioni-"+today()+".json",{version:1,kind:"agrotritura-review-backup",reviews:records()});message("Backup privato esportato.");};
+$("import").onclick=()=>$("file").click();
+$("file").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;
+ try{if(f.size>2*1024*1024)throw Error("Backup troppo grande");const data=JSON.parse(await f.text());
+ if(data.kind!=="agrotritura-review-backup"||data.version!==1||!Array.isArray(data.reviews)||data.reviews.length>1000)throw Error("Backup non valido");
+ if(!confirm("Ripristinare "+data.reviews.length+" recensioni, sostituendo le bozze locali?"))return;
+ const rows=data.reviews.map(r=>({id:String(r.id||"").slice(0,80),name:String(r.name||"").slice(0,60),rating:Math.max(1,Math.min(5,Number(r.rating)||5)),text:String(r.text||"").slice(0,1300),date:String(r.date||"").slice(0,10),consent:r.consent===true,approved:r.approved===true}));
+ store(rows);reset();message("✓ Backup importato");
+ }catch(err){message("Errore importazione: "+err.message);}finally{e.target.value="";}};
+reset();renderList();
+})();
+</script></body></html>
