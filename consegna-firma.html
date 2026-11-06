@@ -134,6 +134,7 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 <h2>4 · Stampa per la consegna</h2>
 <p class="help">Sul foglio restano spazi per <b>codice fiscale/indirizzo del cliente</b> (se non già compilati), <b>luogo e data effettivi</b>, <b>firma del venditore</b> e <b>firma leggibile per esteso del cliente</b>.</p>
 <div class="actions"><button class="primary" id="print" type="button" disabled>🖨️ Stampa / Salva PDF</button><button class="secondary" id="refresh" type="button">Aggiorna anteprima</button></div>
+<p class="help" id="printHint" role="status">Per stampare, carica prima un ordine valido. I dati mancanti potranno essere compilati a penna sul foglio.</p>
 <p class="help">Il documento non modifica lo stato dell'ordine sul sistema. Dopo la consegna, aggiorna separatamente lo stato a «Consegnato» dal pannello.</p>
 </section>
 <section class="preview">
@@ -202,7 +203,7 @@ async function loadOrder(){
  }catch(e){showMessage(e.message,true);render();}
  finally{$("load").disabled=false;}
 }
-function showText(value,blank){return value?esc(value):'<span class="paperPlaceholder">'+esc(blank||"Da compilare")+'</span>';}
+function showText(value,blank){return value?esc(value):'<span class="paperPlaceholder">'+esc(blank||"Da compilare a mano")+'</span>';}
 function lineOrText(value){return value?esc(value):'<span class="fillLine">&nbsp;</span>';}
 function money(v){if(v==="")return "";const n=Number(v);return Number.isFinite(n)&&n>=0?new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(n):"";}
 function render(){
@@ -212,8 +213,25 @@ function render(){
  const total=money($("total").value),paid=$("payment").value,prepared=dateStr($("docDate").value);
  const planned=dateStr($("plannedDate").value),transport=$("transport").value,notes=$("notes").value.trim();
  const delivered=/consegn/i.test(verifiedState);
- const ok=verifiedOrder===id&&idValid(id)&&seller&&sellerTax&&sellerAddress&&product&&bags&&Number(bags)>0&&weight&&total&&prepared&&paid!=="Da confermare";
+ // Il documento è un modulo di presa in consegna NON fiscale: dopo il caricamento
+ // dell'ordine si può stampare anche con dati lasciati da compilare a mano.
+ const ok=verifiedOrder===id&&idValid(id);
  $("print").disabled=!ok;
+ const incomplete=[];
+ if(!seller)incomplete.push("nominativo venditore");
+ if(!sellerTax)incomplete.push("CF venditore");
+ if(!sellerAddress)incomplete.push("indirizzo venditore");
+ if(!customer)incomplete.push("nome cliente");
+ if(!product)incomplete.push("descrizione merce");
+ if(!bags||!Number.isInteger(Number(bags))||Number(bags)<=0)incomplete.push("numero sacchi");
+ if(!weight)incomplete.push("peso totale");
+ if(!total)incomplete.push("prezzo totale");
+ if(paid==="Da confermare")incomplete.push("pagamento");
+ $("printHint").textContent=ok
+   ?(incomplete.length
+      ?"✓ Stampa disponibile. Da completare sul foglio, se necessario: "+incomplete.join(", ")+"."
+      :"✓ Documento pronto: puoi stampare o salvare il PDF.")
+   :"Carica prima un ordine valido per attivare la stampa. I dati mancanti potranno essere compilati a penna.";
  const orderStatus=verifiedState||"Non ancora caricato";
  $("sheet").innerHTML=
   '<div class="paperHead"><div><div class="logo">AGROTRITURA</div><div class="tagline">Mangime su misura</div><div class="subbrand">agrotritura.it</div></div><div class="tag">DOCUMENTO DI CONSEGNA<br>NON FISCALE</div></div>'+
@@ -259,7 +277,7 @@ $("clearOrder").addEventListener("click",()=>{if(!verifiedOrder){showMessage("Ca
  try{localStorage.removeItem(currentOrderKey());}catch(_){}
  showMessage("Dettagli locali cancellati. Ricarica l'ordine per ripartire dai dati del gestionale.");});
 $("refresh").addEventListener("click",render);
-$("print").addEventListener("click",()=>{if(!render()){showMessage("Completa prima i dati: ordine caricato, venditore con CF e indirizzo, numero sacchi, peso, importo e stato del pagamento.",true);return;}window.print();});
+$("print").addEventListener("click",()=>{if(!render()){showMessage("Carica prima un ordine valido. Dopo potrai stampare anche con alcuni dati da compilare a penna.",true);return;}window.print();});
 setValues(maybeData(PROFILE_KEY),localSeller);
 const d=new Date(),localDate=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
 $("docDate").value=localDate;
