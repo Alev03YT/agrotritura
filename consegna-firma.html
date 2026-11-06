@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#174b38">
+<link rel="icon" href="favicon.jpg">
+<title>AgroTritura | Documento consegna e firme</title>
+<style>
+:root{--green:#174b38;--green-dark:#0e3528;--green-soft:#eaf3ed;--gold:#c2903f;--ink:#1c2a20;--muted:#637369;--line:#dce7df;--bg:#f1f5f1}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--green);font-weight:750;text-decoration:none}
+a:hover{text-decoration:underline}
+header{background:linear-gradient(120deg,#103b2c,#2b7650);padding:19px 18px;color:#fff}
+header .head{max-width:1340px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+header h1{font-size:23px;margin:0}header p{color:#deeee1;margin:5px 0 0;font-size:13px}
+header a{color:#fff;border:1px solid #ffffff66;border-radius:9px;padding:9px 12px}
+main{max-width:1340px;margin:auto;display:grid;grid-template-columns:minmax(310px,410px) minmax(0,1fr);gap:19px;padding:20px 16px 45px;align-items:start}
+.control{border-radius:17px;border:1px solid var(--line);background:white;box-shadow:0 9px 25px #0c2d1d12;padding:18px}
+.control h2{font-size:17px;color:var(--green);margin:4px 0 10px}
+.control h3{font-size:14px;color:var(--green);margin:21px 0 4px}
+label{display:block;font-size:12px;font-weight:780;margin:12px 0 5px}
+input,select,textarea{font:inherit;color:var(--ink);background:white;width:100%;border:1px solid #c7d7cb;border-radius:10px;padding:10px 11px}
+textarea{min-height:77px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid #a4c8ad}
+input::placeholder{color:#97a499}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 2px}
+button{font:inherit;font-weight:780;border-radius:10px;border:1px solid transparent;padding:11px 13px;cursor:pointer}
+button.primary{background:var(--green);color:#fff}
+button.secondary{background:#e8f2eb;border-color:#b8cebe;color:var(--green)}
+button.light{background:#fff;border-color:#c9d9ce;color:var(--green)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.message{border-radius:10px;background:#ecf5ed;color:#22553a;padding:11px 12px;margin:12px 0;font-size:13px}
+.message.error{background:#fff0eb;color:#9a322b}
+.help{color:var(--muted);font-size:12px;line-height:1.5;margin:8px 0}
+.note{border-left:4px solid #c99437;background:#fff9ec;font-size:12px;padding:11px 12px;border-radius:6px;margin:15px 0}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+.preview{background:#dfe8e0;border:1px solid #d3dfd4;padding:15px;border-radius:16px;overflow-x:auto}
+.sheet{width:210mm;min-height:297mm;padding:13mm 14mm;margin:0 auto;background:white;color:#1a2b22;box-shadow:0 10px 30px #102b1b22;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.38}
+.sheet *{box-sizing:border-box}
+.paperHead{display:flex;align-items:start;justify-content:space-between;gap:15px;padding-bottom:12px;border-bottom:3px solid #19553d}
+.logo{font-size:26px;font-weight:900;color:#174b38;letter-spacing:1px}
+.tagline{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:#54735d}
+.subbrand{font-size:10px;color:#728273}
+.tag{font-weight:800;background:#e6f2e9;color:#205940;border-radius:7px;text-align:center;padding:8px;font-size:10px;line-height:1.35;max-width:172px}
+.paperTitle{margin:16px 0 2px;font-size:19px;color:#172f22;line-height:1.18}
+.paperSubtitle{font-size:10px;color:#677c6f;margin:0 0 13px}
+.meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.field{border:1px solid #dce6df;border-radius:7px;padding:8px 10px;min-width:0;overflow-wrap:anywhere}
+.field small{display:block;text-transform:uppercase;letter-spacing:.65px;color:#708273;font-size:9px;font-weight:700;margin-bottom:5px}
+.field strong{display:block;font-size:12px}
+.sectionLabel{font-weight:900;text-transform:uppercase;letter-spacing:1.25px;color:#194a35;font-size:10px;margin:16px 0 8px}
+.people{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.person{border:1px solid #dae4dc;border-radius:8px;padding:10px 12px;min-height:110px}
+.person h3{font-size:11px;color:#194c36;margin:0 0 8px;padding-bottom:5px;border-bottom:1px solid #e4ebe5}
+.pair{margin:5px 0;line-height:1.46;overflow-wrap:anywhere}
+.pair b{font-weight:750}
+.fillLine{display:inline-block;border-bottom:1px solid #a7b6ab;min-width:70%;height:14px;vertical-align:baseline}
+.detail{width:100%;border-collapse:collapse;table-layout:fixed}
+.detail th{background:#edf4ed;color:#345f46;text-align:left;font-size:10px;text-transform:uppercase;padding:8px;border-bottom:1px solid #dce5de}
+.detail td{padding:10px 8px;border-bottom:1px solid #e3e8e4;overflow-wrap:anywhere;vertical-align:top;font-size:12px}
+.detail td:last-child,.detail th:last-child{width:25%;text-align:right}
+.payment{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.payment .field{min-height:57px}
+.remarks{margin:12px 0 10px;background:#f6f9f6;border-left:3px solid #759784;padding:8px 10px;font-size:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.pending{border:1px solid #d4b16e;background:#fff9ee;color:#6d562e;border-radius:7px;padding:9px 10px;font-size:10px;margin:11px 0}
+.acceptance{margin-top:14px;border:1.5px solid #86a890;border-radius:9px;padding:11px 12px;background:#fff}
+.acceptance h3{font-size:11px;letter-spacing:.75px;margin:0 0 6px;color:#174a35}
+.acceptance p{font-size:10px;line-height:1.45;margin:3px 0 10px}
+.signaturePlace{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:9px 0 3px}
+.signatures{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:19px}
+.signatures .sign{padding-top:6px;border-top:1px solid #879c8b;font-size:10px;color:#405a48;min-height:16px}
+.printFooter{margin-top:13px;border-top:1px solid #e3e9e4;padding-top:8px;color:#647367;font-size:9px}
+.paperPlaceholder{font-weight:400;color:#7b9082}
+.hidden{display:none!important}
+@media(max-width:1120px){main{grid-template-columns:1fr}.preview{margin:auto;max-width:900px}}
+@media(max-width:880px){.sheet{width:100%;min-height:0;padding:22px 18px}.meta{grid-template-columns:1fr 1fr}.logo{font-size:21px}}
+@media(max-width:530px){main{padding:11px}.control{padding:15px}.preview{padding:5px}.sheet{padding:13px;font-size:10px}.paperTitle{font-size:16px}.people{grid-template-columns:1fr}.payment{grid-template-columns:1fr}.field{padding:6px}.row{grid-template-columns:1fr}.signaturePlace{gap:7px}.person{min-height:0}.meta{grid-template-columns:1fr 1fr}.logo{font-size:18px}}
+@page{size:A4;margin:10mm}
+@media print{
+ html,body{width:auto;margin:0!important;padding:0!important;background:#fff!important}
+ header,.control,.noPrint{display:none!important}
+ main{display:block!important;padding:0!important;margin:0!important;max-width:none!important}
+ .preview{display:block!important;overflow:visible!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:white!important}
+ .sheet{width:100%!important;min-height:0!important;margin:0!important;padding:0!important;box-shadow:none!important;border:0!important;color:#1a2b22!important;font-size:11px!important}
+ .people{grid-template-columns:1fr 1fr!important}.payment{grid-template-columns:1fr 1fr!important}
+ .meta{grid-template-columns:1fr 1fr 1fr!important}
+ .paperHead,.person,.field,.acceptance,.signatures{break-inside:avoid}
+ .paperHead{padding-bottom:9px}.paperTitle{margin-top:13px}
+ .sectionLabel{margin:12px 0 7px}
+ .remarks{margin:9px 0}.pending{margin:8px 0}.acceptance{margin-top:9px}
+ .person{min-height:100px!important}
+ .tag,.detail th,.remarks,.pending{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header><div class="head"><div><h1>🌾 AgroTritura · Consegna e firme</h1><p>Documento A4 precompilato dall'ordine · dati da completare al ritiro</p></div><a href="admin-ordini.html">← Gestione ordini</a></div></header>
+<main>
+<section class="control">
+<h2>1 · Recupera l'ordine</h2>
+<label for="orderId">Codice ordine AgroTritura</label>
+<input id="orderId" autocomplete="off" placeholder="AT-2026-11-05-XXXXXX">
+<div class="actions"><button class="primary" id="load" type="button">Carica ordine e compila</button></div>
+<div class="message" id="status" role="status">Inserisci il codice ordine per preparare il documento.</div>
+<div class="note"><b>Documento non fiscale.</b> Attesta la presa in consegna quando viene sottoscritto; non sostituisce fattura, documento commerciale o eventuali documenti di trasporto obbligatori.</div>
+<hr>
+<h2>2 · Dati del venditore</h2>
+<p class="help">Compilali una volta e premi «Salva i miei dati»: saranno riutilizzati su questo dispositivo. Inserisci i dati anagrafici reali, non una partita IVA inesistente.</p>
+<label for="seller">Nome e cognome / denominazione effettiva</label><input id="seller" maxlength="135" placeholder="Nome e cognome del venditore">
+<label for="sellerTax">Codice fiscale / P. IVA, se presente</label><input id="sellerTax" maxlength="32" placeholder="Inserisci il tuo codice fiscale">
+<label for="sellerAddress">Indirizzo completo</label><textarea id="sellerAddress" maxlength="210" rows="2" placeholder="Via, civico, CAP, comune e provincia"></textarea>
+<div class="actions"><button class="secondary" id="saveSeller" type="button">💾 Salva i miei dati</button><button class="light" id="clearSeller" type="button">Cancella dati salvati</button></div>
+<hr>
+<h2>3 · Dati dell'ordine</h2>
+<label for="customer">Cliente (caricato dall'ordine)</label><input id="customer" maxlength="145" placeholder="Nome e cognome cliente">
+<div class="row"><div><label for="buyerTax">CF / P. IVA cliente (facoltativo prima della stampa)</label><input id="buyerTax" maxlength="35" placeholder="Oppure lascia lo spazio a penna"></div><div><label for="buyerAddress">Indirizzo cliente (facoltativo)</label><input id="buyerAddress" maxlength="180" placeholder="Oppure da compilare al ritiro"></div></div>
+<label for="product">Prodotto / descrizione</label><textarea id="product" maxlength="650" placeholder="Mangime tritato e confezionato in sacchi"></textarea>
+<div class="row"><div><label for="bags">Numero sacchi</label><input id="bags" inputmode="numeric" type="number" min="1" max="999" step="1" placeholder="Es. 4"></div><div><label for="weight">Peso complessivo</label><input id="weight" maxlength="90" placeholder="Es. 100 kg"></div></div>
+<div class="row"><div><label for="total">Importo totale (€)</label><input id="total" type="number" min="0" step=".01" inputmode="decimal" placeholder="Es. 65,00"></div><div><label for="payment">Pagamento</label><select id="payment">
+<option value="Da confermare">Da confermare</option>
+<option value="Bonifico bancario già ricevuto">Bonifico bancario già ricevuto</option>
+<option value="Contanti già ricevuti">Contanti già ricevuti</option>
+<option value="Pagamento ancora da ricevere">Pagamento ancora da ricevere</option>
+</select></div></div>
+<div class="row"><div><label for="docDate">Data preparazione documento</label><input id="docDate" type="date"></div><div><label for="plannedDate">Data prevista consegna / ritiro</label><input id="plannedDate" type="date"></div></div>
+<label for="transport">Trasporto / ritiro</label><select id="transport"><option value="A cura del destinatario (ritiro personale)">A cura del destinatario (ritiro personale)</option><option value="A cura del mittente (consegna)">A cura del mittente (consegna)</option><option value="Da definire">Da definire</option></select>
+<label for="notes">Note relative alla miscela e al ritiro</label><textarea id="notes" maxlength="520">Miscela personalizzata preparata con gli ingredienti, nelle proporzioni e secondo la granulometria concordati. Il prodotto sarà considerato consegnato al momento dell'effettiva presa in carico da parte del cliente.</textarea>
+<div class="actions"><button class="secondary" id="saveOrder" type="button">💾 Salva dettagli dell'ordine</button><button class="light" id="clearOrder" type="button">Cancella dettagli salvati</button></div>
+<hr>
+<h2>4 · Stampa per la consegna</h2>
+<p class="help">Sul foglio restano spazi per <b>codice fiscale/indirizzo del cliente</b> (se non già compilati), <b>luogo e data effettivi</b>, <b>firma del venditore</b> e <b>firma leggibile per esteso del cliente</b>.</p>
+<div class="actions"><button class="primary" id="print" type="button" disabled>🖨️ Stampa / Salva PDF</button><button class="secondary" id="refresh" type="button">Aggiorna anteprima</button></div>
+<p class="help">Il documento non modifica lo stato dell'ordine sul sistema. Dopo la consegna, aggiorna separatamente lo stato a «Consegnato» dal pannello.</p>
+</section>
+<section class="preview">
+<div class="sheet" id="sheet">
+<div class="paperTitle">Documento in preparazione</div>
+<p>Carica un ordine per vedere l'anteprima A4.</p>
+</div>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+const API="https://script.google.com/macros/s/AKfycbxvrgdzM5t1Zg-pS00iopBEpw3OBZj_-y14QjaurcRHnrrlXJd3T5i2i8z7qPrS98hK/exec";
+const PROFILE_KEY="at-delivery-seller-profile-v1";
+const ORDER_PREFIX="at-delivery-order-v1:";
+const $=id=>document.getElementById(id);
+const fields=["seller","sellerTax","sellerAddress","customer","buyerTax","buyerAddress","product","bags","weight","total","payment","docDate","plannedDate","transport","notes"];
+const localSeller=["seller","sellerTax","sellerAddress"];
+const localOrder=["bags","weight","total","payment","plannedDate","transport","notes"];
+const initialNotes=$("notes").value;
+let verifiedOrder="",verifiedState="";
+const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const dateStr=s=>{if(!s)return "";const d=new Date(s+"T12:00:00");return isNaN(d.getTime())?s:d.toLocaleDateString("it-IT");};
+function showMessage(text,bad){$("status").textContent=text;$("status").className="message"+(bad?" error":"");}
+function maybeData(key){try{return JSON.parse(localStorage.getItem(key)||"null");}catch(_){return null;}}
+function setValues(obj,keys){if(obj&&typeof obj==="object")for(const id of keys)if(typeof obj[id]==="string"||typeof obj[id]==="number")$(id).value=String(obj[id]);}
+function dataValues(keys){const out={};for(const id of keys)out[id]=$(id).value;return out;}
+function currentOrderKey(){return ORDER_PREFIX+verifiedOrder;}
+function emailSafe(){} // no customer data is sent or emailed by this page
+function jsonp(url,cb){return new Promise((resolve,reject)=>{
+ const node=document.createElement("script");let done=false;
+ const timeout=setTimeout(()=>end(new Error("Il servizio ordini non risponde.")),11000);
+ function end(err,value){if(done)return;done=true;clearTimeout(timeout);delete window[cb];node.remove();err?reject(err):resolve(value);}
+ window[cb]=value=>end(null,value);node.onerror=()=>end(new Error("Impossibile contattare il servizio ordini."));
+ node.src=url;document.body.appendChild(node);
+});}
+function extract(json){
+ if(!json||json.ok===false)throw new Error(String(json?.error||"Ordine non trovato."));
+ const a=[json.order,json.data?.order,json.result?.order,json.data,json.result,json.record,json];
+ const rec=a.find(x=>x&&typeof x==="object"&&!Array.isArray(x)&&String(x.status??x.stato??x.order_status??"").trim());
+ if(!rec)throw new Error("Stato ordine non presente nella risposta.");
+ return rec;
+}
+function idValid(id){return /^[A-Za-z0-9_-]{5,65}$/.test(id);}
+async function loadOrder(){
+ const id=$("orderId").value.trim();verifiedOrder="";verifiedState="";$("print").disabled=true;
+ if(!idValid(id)){showMessage("Inserisci un codice ordine valido.",true);render();return;}
+ $("load").disabled=true;showMessage("Caricamento ordine…");
+ try{
+   const cb="__atDelivery"+Math.random().toString(36).slice(2);
+   const rec=extract(await jsonp(API+"?order_id="+encodeURIComponent(id)+"&callback="+encodeURIComponent(cb)+"&t="+Date.now(),cb));
+   const returnedId=String(rec.order_id??rec.id??id).trim();
+   if(returnedId.toLowerCase()!==id.toLowerCase())throw new Error("Ordine restituito diverso dal codice richiesto.");
+   verifiedOrder=id;
+   verifiedState=String(rec.status??rec.stato??rec.order_status??"").trim();
+   $("customer").value=String(rec.customer??rec.customer_name??rec.cliente??"");
+   $("buyerTax").value="";$("buyerAddress").value="";
+   $("product").value=String(rec.product??rec.prodotto??"")||"Mangime tritato e confezionato in sacchi";
+   const q=String(rec.quantity??rec.quantita??"").trim();
+   $("weight").value=q?(/kg\b/i.test(q)?q:q+" kg"):"";
+   $("bags").value="";$("total").value="";$("payment").value="Da confermare";
+   $("plannedDate").value="";$("transport").value="A cura del destinatario (ritiro personale)";$("notes").value=initialNotes;
+   setValues(maybeData(currentOrderKey()),localOrder);
+   showMessage("✓ Ordine "+id+" caricato (stato: "+verifiedState+"). Completa i dati non presenti nel gestionale e stampa per la firma al ritiro.");
+   render();
+ }catch(e){showMessage(e.message,true);render();}
+ finally{$("load").disabled=false;}
+}
+function showText(value,blank){return value?esc(value):'<span class="paperPlaceholder">'+esc(blank||"Da compilare")+'</span>';}
+function lineOrText(value){return value?esc(value):'<span class="fillLine">&nbsp;</span>';}
+function money(v){if(v==="")return "";const n=Number(v);return Number.isFinite(n)&&n>=0?new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(n):"";}
+function render(){
+ const id=$("orderId").value.trim(),seller=$("seller").value.trim(),sellerTax=$("sellerTax").value.trim(),sellerAddress=$("sellerAddress").value.trim();
+ const customer=$("customer").value.trim(),buyerTax=$("buyerTax").value.trim(),buyerAddress=$("buyerAddress").value.trim();
+ const product=$("product").value.trim(),bags=$("bags").value,weight=$("weight").value.trim();
+ const total=money($("total").value),paid=$("payment").value,prepared=dateStr($("docDate").value);
+ const planned=dateStr($("plannedDate").value),transport=$("transport").value,notes=$("notes").value.trim();
+ const delivered=/consegn/i.test(verifiedState);
+ const ok=verifiedOrder===id&&idValid(id)&&seller&&sellerTax&&sellerAddress&&product&&bags&&Number(bags)>0&&weight&&total&&prepared&&paid!=="Da confermare";
+ $("print").disabled=!ok;
+ const orderStatus=verifiedState||"Non ancora caricato";
+ $("sheet").innerHTML=
+  '<div class="paperHead"><div><div class="logo">AGROTRITURA</div><div class="tagline">Mangime su misura</div><div class="subbrand">agrotritura.it</div></div><div class="tag">DOCUMENTO DI CONSEGNA<br>NON FISCALE</div></div>'+
+  '<h1 class="paperTitle">Conferma di consegna e presa in carico della merce</h1><p class="paperSubtitle">Documento preparatorio per sottoscrizione al momento della consegna effettiva</p>'+
+  '<div class="meta"><div class="field"><small>Riferimento ordine</small><strong>'+showText(verifiedOrder||id,"Da caricare")+'</strong></div>'+
+  '<div class="field"><small>Data preparazione</small><strong>'+showText(prepared)+'</strong></div>'+
+  '<div class="field"><small>Consegna prevista</small><strong>'+showText(planned,"Da concordare")+'</strong></div></div>'+
+  '<div class="sectionLabel">Soggetti interessati</div><div class="people">'+
+  '<div class="person"><h3>Venditore / mittente</h3><div class="pair"><b>Nominativo:</b> '+showText(seller)+'</div><div class="pair"><b>CF / P. IVA:</b> '+showText(sellerTax)+'</div><div class="pair"><b>Indirizzo:</b> '+showText(sellerAddress)+'</div></div>'+
+  '<div class="person"><h3>Compratore / destinatario</h3><div class="pair"><b>Nominativo:</b> '+lineOrText(customer)+'</div><div class="pair"><b>CF / P. IVA:</b> '+lineOrText(buyerTax)+'</div><div class="pair"><b>Indirizzo:</b> '+lineOrText(buyerAddress)+'</div></div></div>'+
+  '<div class="sectionLabel">Merce oggetto della consegna</div>'+
+  '<table class="detail"><thead><tr><th>Descrizione del prodotto</th><th>Quantità / peso</th></tr></thead><tbody>'+
+  '<tr><td><b>'+showText(product,"Mangime tritato e confezionato in sacchi")+'</b><br><span style="color:#63766a;font-size:10px">Miscela preparata secondo le specifiche concordate.</span></td>'+
+  '<td>'+showText(bags,"—")+' sacchi<br>'+showText(weight,"—")+' complessivi</td></tr></tbody></table>'+
+  '<div class="payment"><div class="field"><small>Prezzo totale concordato</small><strong>'+showText(total)+'</strong></div><div class="field"><small>Stato del pagamento</small><strong>'+showText(paid)+'</strong></div></div>'+
+  '<div class="payment"><div class="field"><small>Modalità di trasporto / ritiro</small><strong>'+esc(transport)+'</strong></div><div class="field"><small>Stato ordine nel gestionale</small><strong>'+esc(orderStatus)+'</strong></div></div>'+
+  (notes?'<div class="remarks"><b>Note:</b> '+esc(notes)+'</div>':'')+
+  '<div class="pending"><b>Consegna da confermare alla firma.</b> Questa stampa non attesta di per sé l’avvenuto ritiro o la consegna della merce.</div>'+
+  '<div class="acceptance"><h3>RICEVUTA DELLA MERCE E ACCETTAZIONE</h3>'+
+  '<p>Con la firma, il destinatario conferma la presa in consegna della merce descritta nel presente documento. Data e luogo sono da compilare al momento della consegna effettiva.</p>'+
+  '<div class="signaturePlace"><div><b>Luogo effettivo di consegna</b><br><span class="fillLine">&nbsp;</span></div><div><b>Data effettiva di consegna</b><br><span class="fillLine">&nbsp;</span></div></div>'+
+  '<div class="signatures"><div class="sign"><b>Firma del venditore / consegnante</b><br><br><br>________________________________</div>'+
+  '<div class="sign"><b>Firma leggibile per esteso del cliente</b><br><br><br>________________________________</div></div></div>'+
+  '<div class="printFooter">AGROTRITURA · www.agrotritura.it · Documento non fiscale. Non sostituisce la fattura, il documento commerciale o gli eventuali documenti di trasporto richiesti dalla legge. Non attesta automaticamente la regolarità fiscale della vendita.</div>';
+ return ok;
+}
+function update(){render();}
+for(const id of fields){$(id).addEventListener("input",update);$(id).addEventListener("change",update);}
+$("orderId").addEventListener("input",()=>{if($("orderId").value.trim()!==verifiedOrder){verifiedOrder="";verifiedState="";}render();});
+$("orderId").addEventListener("keydown",e=>{if(e.key==="Enter")loadOrder();});
+$("load").addEventListener("click",loadOrder);
+$("saveSeller").addEventListener("click",()=>{try{
+ const profile=dataValues(localSeller);localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));showMessage("✓ I dati del venditore sono salvati in questo browser.");}
+ catch(e){showMessage("Salvataggio non disponibile: "+e.message,true);}
+});
+$("clearSeller").addEventListener("click",()=>{if(!confirm("Cancellare i dati del venditore salvati in questo browser?"))return;
+ try{localStorage.removeItem(PROFILE_KEY);}catch(_){}for(const id of localSeller)$(id).value="";showMessage("Dati venditore locali cancellati.");render();});
+$("saveOrder").addEventListener("click",()=>{if(!verifiedOrder){showMessage("Carica prima un ordine valido.",true);return;}
+ try{localStorage.setItem(currentOrderKey(),JSON.stringify(dataValues(localOrder)));showMessage("✓ Dettagli salvati solo su questo dispositivo per "+verifiedOrder+".");}
+ catch(e){showMessage("Impossibile salvare: "+e.message,true);}
+});
+$("clearOrder").addEventListener("click",()=>{if(!verifiedOrder){showMessage("Carica prima l'ordine.",true);return;}if(!confirm("Eliminare i dati aggiuntivi salvati per "+verifiedOrder+"?"))return;
+ try{localStorage.removeItem(currentOrderKey());}catch(_){}
+ showMessage("Dettagli locali cancellati. Ricarica l'ordine per ripartire dai dati del gestionale.");});
+$("refresh").addEventListener("click",render);
+$("print").addEventListener("click",()=>{if(!render()){showMessage("Completa prima i dati: ordine caricato, venditore con CF e indirizzo, numero sacchi, peso, importo e stato del pagamento.",true);return;}window.print();});
+setValues(maybeData(PROFILE_KEY),localSeller);
+const d=new Date(),localDate=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$("docDate").value=localDate;
+const p=new URLSearchParams(location.search);const order=p.get("order_id");
+const date=p.get("delivery_date");if(date&&/^\d{4}-\d{2}-\d{2}$/.test(date))$("plannedDate").value=date;
+if(order){$("orderId").value=order;loadOrder().then(()=>{if(date&&!$("plannedDate").value)$("plannedDate").value=date;render();});}else render();
+})();
+</script>
+</body>
+</html>
