@@ -109,9 +109,9 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 <div class="note"><b>Documento non fiscale.</b> Attesta la presa in consegna quando viene sottoscritto; non sostituisce fattura, documento commerciale o eventuali documenti di trasporto obbligatori.</div>
 <hr>
 <h2>2 · Dati del venditore</h2>
-<p class="help">Compilali una volta e premi «Salva i miei dati»: saranno riutilizzati su questo dispositivo. Inserisci i dati anagrafici reali, non una partita IVA inesistente.</p>
+<p class="help">Compilali una volta e premi «Salva i miei dati»: saranno riutilizzati su questo dispositivo. Per questo promemoria non fiscale il CF è facoltativo; se lo lasci vuoto, non comparirà nel PDF. Usa solo dati reali. Gli eventuali documenti fiscali o di trasporto obbligatori restano soggetti ai loro requisiti.</p>
 <label for="seller">Nome e cognome / denominazione effettiva</label><input id="seller" maxlength="135" placeholder="Nome e cognome del venditore">
-<label for="sellerTax">Codice fiscale / P. IVA, se presente</label><input id="sellerTax" maxlength="32" placeholder="Inserisci il tuo codice fiscale">
+<label for="sellerTax">Codice fiscale / P. IVA (facoltativo nel promemoria non fiscale)</label><input id="sellerTax" maxlength="32" placeholder="Puoi lasciare questo campo vuoto">
 <label for="sellerAddress">Indirizzo completo</label><textarea id="sellerAddress" maxlength="210" rows="2" placeholder="Via, civico, CAP, comune e provincia"></textarea>
 <div class="actions"><button class="secondary" id="saveSeller" type="button">💾 Salva i miei dati</button><button class="light" id="clearSeller" type="button">Cancella dati salvati</button></div>
 <hr>
@@ -219,7 +219,6 @@ function render(){
  $("print").disabled=!ok;
  const incomplete=[];
  if(!seller)incomplete.push("nominativo venditore");
- if(!sellerTax)incomplete.push("CF venditore");
  if(!sellerAddress)incomplete.push("indirizzo venditore");
  if(!customer)incomplete.push("nome cliente");
  if(!product)incomplete.push("descrizione merce");
@@ -240,7 +239,7 @@ function render(){
   '<div class="field"><small>Data preparazione</small><strong>'+showText(prepared)+'</strong></div>'+
   '<div class="field"><small>Consegna prevista</small><strong>'+showText(planned,"Da concordare")+'</strong></div></div>'+
   '<div class="sectionLabel">Soggetti interessati</div><div class="people">'+
-  '<div class="person"><h3>Venditore / mittente</h3><div class="pair"><b>Nominativo:</b> '+showText(seller)+'</div><div class="pair"><b>CF / P. IVA:</b> '+showText(sellerTax)+'</div><div class="pair"><b>Indirizzo:</b> '+showText(sellerAddress)+'</div></div>'+
+  '<div class="person"><h3>Venditore / mittente</h3><div class="pair"><b>Nominativo:</b> '+showText(seller)+'</div>'+(sellerTax?'<div class="pair"><b>CF / P. IVA:</b> '+esc(sellerTax)+'</div>':'')+'<div class="pair"><b>Indirizzo:</b> '+showText(sellerAddress)+'</div></div>'+
   '<div class="person"><h3>Compratore / destinatario</h3><div class="pair"><b>Nominativo:</b> '+lineOrText(customer)+'</div><div class="pair"><b>CF / P. IVA:</b> '+lineOrText(buyerTax)+'</div><div class="pair"><b>Indirizzo:</b> '+lineOrText(buyerAddress)+'</div></div></div>'+
   '<div class="sectionLabel">Merce oggetto della consegna</div>'+
   '<table class="detail"><thead><tr><th>Descrizione del prodotto</th><th>Quantità / peso</th></tr></thead><tbody>'+
