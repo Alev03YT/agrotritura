@@ -266,7 +266,8 @@
         </div>
       </div>
       <div class="actions">
-        <button class="btn gray" type="button" id="btnDocManual">📄 Prepara documento / PDF</button>
+        <button class="btn gray" type="button" id="btnDocManual">📄 Promemoria / PDF</button>
+        <button class="btn orange" type="button" id="btnDeliverySignature">✍️ Consegna e firma cliente (A4)</button>
       </div>
       <div class="hint" id="docHint">Per ordini ancora da consegnare il foglio è marcato come preparatorio e non attesta la ricezione. Non sostituisce i documenti fiscali obbligatori.</div>
     </div>
@@ -449,6 +450,13 @@
           link.style.cssText = "display:inline-flex;margin-top:12px;font-size:16px;text-decoration:none;min-width:0";
           link.textContent = "📄 Prepara documento ordine / PDF";
           msgEl.appendChild(document.createElement("div")).appendChild(link);
+          const deliveryLink = document.createElement("a");
+          deliveryLink.href = "consegna-firma.html?v=20261106&order_id=" + encodeURIComponent(savedOrder.order_id);
+          deliveryLink.target = "_blank";deliveryLink.rel = "noopener";
+          deliveryLink.className = "btn orange";
+          deliveryLink.style.cssText = "display:inline-flex;margin-top:12px;font-size:16px;text-decoration:none;min-width:0";
+          deliveryLink.textContent = "✍️ Consegna con firma cliente (A4)";
+          msgEl.appendChild(document.createElement("div")).appendChild(deliveryLink);
         }
 // ✅ WhatsApp precompilato (1 tap invio)
 try{
@@ -466,6 +474,19 @@ try{
         return false;
       }
     }
+
+    document.getElementById("btnDeliverySignature").addEventListener("click", ()=>{
+      if(!isUnlocked()){ showGate(true); return; }
+      const id = document.getElementById("docManualId").value.trim()
+        || document.getElementById("order_id_3").value.trim()
+        || document.getElementById("order_id_2").value.trim()
+        || document.getElementById("order_id").value.trim();
+      if(!/^[a-zA-Z0-9_-]{5,65}$/.test(id)){
+        document.getElementById("docHint").textContent = "⚠️ Inserisci un codice ordine valido.";
+        return;
+      }
+      window.open("consegna-firma.html?v=20261106&order_id=" + encodeURIComponent(id), "_blank", "noopener");
+    });
 
     document.getElementById("btnDocManual").addEventListener("click", ()=>{
       if(!isUnlocked()){ showGate(true); return; }
