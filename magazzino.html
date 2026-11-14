@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>AgroTritura • Magazzino</title>
+<style>
+:root{--green:#173f2a;--soft:#f2f7f3;--line:#dae7dd;--muted:#65756b;--red:#a5342b}*{box-sizing:border-box}body{font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:#f3f6f3;color:#17221b;margin:0}main{max-width:1220px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap}.top h1{margin:0;color:var(--green)}.top p{margin:5px 0;color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:17px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 6px 24px #173f2a0b}.wide{grid-column:1/-1}h2{font-size:1.17rem;color:var(--green);margin:0 0 13px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}label{display:block;font-weight:700;color:var(--green);font-size:13px;margin-bottom:4px}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid #cad9ce;padding:10px 11px;border-radius:10px;background:#fff}button{border:0;border-radius:11px;padding:10px 13px;font-weight:750;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--green);color:#fff}.secondary{background:#e9f1eb;color:var(--green)}.danger{background:#f9e9e8;color:var(--red)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.muted{font-size:13px;color:var(--muted)}.message{margin-top:12px;padding:11px;border-radius:11px;background:var(--soft);white-space:pre-wrap}.message.error{background:#fff1ee;color:var(--red)}.tableWrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left}th{font-size:12px;color:var(--muted)}td:last-child{text-align:right}td button{padding:7px 9px}.low{color:var(--red);font-weight:800}.summary{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0}.stat{background:var(--soft);padding:13px 16px;border-radius:13px;min-width:150px}.stat b{display:block;font-size:1.25rem;color:var(--green)}.compositionRow{display:grid;grid-template-columns:1fr 130px auto;gap:8px;align-items:end;margin-top:8px}.compositionRow label{margin:0}.record{border:1px solid var(--line);padding:11px;border-radius:12px;margin-top:8px}.record small{color:var(--muted)}.note{padding:12px;border-radius:12px;background:#fff9e7;border:1px solid #f1dfaa;margin-top:13px}.tag{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;background:#ecf4ee;color:var(--green)}@media(max-width:760px){main{padding:12px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.fields{grid-template-columns:1fr}.full{grid-column:auto}.compositionRow{grid-template-columns:1fr 90px auto}.card{padding:14px}.stat{flex:1;min-width:120px}}
+</style></head>
+<body><main><header class="top"><div><h1>📦 Magazzino AgroTritura</h1><p>Giacenze, acquisti, nuovi prodotti e consumo per ordine consegnato.</p></div><a href="pannello.html" style="color:#173f2a;font-weight:750">← Control Center</a></header>
+<div class="note"><strong>Dati locali:</strong> scorte e movimenti sono salvati in questo browser, con le stesse chiavi già utilizzate dal formulatore dei preventivi. Non si sincronizzano automaticamente tra telefono e PC. Usa il backup per trasferirli. Il controllo dello stato dell'ordine viene fatto sul sistema ordini AgroTritura.</div>
+<div class="summary"><div class="stat">Prodotti registrati<b id="count">—</b></div><div class="stat">Giacenza totale<b id="totalKg">—</b></div><div class="stat">Prodotti da riordinare<b id="lowCount">—</b></div><div class="stat">Ordini già scaricati<b id="orderCount">—</b></div></div>
+<div class="grid">
+<section class="card wide"><h2>Giacenze attuali</h2><div class="fields"><div><label for="filter">Cerca prodotto</label><input id="filter" placeholder="Mais, orzo, vitamine..."></div></div><div class="tableWrap"><table><thead><tr><th>Prodotto</th><th>Disponibilità</th><th>Soglia minima</th><th>Costo confezione</th><th>Azioni</th></tr></thead><tbody id="inventoryTable"></tbody></table></div></section>
+<section class="card"><h2>➕ Aggiungi prodotto al magazzino</h2><form id="newForm" class="fields"><div class="full"><label>Nome prodotto</label><input id="newName" required maxlength="100" placeholder="Es. Semi di girasole"></div><div><label>Quantità iniziale (kg)</label><input id="newQty" type="number" min="0" step="0.001" value="0" required></div><div><label>Soglia minima (kg)</label><input id="newMin" type="number" min="0" step="0.001" value="0" required></div><div><label>Confezione acquisto (kg)</label><input id="newPackKg" type="number" min="0.001" step="0.001" value="25" required></div><div><label>Prezzo confezione (€)</label><input id="newPackPrice" type="number" min="0" step="0.01" value="0" required></div><div class="full"><button class="primary" type="submit">Aggiungi prodotto</button></div></form></section>
+<section class="card"><h2>🔄 Carico, scarico o correzione manuale</h2><form id="movementForm" class="fields"><div class="full"><label>Prodotto</label><select id="moveName" required></select></div><div><label>Operazione</label><select id="moveType"><option value="in">Carico (+)</option><option value="out">Scarico (−)</option><option value="set">Imposta giacenza esatta</option></select></div><div><label>Quantità (kg)</label><input id="moveQty" type="number" min="0.001" step="0.001" required></div><div class="full"><label>Motivo / riferimento</label><input id="moveNote" placeholder="Es. acquistati 2 sacchi da 25 kg"></div><div class="full"><button type="submit" class="primary">Registra movimento</button></div></form></section>
+<section class="card wide"><h2>🚚 Scarica i prodotti di un ordine consegnato</h2><p class="muted">Apri un ordine tramite il suo codice. Il sistema verifica che sia davvero <b>Consegnato</b>, quindi scegli gli ingredienti e i kg effettivamente usati. Per i mix non viene inventata alcuna ricetta.</p><div class="fields"><div><label>Codice ordine</label><input id="orderId" placeholder="AT-2026-..."></div><div style="align-self:end"><button id="fetchOrder" class="primary" type="button">Apri ordine e verifica consegna</button></div></div><div id="orderMessage" class="message">Inserisci il codice ordine per procedere.</div><div id="orderBox" hidden><div id="orderData" class="record"></div><h3 style="margin:16px 0 6px;color:var(--green)">Materiali da scalare</h3><div id="composition"></div><div class="actions"><button class="secondary" type="button" id="addIngredient">+ Aggiungi ingrediente</button><button class="primary" type="button" id="deduct">Conferma scarico ordine</button></div></div></section>
+<section class="card"><h2>📋 Ultimi movimenti</h2><div id="movements"></div></section>
+<section class="card"><h2>🧾 Ordini già scaricati</h2><div id="orders"></div><div class="actions"><button type="button" class="secondary" id="exportBackup">Esporta backup JSON</button><label style="margin:0;display:inline-flex;align-items:center;padding:10px 13px;background:#e9f1eb;border-radius:11px;cursor:pointer">Importa backup JSON<input style="display:none" id="importBackup" type="file" accept=".json,application/json"></label></div></section>
+</div></main>
+<script>
+(function(){
+'use strict';
+const API='https://script.google.com/macros/s/AKfycbxvrgdzM5t1Zg-pS00iopBEpw3OBZj_-y14QjaurcRHnrrlXJd3T5i2i8z7qPrS98hK/exec';
+const K={stock:'at_inventory_v3',cfg:'at_purchase_cfg_v3',min:'at_inventory_min_v1',catalog:'at_inventory_catalog_v1',moves:'at_inventory_movements_v1',orders:'at_inventory_orders_v1'};
+const defaults={'Mais tritato':{packKg:25,packPrice:11.60},'Orzo tritato':{packKg:25,packPrice:13.10},'Frumento tritato':{packKg:25,packPrice:13.50},'Grana verde tritata':{packKg:25,packPrice:13.80},'Mangime ovaiole completo':{packKg:22,packPrice:14.30},'Vit Complex':{packKg:1,packPrice:11.50},'Fonte di calcio / grit':{packKg:5,packPrice:2.48,provisional:true}};
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>Number(String(v??'').replace(',','.'));
+const round=v=>Math.round((Number(v)+Number.EPSILON)*1000)/1000;
+const fmt=v=>Number(v).toLocaleString('it-IT',{maximumFractionDigits:3});
+const money=v=>Number(v).toLocaleString('it-IT',{style:'currency',currency:'EUR'});
+const get=(k,def)=>{try{let v=JSON.parse(localStorage.getItem(k));return v&&typeof v==='object'&&!Array.isArray(v)?v:def}catch{return def}};
+let stock={},cfg={},min={},catalog=[],moves=[],orders={},verified=null,loadedId='';
+function read(){
+ stock=get(K.stock,{});cfg=Object.assign({},defaults,get(K.cfg,{}));min=get(K.min,{});
+ try{let v=JSON.parse(localStorage.getItem(K.catalog)||'[]');catalog=Array.isArray(v)?v:[]}catch{catalog=[]}
+ try{let v=JSON.parse(localStorage.getItem(K.moves)||'[]');moves=Array.isArray(v)?v:[]}catch{moves=[]}
+ orders=get(K.orders,{});
+}
+function write(){localStorage.setItem(K.stock,JSON.stringify(stock));localStorage.setItem(K.cfg,JSON.stringify(cfg));localStorage.setItem(K.min,JSON.stringify(min));localStorage.setItem(K.catalog,JSON.stringify(catalog));localStorage.setItem(K.moves,JSON.stringify(moves.slice(0,400)));localStorage.setItem(K.orders,JSON.stringify(orders))}
+function names(){return [...new Set([...Object.keys(defaults),...Object.keys(cfg),...Object.keys(stock),...catalog].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'it'))}
+function addMove(type,name,before,after,note,orderId){moves.unshift({id:Date.now()+'-'+Math.random().toString(36).slice(2,7),date:new Date().toISOString(),type,name,before,after,delta:round(after-before),note:note||'',orderId:orderId||''});moves=moves.slice(0,400)}
+function say(t,error){$('orderMessage').textContent=t;$('orderMessage').className=error?'message error':'message'}
+function render(){
+ const n=names(),q=$('filter').value.trim().toLocaleLowerCase('it');
+ $('count').textContent=n.length;
+ $('totalKg').textContent=fmt(n.reduce((s,x)=>s+(Number(stock[x])||0),0))+' kg';
+ $('lowCount').textContent=n.filter(x=>Number(min[x])>0&&Number(stock[x]||0)<Number(min[x])).length;
+ $('orderCount').textContent=Object.keys(orders).length;
+ $('inventoryTable').innerHTML=n.filter(x=>x.toLocaleLowerCase('it').includes(q)).map(x=>{
+ const kg=Math.max(0,Number(stock[x])||0),minimum=Number(min[x])||0,c=cfg[x]||{},low=minimum>0&&kg<minimum;
+ return '<tr><td><b>'+esc(x)+'</b></td><td class="'+(low?'low':'')+'">'+fmt(kg)+' kg'+(low?' ⚠':'')+'</td><td>'+fmt(minimum)+' kg</td><td>'+(Number(c.packKg)>0?fmt(c.packKg)+' kg / '+money(Number(c.packPrice)||0):'Non impostato')+'</td><td><button class="secondary" data-edit="'+esc(x)+'" type="button">Modifica</button> <button class="secondary" data-load="'+esc(x)+'" type="button">Movimento</button></td></tr>'}).join('')||'<tr><td colspan="5">Nessun prodotto trovato.</td></tr>';
+ $('moveName').innerHTML=n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
+ $('movements').innerHTML=moves.slice(0,15).map(m=>'<div class="record"><b>'+esc(m.name)+'</b> <span class="tag">'+esc(m.type)+'</span><br>'+((Number(m.delta)>=0?'+':'')+fmt(m.delta))+' kg — '+fmt(m.after)+' kg rimasti<br><small>'+new Date(m.date).toLocaleString('it-IT')+(m.orderId?' · ordine '+esc(m.orderId):'')+(m.note?' · '+esc(m.note):'')+'</small></div>').join('')||'<p class="muted">Nessun movimento registrato.</p>';
+ $('orders').innerHTML=Object.values(orders).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,18).map(o=>'<div class="record"><b>'+esc(o.id)+'</b><br>'+esc(o.customer||'Cliente non specificato')+' · '+esc(o.product||'')+'<br><small>'+new Date(o.date).toLocaleString('it-IT')+' · '+(Array.isArray(o.lines)?o.lines.map(x=>esc(x.name)+' '+fmt(x.kg)+' kg').join(', '):'')+'</small></div>').join('')||'<p class="muted">Nessun ordine ancora scaricato.</p>';
+}
+function select(name){$('moveName').value=name;$('moveQty').focus()}
+$('filter').addEventListener('input',render);
+$('inventoryTable').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.hasAttribute('data-load')){select(b.getAttribute('data-load'));return}
+ const name=b.getAttribute('data-edit');if(!name)return;
+ const c=cfg[name]||{};
+ const pk=prompt('Formato confezione in kg per '+name, String(c.packKg||25));if(pk===null)return;
+ const pp=prompt('Prezzo di acquisto della confezione (€)',String(c.packPrice||0));if(pp===null)return;
+ const mm=prompt('Avviso scorta minima (kg)',String(min[name]||0));if(mm===null)return;
+ if(!Number.isFinite(num(pk))||num(pk)<=0||!Number.isFinite(num(pp))||num(pp)<0||!Number.isFinite(num(mm))||num(mm)<0)return alert('Inserisci valori numerici validi.');
+ cfg[name]=Object.assign({},c,{packKg:num(pk),packPrice:num(pp),provisional:false});
+ min[name]=num(mm);write();render();
+});
+$('newForm').addEventListener('submit',e=>{
+ e.preventDefault();const name=$('newName').value.trim().replace(/\s+/g,' ');
+ const quantity=num($('newQty').value),minimum=num($('newMin').value),packKg=num($('newPackKg').value),packPrice=num($('newPackPrice').value);
+ if(!name||name.length>100||[quantity,minimum,packKg,packPrice].some(x=>!Number.isFinite(x)||x<0)||packKg<=0)return alert('Completa correttamente tutti i campi.');
+ if(names().some(x=>x.toLowerCase()===name.toLowerCase()))return alert('Prodotto già esistente. Usa il carico manuale per aggiungere giacenze.');
+ catalog.push(name);stock[name]=round(quantity);min[name]=minimum;cfg[name]={packKg,packPrice};addMove('Apertura scorta',name,0,quantity,'Nuovo prodotto');write();render();e.target.reset();$('newQty').value='0';$('newMin').value='0';$('newPackKg').value='25';$('newPackPrice').value='0';
+});
+$('movementForm').addEventListener('submit',e=>{
+ e.preventDefault();const name=$('moveName').value,type=$('moveType').value,q=num($('moveQty').value);
+ if(!name||!Number.isFinite(q)||q<0||(q===0&&type!=='set'))return alert('Inserisci una quantità valida.');
+ const old=Number(stock[name])||0,after=round(type==='in'?old+q:type==='out'?old-q:q);
+ if(after<0)return alert('Scorte insufficienti: '+fmt(old)+' kg disponibili.');
+ stock[name]=after;addMove(type==='in'?'Carico':type==='out'?'Scarico':'Rettifica',name,old,after,$('moveNote').value.trim());write();render();$('moveQty').value='';$('moveNote').value='';
+});
+function jsonp(url,callbackName){
+ return new Promise((resolve,reject)=>{
+ const s=document.createElement('script');let done=false;
+ const timeout=setTimeout(()=>finish(new Error('Tempo scaduto durante il caricamento ordine.')),12000);
+ function finish(err,v){if(done)return;done=true;clearTimeout(timeout);try{delete window[callbackName]}catch{window[callbackName]=undefined}s.remove();err?reject(err):resolve(v)}
+ window[callbackName]=v=>finish(null,v);s.onerror=()=>finish(new Error('Servizio ordini non raggiungibile.'));s.src=url;document.body.appendChild(s);
+ });
+}
+function extract(j){
+ if(!j||j.ok===false)throw Error((j&&j.error)||'Ordine non trovato.');
+ const candidates=[j.order,j.data&&j.data.order,j.result&&j.result.order,j.data,j.result,j.record,j];
+ const r=candidates.find(x=>x&&typeof x==='object'&&!Array.isArray(x)&&String(x.status??x.stato??x.order_status??'').trim());
+ if(!r)throw Error('Il servizio non ha restituito lo stato dell’ordine.');return r;
+}
+function ingredientRow(name,kg){
+ const div=document.createElement('div');div.className='compositionRow';
+ const label=document.createElement('label');label.textContent='Ingrediente';const sel=document.createElement('select');sel.className='ingName';
+ sel.innerHTML='<option value="">Scegli ingrediente</option>'+names().map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');sel.value=name||'';label.appendChild(sel);
+ const qty=document.createElement('label');qty.textContent='Kg utilizzati';const input=document.createElement('input');input.className='ingKg';input.type='number';input.min='0.001';input.step='0.001';input.value=kg||'';qty.appendChild(input);
+ const rm=document.createElement('button');rm.type='button';rm.className='danger';rm.textContent='✕';rm.title='Rimuovi ingrediente';rm.onclick=()=>div.remove();
+ div.append(label,qty,rm);$('composition').appendChild(div);
+}
+$('addIngredient').onclick=()=>ingredientRow('','');
+function orderKey(id){return id.trim().toUpperCase()}
+async function openOrder(){
+ verified=null;$('orderBox').hidden=true;$('composition').innerHTML='';
+ const id=$('orderId').value.trim();if(!/^[A-Za-z0-9_-]{5,65}$/.test(id))return say('Inserisci un codice ordine valido.',true);
+ $('fetchOrder').disabled=true;say('Verifico ordine e stato di consegna…');
+ try{
+ const cb='__atStock'+Math.random().toString(36).slice(2);
+ const rec=extract(await jsonp(API+'?order_id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb)+'&t='+Date.now(),cb));
+ const realId=String(rec.order_id??rec.id??id).trim();
+ if(realId&&orderKey(realId)!==orderKey(id))throw Error('Il server ha restituito un ordine diverso.');
+ const status=String(rec.status??rec.stato??rec.order_status??'').trim();
+ if(!status.toLowerCase().includes('consegn'))throw Error('Ordine non consegnato: stato attuale «'+status+'». Nessun prodotto è stato scalato.');
+ const key=orderKey(id);
+ if(orders[key]){say('Ordine '+id+' già scaricato in questo browser. Nessun doppio movimento consentito.',true);return}
+ const product=String(rec.product??rec.prodotto??''),qty=String(rec.quantity??rec.quantita??'');
+ verified={id:key,customer:String(rec.customer??rec.customer_name??rec.cliente??''),product,quantity:qty,status};
+ $('orderData').innerHTML='<b>Ordine '+esc(id)+'</b> <span class="tag">'+esc(status)+'</span><br><b>Cliente:</b> '+esc(verified.customer||'—')+'<br><b>Prodotto:</b> '+esc(product||'—')+'<br><b>Quantità indicata:</b> '+esc(qty||'—');
+ let best='',kg='';
+ if(!/[+,;/]|\bmix\b|\bmisto\b/i.test(product)){
+ const matches=names().filter(x=>x.toLowerCase()===product.toLowerCase()||x.toLowerCase().replace(' tritato','')===product.toLowerCase());
+ if(matches.length===1){best=matches[0];const parsed=qty.match(/^\s*(\d+(?:[,.]\d+)?)\s*kg\s*$/i);if(parsed)kg=parsed[1].replace(',','.')}
+ }
+ ingredientRow(best,kg);
+ $('orderBox').hidden=false;say('Consegna verificata. Controlla e conferma i materiali realmente utilizzati.');
+ }catch(err){say('⚠️ '+err.message,true)}finally{$('fetchOrder').disabled=false}
+}
+$('fetchOrder').onclick=openOrder;
+$('deduct').onclick=()=>{
+ if(!verified)return say('Apri prima un ordine consegnato.',true);
+ const key=verified.id;
+ // Rileggi prima del commit per evitare il doppio scarico dopo un'altra scheda.
+ const recent=get(K.orders,{});
+ if(recent[key]||orders[key])return say('Questo ordine è già stato scaricato. Operazione bloccata.',true);
+ const list=[...document.querySelectorAll('.compositionRow')];
+ if(!list.length)return say('Inserisci almeno un ingrediente.',true);
+ const merged={};
+ for(const row of list){const name=row.querySelector('.ingName').value,q=num(row.querySelector('.ingKg').value);
+ if(!name||!Number.isFinite(q)||q<=0)return say('Seleziona prodotto e quantità positiva per ogni riga.',true);
+ merged[name]=round((merged[name]||0)+q);}
+ const insuff=Object.entries(merged).filter(([name,q])=>q>Number(stock[name]||0)+0.000001);
+ if(insuff.length)return say('Scorte insufficienti: '+insuff.map(([name,q])=>name+' (servono '+fmt(q)+' kg; disponibili '+fmt(stock[name]||0)+' kg)').join('; ')+'. Registra prima l’acquisto.',true);
+ const lines=Object.entries(merged).map(([name,kg])=>({name,kg}));
+ if(!confirm('Confermi di scaricare '+lines.map(x=>x.name+': '+fmt(x.kg)+' kg').join(', ')+' per ordine '+key+'? Questa operazione non si può ripetere.'))return;
+ // Ultimo controllo della giacenza e del journal salvati.
+ const latestOrders=get(K.orders,{}),latestStock=get(K.stock,{});
+ if(latestOrders[key])return say('Scarico già eseguito in un’altra scheda.',true);
+ if(lines.some(x=>x.kg>Number(latestStock[x.name]||0)+0.000001))return say('Giacenza aggiornata: ricarica il magazzino e ricontrolla le quantità.',true);
+ stock=latestStock;orders=latestOrders;
+ lines.forEach(x=>{const old=Number(stock[x.name]||0);stock[x.name]=round(old-x.kg);addMove('Ordine consegnato',x.name,old,stock[x.name],'Scarico per consegna',key)});
+ orders[key]={...verified,date:new Date().toISOString(),lines};
+ try{write();verified=null;$('orderBox').hidden=true;say('✅ Scarico registrato per '+key+'. La stessa consegna non può essere scaricata di nuovo.');render()}catch(e){say('Errore durante il salvataggio locale: '+e.message,true)}
+};
+$('exportBackup').onclick=()=>{
+ const data={format:'AgroTritura-magazzino-1',created:new Date().toISOString(),stock,cfg,min,catalog,moves,orders};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='agrotritura-magazzino-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
+};
+$('importBackup').onchange=async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ try{if(file.size>2e6)throw Error('Backup troppo grande.');
+ const obj=JSON.parse(await file.text());
+ if(obj.format!=='AgroTritura-magazzino-1'||!obj.stock||!obj.cfg||!obj.orders||!Array.isArray(obj.moves)||!Array.isArray(obj.catalog))throw Error('Formato backup non valido.');
+ if(!confirm('Importare il backup? SOSTITUISCE le giacenze e lo storico movimenti attuali in questo browser.'))return;
+ stock=obj.stock;cfg=obj.cfg;min=obj.min||{};catalog=obj.catalog;moves=obj.moves;orders=obj.orders;write();read();render();say('Backup importato.') }catch(err){alert('Impossibile importare: '+err.message)}finally{e.target.value=''}
+};
+window.addEventListener('storage',()=>{read();render()});
+read();render();
+const param=new URLSearchParams(location.search).get('order_id');if(param){$('orderId').value=param;openOrder();}
+})();
+</script></body></html>
