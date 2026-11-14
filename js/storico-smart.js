@@ -34,6 +34,8 @@ function schedule(){
 }
 const btn=$('calculate');
 if(btn)btn.addEventListener('click',schedule);
+// Alcuni preventivi vengono conclusi tramite copia, WhatsApp o stampa PDF.
+['copy','wa','printPdf'].forEach(id=>$(id)?.addEventListener('click',schedule));
 const actions=document.querySelector('.btns:has(#calculate)');
 if(actions){
  const direct=document.createElement('button');direct.type='button';direct.className='btn light';direct.textContent='💾 Salva nello storico';direct.onclick=()=>{try{if(!snapshot())alert('Calcola prima un preventivo valido.')}catch(e){alert('Impossibile salvare: '+e.message)}};
