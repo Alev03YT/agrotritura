@@ -457,6 +457,14 @@
           deliveryLink.style.cssText = "display:inline-flex;margin-top:12px;font-size:16px;text-decoration:none;min-width:0";
           deliveryLink.textContent = "✍️ Consegna con firma cliente (A4)";
           msgEl.appendChild(document.createElement("div")).appendChild(deliveryLink);
+          if(String(savedOrder.status||"").toLowerCase().includes("consegn")){
+            const invLink=document.createElement("a");
+            invLink.href="magazzino.html?order_id="+encodeURIComponent(savedOrder.order_id);
+            invLink.target="_blank";invLink.rel="noopener";invLink.className="btn gray";
+            invLink.style.cssText="display:inline-flex;margin-top:12px;font-size:16px;text-decoration:none;min-width:0";
+            invLink.textContent="📦 Apri ordine consegnato e scarica magazzino";
+            msgEl.appendChild(document.createElement("div")).appendChild(invLink);
+          }
         }
 // ✅ WhatsApp precompilato (1 tap invio)
 try{
