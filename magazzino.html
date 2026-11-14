@@ -15,7 +15,7 @@
 <div id="knownOrders"></div></section>
 <section class="card wide"><h2>🚚 Scarica i prodotti di un ordine consegnato</h2><p class="muted">Apri un ordine tramite il suo codice. Il sistema verifica che sia davvero <b>Consegnato</b>, quindi scegli gli ingredienti e i kg effettivamente usati. Per i mix non viene inventata alcuna ricetta.</p><div class="fields"><div><label>Codice ordine</label><input id="orderId" placeholder="AT-2026-..."></div><div style="align-self:end"><button id="fetchOrder" class="primary" type="button">Apri ordine e verifica consegna</button></div></div><div id="orderMessage" class="message">Inserisci il codice ordine per procedere.</div><div id="orderBox" hidden><div id="orderData" class="record"></div><h3 style="margin:16px 0 6px;color:var(--green)">Materiali da scalare</h3><p class="muted">Seleziona tutti i prodotti utilizzati (anche più di uno) e indica i kg per ciascuno.</p><div id="orderEditHint" class="editHint" hidden></div><div id="ingredientPicker" class="ingredientPicker"></div><div id="composition"></div><div class="actions"><button class="secondary" type="button" id="addIngredient">+ Aggiungi ingrediente</button><button class="primary" type="button" id="deduct">Conferma scarico ordine</button></div></div></section>
 <section class="card"><h2>📋 Ultimi movimenti</h2><div id="movements"></div></section>
-<section class="card"><h2>🧾 Ordini già scaricati</h2><div id="orders"></div><div class="actions"><button type="button" class="secondary" id="exportBackup">Esporta backup JSON</button><label style="margin:0;display:inline-flex;align-items:center;padding:10px 13px;background:#e9f1eb;border-radius:11px;cursor:pointer">Importa backup JSON<input style="display:none" id="importBackup" type="file" accept=".json,application/json"></label></div></section>
+<section class="card"><h2>🧾 Scarichi registrati (modificabili)</h2><div id="orders"></div><div class="actions"><button type="button" class="secondary" id="exportBackup">Esporta backup JSON</button><label style="margin:0;display:inline-flex;align-items:center;padding:10px 13px;background:#e9f1eb;border-radius:11px;cursor:pointer">Importa backup JSON<input style="display:none" id="importBackup" type="file" accept=".json,application/json"></label></div></section>
 </div></main>
 <script>
 (function(){
@@ -71,12 +71,12 @@ function render(){
  return '<tr><td><b>'+esc(x)+'</b></td><td class="'+(low?'low':'')+'">'+fmt(kg)+' kg'+(low?' ⚠':'')+'</td><td>'+fmt(minimum)+' kg</td><td>'+(Number(c.packKg)>0?fmt(c.packKg)+' kg / '+money(Number(c.packPrice)||0):'Non impostato')+'</td><td><button class="secondary" data-edit="'+esc(x)+'" type="button">Modifica</button> <button class="secondary" data-load="'+esc(x)+'" type="button">Movimento</button></td></tr>'}).join('')||'<tr><td colspan="5">Nessun prodotto trovato.</td></tr>';
  $('moveName').innerHTML=n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
  $('movements').innerHTML=moves.slice(0,15).map(m=>'<div class="record"><b>'+esc(m.name)+'</b> <span class="tag">'+esc(m.type)+'</span><br>'+((Number(m.delta)>=0?'+':'')+fmt(m.delta))+' kg — '+fmt(m.after)+' kg rimasti<br><small>'+new Date(m.date).toLocaleString('it-IT')+(m.orderId?' · ordine '+esc(m.orderId):'')+(m.note?' · '+esc(m.note):'')+'</small></div>').join('')||'<p class="muted">Nessun movimento registrato.</p>';
- $('orders').innerHTML=Object.values(orders).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,18).map(o=>'<div class="record"><b>'+esc(o.id)+'</b><br>'+esc(o.customer||'Cliente non specificato')+' · '+esc(o.product||'')+'<br><small>'+new Date(o.date).toLocaleString('it-IT')+' · '+(Array.isArray(o.lines)?o.lines.map(x=>esc(x.name)+' '+fmt(x.kg)+' kg').join(', '):'')+'</small></div>').join('')||'<p class="muted">Nessun ordine ancora scaricato.</p>';
+ $('orders').innerHTML=Object.values(orders).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,18).map(o=>'<div class="record"><b>'+esc(o.id)+'</b><br>'+esc(o.customer||'Cliente non specificato')+' · '+esc(o.product||'')+'<br><small>'+new Date(o.date).toLocaleString('it-IT')+' · '+(Array.isArray(o.lines)?o.lines.map(x=>esc(x.name)+' '+fmt(x.kg)+' kg').join(', '):'')+'</small><br><button class="secondary" type="button" data-correct="'+esc(o.id)+'">✏️ Apri e aggiungi/correggi prodotti</button></div>').join('')||'<p class="muted">Nessun ordine ancora scaricato.</p>';
  const idx=get(INDEX_KEY,{});
  const last=Object.values(idx).filter(o=>String(o.status||'').toLowerCase().includes('consegn')).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0,30);
  $('knownOrders').innerHTML=last.length?last.map(o=>{
   const used=Boolean(orders[String(o.id).toUpperCase()]);
-  return '<div class="record"><b>'+esc(o.id)+'</b> <span class="tag">'+(used?'Scaricato':'Consegnato, da verificare')+'</span><br>'+esc(o.customer||'Cliente non indicato')+' · '+esc(o.product||'')+' · '+esc(o.quantity||'')+'<br><small>Ultima registrazione: '+(o.updatedAt?new Date(o.updatedAt).toLocaleString('it-IT'):'—')+'</small><br><button class="secondary" type="button" data-retrieve="'+esc(o.id)+'">'+(used?'Modifica scarico':'Apri ordine e verifica')+'</button></div>'
+  return '<div class="record"><b>'+esc(o.id)+'</b> <span class="tag">'+(used?'Scarico registrato · modificabile':'Consegnato, da verificare')+'</span><br>'+esc(o.customer||'Cliente non indicato')+' · '+esc(o.product||'')+' · '+esc(o.quantity||'')+'<br><small>Ultima registrazione: '+(o.updatedAt?new Date(o.updatedAt).toLocaleString('it-IT'):'—')+'</small><br><button class="secondary" type="button" data-retrieve="'+esc(o.id)+'">'+(used?'Modifica scarico':'Apri ordine e verifica')+'</button></div>'
  }).join(''):'<p class="muted">Nessun ordine consegnato indicizzato in questo browser. Puoi comunque aprire un ordine preesistente tramite il suo codice qui sotto.</p>';
  if(!$('orderBox').hidden){refreshIngredientChoices();drawIngredientPicker();}
 
@@ -188,12 +188,12 @@ async function openOrder(){
   verified={id:key,customer:String(rec.customer??rec.customer_name??rec.cliente??''),product,quantity,status};
   $('orderData').innerHTML='<b>Ordine '+esc(id)+'</b> <span class="tag">'+esc(status)+'</span><br><b>Cliente:</b> '+esc(verified.customer||'—')+'<br><b>Prodotto:</b> '+esc(product||'—')+'<br><b>Quantità indicata:</b> '+esc(quantity||'—');
   $('orderEditHint').hidden=!previous;
-  $('orderEditHint').textContent=previous?'Questo ordine è già stato scaricato. Puoi aggiungere prodotti o correggere i kg: saranno applicate soltanto le differenze, senza un secondo scarico completo.':'';
+  $('orderEditHint').textContent=previous?'✅ Scarico precedente trovato. NON è bloccato: modifica i prodotti o aggiungine altri, poi premi «Salva rettifica ordine». Verrà calcolata soltanto la differenza.':'';
   $('orderBox').hidden=false;
   $('deduct').textContent=previous?'Salva rettifica ordine':'Conferma scarico ordine';
   if(previous?.lines?.length){
    previous.lines.forEach(x=>ingredientRow(x.name,x.kg));
-   say('Ordine consegnato verificato. Puoi modificare gli ingredienti già scaricati.');
+   say('✅ Ordine aperto per la RETTIFICA: seleziona anche altri prodotti, inserisci i kg e salva. Nessuno scarico doppio.');
   }else{
    let name='',kg='';
    if(!/[+,;/]|\bmix\b|\bmisto\b/i.test(product)){
@@ -207,10 +207,12 @@ async function openOrder(){
    drawIngredientPicker();
    say('Ordine consegnato verificato. Puoi selezionare più prodotti dalla griglia.');
   }
+  if(!$('orderBox').hidden)$('orderBox').scrollIntoView({behavior:'smooth',block:'start'});
  }catch(e){$('orderBox').hidden=true;say('⚠️ '+e.message,true)}
  finally{$('fetchOrder').disabled=false}
 }
 $('knownOrders').onclick=e=>{const b=e.target.closest('[data-retrieve]');if(!b)return;$('orderId').value=b.getAttribute('data-retrieve');openOrder()};
+$('orders').onclick=e=>{const b=e.target.closest('[data-correct]');if(!b)return;$('orderId').value=b.getAttribute('data-correct');openOrder()};
 $('fetchOrder').onclick=openOrder;
 $('deduct').onclick=()=>{
  if(!verified)return say('Apri prima un ordine consegnato.',true);
