@@ -76,7 +76,7 @@ function render(){
  const last=Object.values(idx).filter(o=>String(o.status||'').toLowerCase().includes('consegn')).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0,30);
  $('knownOrders').innerHTML=last.length?last.map(o=>{
   const used=Boolean(orders[String(o.id).toUpperCase()]);
-  return '<div class="record"><b>'+esc(o.id)+'</b> <span class="tag">'+(used?'Scaricato':'Consegnato, da verificare')+'</span><br>'+esc(o.customer||'Cliente non indicato')+' · '+esc(o.product||'')+' · '+esc(o.quantity||'')+'<br><small>Ultima registrazione: '+(o.updatedAt?new Date(o.updatedAt).toLocaleString('it-IT'):'—')+'</small><br><button class="secondary" type="button" data-retrieve="'+esc(o.id)+'" '+''+'>Apri ordine e verifica</button></div>'
+  return '<div class="record"><b>'+esc(o.id)+'</b> <span class="tag">'+(used?'Scaricato':'Consegnato, da verificare')+'</span><br>'+esc(o.customer||'Cliente non indicato')+' · '+esc(o.product||'')+' · '+esc(o.quantity||'')+'<br><small>Ultima registrazione: '+(o.updatedAt?new Date(o.updatedAt).toLocaleString('it-IT'):'—')+'</small><br><button class="secondary" type="button" data-retrieve="'+esc(o.id)+'">'+(used?'Modifica scarico':'Apri ordine e verifica')+'</button></div>'
  }).join(''):'<p class="muted">Nessun ordine consegnato indicizzato in questo browser. Puoi comunque aprire un ordine preesistente tramite il suo codice qui sotto.</p>';
  if(!$('orderBox').hidden){refreshIngredientChoices();drawIngredientPicker();}
 
@@ -190,6 +190,7 @@ async function openOrder(){
   $('orderEditHint').hidden=!previous;
   $('orderEditHint').textContent=previous?'Questo ordine è già stato scaricato. Puoi aggiungere prodotti o correggere i kg: saranno applicate soltanto le differenze, senza un secondo scarico completo.':'';
   $('orderBox').hidden=false;
+  $('deduct').textContent=previous?'Salva rettifica ordine':'Conferma scarico ordine';
   if(previous?.lines?.length){
    previous.lines.forEach(x=>ingredientRow(x.name,x.kg));
    say('Ordine consegnato verificato. Puoi modificare gli ingredienti già scaricati.');
