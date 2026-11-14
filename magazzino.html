@@ -10,6 +10,9 @@
 <section class="card wide"><h2>Giacenze attuali</h2><div class="fields"><div><label for="filter">Cerca prodotto</label><input id="filter" placeholder="Mais, orzo, vitamine..."></div></div><div class="tableWrap"><table><thead><tr><th>Prodotto</th><th>Disponibilità</th><th>Soglia minima</th><th>Costo confezione</th><th>Azioni</th></tr></thead><tbody id="inventoryTable"></tbody></table></div></section>
 <section class="card"><h2>➕ Aggiungi prodotto al magazzino</h2><form id="newForm" class="fields"><div class="full"><label>Nome prodotto</label><input id="newName" required maxlength="100" placeholder="Es. Semi di girasole"></div><div><label>Quantità iniziale (kg)</label><input id="newQty" type="number" min="0" step="0.001" value="0" required></div><div><label>Soglia minima (kg)</label><input id="newMin" type="number" min="0" step="0.001" value="0" required></div><div><label>Confezione acquisto (kg)</label><input id="newPackKg" type="number" min="0.001" step="0.001" value="25" required></div><div><label>Prezzo confezione (€)</label><input id="newPackPrice" type="number" min="0" step="0.01" value="0" required></div><div class="full"><button class="primary" type="submit">Aggiungi prodotto</button></div></form></section>
 <section class="card"><h2>🔄 Carico, scarico o correzione manuale</h2><form id="movementForm" class="fields"><div class="full"><label>Prodotto</label><select id="moveName" required></select></div><div><label>Operazione</label><select id="moveType"><option value="in">Carico (+)</option><option value="out">Scarico (−)</option><option value="set">Imposta giacenza esatta</option></select></div><div><label>Quantità (kg)</label><input id="moveQty" type="number" min="0" step="0.001" required></div><div class="full"><label>Motivo / riferimento</label><input id="moveNote" placeholder="Es. acquistati 2 sacchi da 25 kg"></div><div class="full"><button type="submit" class="primary">Registra movimento</button></div></form></section>
+<section class="card wide"><h2>🟢 Ordini consegnati nel gestionale (indice locale)</h2>
+<p class="muted">Mostro gli ordini registrati o aggiornati con il pannello <b>da questo browser</b>. Per ogni ordine viene verificato di nuovo lo stato su Google Apps Script prima di permettere lo scarico. Gli ordini consegnati prima di questo aggiornamento non sono automaticamente nell'indice: per recuperarli inserisci sotto il loro codice ordine.</p>
+<div id="knownOrders"></div></section>
 <section class="card wide"><h2>🚚 Scarica i prodotti di un ordine consegnato</h2><p class="muted">Apri un ordine tramite il suo codice. Il sistema verifica che sia davvero <b>Consegnato</b>, quindi scegli gli ingredienti e i kg effettivamente usati. Per i mix non viene inventata alcuna ricetta.</p><div class="fields"><div><label>Codice ordine</label><input id="orderId" placeholder="AT-2026-..."></div><div style="align-self:end"><button id="fetchOrder" class="primary" type="button">Apri ordine e verifica consegna</button></div></div><div id="orderMessage" class="message">Inserisci il codice ordine per procedere.</div><div id="orderBox" hidden><div id="orderData" class="record"></div><h3 style="margin:16px 0 6px;color:var(--green)">Materiali da scalare</h3><div id="composition"></div><div class="actions"><button class="secondary" type="button" id="addIngredient">+ Aggiungi ingrediente</button><button class="primary" type="button" id="deduct">Conferma scarico ordine</button></div></div></section>
 <section class="card"><h2>📋 Ultimi movimenti</h2><div id="movements"></div></section>
 <section class="card"><h2>🧾 Ordini già scaricati</h2><div id="orders"></div><div class="actions"><button type="button" class="secondary" id="exportBackup">Esporta backup JSON</button><label style="margin:0;display:inline-flex;align-items:center;padding:10px 13px;background:#e9f1eb;border-radius:11px;cursor:pointer">Importa backup JSON<input style="display:none" id="importBackup" type="file" accept=".json,application/json"></label></div></section>
@@ -19,6 +22,7 @@
 'use strict';
 const API='https://script.google.com/macros/s/AKfycbxvrgdzM5t1Zg-pS00iopBEpw3OBZj_-y14QjaurcRHnrrlXJd3T5i2i8z7qPrS98hK/exec';
 const K={stock:'at_inventory_v3',cfg:'at_purchase_cfg_v3',min:'at_inventory_min_v1',catalog:'at_inventory_catalog_v1',moves:'at_inventory_movements_v1',orders:'at_inventory_orders_v1'};
+const INDEX_KEY='at_orders_index_v1';
 const defaults={'Mais tritato':{packKg:25,packPrice:11.60},'Orzo tritato':{packKg:25,packPrice:13.10},'Frumento tritato':{packKg:25,packPrice:13.50},'Grana verde tritata':{packKg:25,packPrice:13.80},'Mangime ovaiole completo':{packKg:22,packPrice:14.30},'Vit Complex':{packKg:1,packPrice:11.50},'Fonte di calcio / grit':{packKg:5,packPrice:2.48,provisional:true}};
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -68,6 +72,13 @@ function render(){
  $('moveName').innerHTML=n.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
  $('movements').innerHTML=moves.slice(0,15).map(m=>'<div class="record"><b>'+esc(m.name)+'</b> <span class="tag">'+esc(m.type)+'</span><br>'+((Number(m.delta)>=0?'+':'')+fmt(m.delta))+' kg — '+fmt(m.after)+' kg rimasti<br><small>'+new Date(m.date).toLocaleString('it-IT')+(m.orderId?' · ordine '+esc(m.orderId):'')+(m.note?' · '+esc(m.note):'')+'</small></div>').join('')||'<p class="muted">Nessun movimento registrato.</p>';
  $('orders').innerHTML=Object.values(orders).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,18).map(o=>'<div class="record"><b>'+esc(o.id)+'</b><br>'+esc(o.customer||'Cliente non specificato')+' · '+esc(o.product||'')+'<br><small>'+new Date(o.date).toLocaleString('it-IT')+' · '+(Array.isArray(o.lines)?o.lines.map(x=>esc(x.name)+' '+fmt(x.kg)+' kg').join(', '):'')+'</small></div>').join('')||'<p class="muted">Nessun ordine ancora scaricato.</p>';
+ const idx=get(INDEX_KEY,{});
+ const last=Object.values(idx).filter(o=>String(o.status||'').toLowerCase().includes('consegn')).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0,30);
+ $('knownOrders').innerHTML=last.length?last.map(o=>{
+  const used=Boolean(orders[String(o.id).toUpperCase()]);
+  return '<div class="record"><b>'+esc(o.id)+'</b> <span class="tag">'+(used?'Scaricato':'Consegnato, da verificare')+'</span><br>'+esc(o.customer||'Cliente non indicato')+' · '+esc(o.product||'')+' · '+esc(o.quantity||'')+'<br><small>Ultima registrazione: '+(o.updatedAt?new Date(o.updatedAt).toLocaleString('it-IT'):'—')+'</small><br><button class="secondary" type="button" data-retrieve="'+esc(o.id)+'" '+(used?'disabled':'')+'>Apri ordine e verifica</button></div>'
+ }).join(''):'<p class="muted">Nessun ordine consegnato indicizzato in questo browser. Puoi comunque aprire un ordine preesistente tramite il suo codice qui sotto.</p>';
+
 }
 function select(name){$('moveName').value=name;$('moveQty').focus()}
 $('filter').addEventListener('input',render);
@@ -146,6 +157,7 @@ async function openOrder(){
  $('orderBox').hidden=false;say('Consegna verificata. Controlla e conferma i materiali realmente utilizzati.');
  }catch(err){say('⚠️ '+err.message,true)}finally{$('fetchOrder').disabled=false}
 }
+$('knownOrders').onclick=e=>{const b=e.target.closest('[data-retrieve]');if(!b)return;$('orderId').value=b.getAttribute('data-retrieve');openOrder();};
 $('fetchOrder').onclick=openOrder;
 $('deduct').onclick=()=>{
  if(!verified)return say('Apri prima un ordine consegnato.',true);
