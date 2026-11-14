@@ -123,67 +123,132 @@ function extract(j){
  const r=candidates.find(x=>x&&typeof x==='object'&&!Array.isArray(x)&&String(x.status??x.stato??x.order_status??'').trim());
  if(!r)throw Error('Il servizio non ha restituito lo stato dell’ordine.');return r;
 }
-function ingredientRow(name,kg){
- const div=document.createElement('div');div.className='compositionRow';
- const label=document.createElement('label');label.textContent='Ingrediente';const sel=document.createElement('select');sel.className='ingName';
- sel.innerHTML='<option value="">Scegli ingrediente</option>'+names().map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');sel.value=name||'';label.appendChild(sel);
- const qty=document.createElement('label');qty.textContent='Kg utilizzati';const input=document.createElement('input');input.className='ingKg';input.type='number';input.min='0.001';input.step='0.001';input.value=kg||'';qty.appendChild(input);
- const rm=document.createElement('button');rm.type='button';rm.className='danger';rm.textContent='✕';rm.title='Rimuovi ingrediente';rm.onclick=()=>div.remove();
- div.append(label,qty,rm);$('composition').appendChild(div);
+function ingredientRows(){return [...$('composition').querySelectorAll('.compositionRow')]}
+function refreshIngredientChoices(){
+ ingredientRows().forEach(row=>{
+  const s=row.querySelector('.ingName'),old=s.value;
+  s.replaceChildren(new Option('Scegli ingrediente',''),...names().map(n=>new Option(n,n)));
+  s.value=old;
+ });
 }
-$('addIngredient').onclick=()=>ingredientRow('','');
+function drawIngredientPicker(){
+ const box=$('ingredientPicker'),selected=new Set(ingredientRows().map(r=>r.querySelector('.ingName').value));
+ box.replaceChildren();
+ names().forEach(n=>{
+  const b=document.createElement('button');b.type='button';b.className='ingredientPick'+(selected.has(n)?' active':'');
+  const title=document.createElement('b');title.textContent=(selected.has(n)?'✓ ':'+ ')+n;
+  const quantity=document.createElement('small');quantity.textContent=fmt(Number(stock[n])||0)+' kg disponibili';
+  b.append(title,quantity);
+  b.onclick=()=>{
+   const existing=ingredientRows().find(r=>r.querySelector('.ingName').value===n);
+   if(existing){existing.querySelector('.ingKg').focus();return}
+   ingredientRow(n,'',true);
+  };
+  box.appendChild(b);
+ });
+}
+function ingredientRow(name,kg,focus){
+ const existing=name&&ingredientRows().find(r=>r.querySelector('.ingName').value===name);
+ if(existing){if(focus)existing.querySelector('.ingKg').focus();return}
+ const div=document.createElement('div');div.className='compositionRow';
+ const label=document.createElement('label');label.textContent='Prodotto';
+ const s=document.createElement('select');s.className='ingName';s.setAttribute('aria-label','Prodotto da scaricare');
+ s.add(new Option('Scegli ingrediente',''));
+ names().forEach(n=>s.add(new Option(n,n)));s.value=name||'';label.appendChild(s);
+ const qty=document.createElement('label');qty.textContent='Kg utilizzati';
+ const input=document.createElement('input');input.className='ingKg';input.type='number';input.inputMode='decimal';input.min='0.001';input.step='0.001';input.placeholder='Es. 10';input.value=kg||'';qty.appendChild(input);
+ const remove=document.createElement('button');remove.className='danger';remove.type='button';remove.textContent='✕';
+ remove.title='Rimuovi dalla composizione';remove.onclick=()=>{div.remove();drawIngredientPicker()};
+ s.onchange=()=>{
+  if(s.value&&ingredientRows().some(r=>r!==div&&r.querySelector('.ingName').value===s.value)){
+   alert('Prodotto già selezionato. Modifica i kg nella riga esistente.');s.value='';
+  }
+  drawIngredientPicker();
+ };
+ div.append(label,qty,remove);$('composition').appendChild(div);
+ drawIngredientPicker();
+ if(focus)input.focus();
+}
+$('addIngredient').onclick=()=>ingredientRow('','',true);
 function orderKey(id){return id.trim().toUpperCase()}
 async function openOrder(){
- verified=null;$('orderBox').hidden=true;$('composition').innerHTML='';
- const id=$('orderId').value.trim();if(!/^[A-Za-z0-9_-]{5,65}$/.test(id))return say('Inserisci un codice ordine valido.',true);
+ verified=null;$('orderBox').hidden=true;$('composition').replaceChildren();
+ const id=$('orderId').value.trim();
+ if(!/^[A-Za-z0-9_-]{5,65}$/.test(id))return say('Inserisci un codice ordine valido.',true);
  $('fetchOrder').disabled=true;say('Verifico ordine e stato di consegna…');
  try{
- const cb='__atStock'+Math.random().toString(36).slice(2);
- const rec=extract(await jsonp(API+'?order_id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb)+'&t='+Date.now(),cb));
- const realId=String(rec.order_id??rec.id??id).trim();
- if(realId&&orderKey(realId)!==orderKey(id))throw Error('Il server ha restituito un ordine diverso.');
- const status=String(rec.status??rec.stato??rec.order_status??'').trim();
- if(!status.toLowerCase().includes('consegn'))throw Error('Ordine non consegnato: stato attuale «'+status+'». Nessun prodotto è stato scalato.');
- const key=orderKey(id);
- if(orders[key]){say('Ordine '+id+' già scaricato in questo browser. Nessun doppio movimento consentito.',true);return}
- const product=String(rec.product??rec.prodotto??''),qty=String(rec.quantity??rec.quantita??'');
- verified={id:key,customer:String(rec.customer??rec.customer_name??rec.cliente??''),product,quantity:qty,status};
- $('orderData').innerHTML='<b>Ordine '+esc(id)+'</b> <span class="tag">'+esc(status)+'</span><br><b>Cliente:</b> '+esc(verified.customer||'—')+'<br><b>Prodotto:</b> '+esc(product||'—')+'<br><b>Quantità indicata:</b> '+esc(qty||'—');
- let best='',kg='';
- if(!/[+,;/]|\bmix\b|\bmisto\b/i.test(product)){
- const matches=names().filter(x=>x.toLowerCase()===product.toLowerCase()||x.toLowerCase().replace(' tritato','')===product.toLowerCase());
- if(matches.length===1){best=matches[0];const parsed=qty.match(/^\s*(\d+(?:[,.]\d+)?)\s*kg\s*$/i);if(parsed)kg=parsed[1].replace(',','.')}
- }
- ingredientRow(best,kg);
- $('orderBox').hidden=false;say('Consegna verificata. Controlla e conferma i materiali realmente utilizzati.');
- }catch(err){say('⚠️ '+err.message,true)}finally{$('fetchOrder').disabled=false}
+  const cb='__atStock'+Math.random().toString(36).slice(2);
+  const rec=extract(await jsonp(API+'?order_id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb)+'&t='+Date.now(),cb));
+  const realId=String(rec.order_id??rec.id??id).trim();
+  if(realId&&orderKey(realId)!==orderKey(id))throw Error('Il server ha restituito un ordine diverso.');
+  const status=String(rec.status??rec.stato??rec.order_status??'').trim();
+  if(!status.toLowerCase().includes('consegn'))throw Error('Ordine non consegnato («'+status+'»). Nessun prodotto scalato.');
+  const key=orderKey(id),previous=get(K.orders,{})[key];
+  const product=String(rec.product??rec.prodotto??''),quantity=String(rec.quantity??rec.quantita??'');
+  verified={id:key,customer:String(rec.customer??rec.customer_name??rec.cliente??''),product,quantity,status};
+  $('orderData').innerHTML='<b>Ordine '+esc(id)+'</b> <span class="tag">'+esc(status)+'</span><br><b>Cliente:</b> '+esc(verified.customer||'—')+'<br><b>Prodotto:</b> '+esc(product||'—')+'<br><b>Quantità indicata:</b> '+esc(quantity||'—');
+  $('orderEditHint').hidden=!previous;
+  $('orderEditHint').textContent=previous?'Questo ordine è già stato scaricato. Puoi aggiungere prodotti o correggere i kg: saranno applicate soltanto le differenze, senza un secondo scarico completo.':'';
+  $('orderBox').hidden=false;
+  if(previous?.lines?.length){
+   previous.lines.forEach(x=>ingredientRow(x.name,x.kg));
+   say('Ordine consegnato verificato. Puoi modificare gli ingredienti già scaricati.');
+  }else{
+   let name='',kg='';
+   if(!/[+,;/]|\bmix\b|\bmisto\b/i.test(product)){
+    const possible=names().filter(n=>n.toLowerCase()===product.toLowerCase()||n.toLowerCase().replace(' tritato','')===product.toLowerCase());
+    if(possible.length===1){
+     name=possible[0];const match=quantity.match(/^\s*(\d+(?:[,.]\d+)?)\s*kg\s*$/i);
+     if(match)kg=match[1].replace(',','.');
+    }
+   }
+   if(name)ingredientRow(name,kg);
+   drawIngredientPicker();
+   say('Ordine consegnato verificato. Puoi selezionare più prodotti dalla griglia.');
+  }
+ }catch(e){$('orderBox').hidden=true;say('⚠️ '+e.message,true)}
+ finally{$('fetchOrder').disabled=false}
 }
-$('knownOrders').onclick=e=>{const b=e.target.closest('[data-retrieve]');if(!b)return;$('orderId').value=b.getAttribute('data-retrieve');openOrder();};
+$('knownOrders').onclick=e=>{const b=e.target.closest('[data-retrieve]');if(!b)return;$('orderId').value=b.getAttribute('data-retrieve');openOrder()};
 $('fetchOrder').onclick=openOrder;
 $('deduct').onclick=()=>{
  if(!verified)return say('Apri prima un ordine consegnato.',true);
- const key=verified.id;
- // Rileggi prima del commit per evitare il doppio scarico dopo un'altra scheda.
- const recent=get(K.orders,{});
- if(recent[key]||orders[key])return say('Questo ordine è già stato scaricato. Operazione bloccata.',true);
- const list=[...document.querySelectorAll('.compositionRow')];
- if(!list.length)return say('Inserisci almeno un ingrediente.',true);
- const merged={};
- for(const row of list){const name=row.querySelector('.ingName').value,q=num(row.querySelector('.ingKg').value);
- if(!name||!Number.isFinite(q)||q<=0)return say('Seleziona prodotto e quantità positiva per ogni riga.',true);
- merged[name]=round((merged[name]||0)+q);}
- const insuff=Object.entries(merged).filter(([name,q])=>q>Number(stock[name]||0)+0.000001);
- if(insuff.length)return say('Scorte insufficienti: '+insuff.map(([name,q])=>name+' (servono '+fmt(q)+' kg; disponibili '+fmt(stock[name]||0)+' kg)').join('; ')+'. Registra prima l’acquisto.',true);
- const lines=Object.entries(merged).map(([name,kg])=>({name,kg}));
- if(!confirm('Confermi di scaricare '+lines.map(x=>x.name+': '+fmt(x.kg)+' kg').join(', ')+' per ordine '+key+'? Questa operazione non si può ripetere.'))return;
- // Ultimo controllo della giacenza e del journal salvati.
- const latestOrders=get(K.orders,{}),latestStock=get(K.stock,{});
- if(latestOrders[key])return say('Scarico già eseguito in un’altra scheda.',true);
- if(lines.some(x=>x.kg>Number(latestStock[x.name]||0)+0.000001))return say('Giacenza aggiornata: ricarica il magazzino e ricontrolla le quantità.',true);
- stock=latestStock;orders=latestOrders;
- lines.forEach(x=>{const old=Number(stock[x.name]||0);stock[x.name]=round(old-x.kg);addMove('Ordine consegnato',x.name,old,stock[x.name],'Scarico per consegna',key)});
- orders[key]={...verified,date:new Date().toISOString(),lines};
- try{write();verified=null;$('orderBox').hidden=true;say('✅ Scarico registrato per '+key+'. La stessa consegna non può essere scaricata di nuovo.');render()}catch(e){say('Errore durante il salvataggio locale: '+e.message,true)}
+ const chosen=ingredientRows(),key=verified.id;
+ if(!chosen.length)return say('Seleziona almeno un prodotto e indica i kg utilizzati.',true);
+ const updated={};
+ for(const row of chosen){
+  const name=row.querySelector('.ingName').value,amount=num(row.querySelector('.ingKg').value);
+  if(!name||!Number.isFinite(amount)||amount<=0)return say('Ogni prodotto selezionato deve avere un nome e una quantità positiva.',true);
+  updated[name]=round((updated[name]||0)+amount);
+ }
+ const latestOrders=get(K.orders,{}),latestStock=get(K.stock,{}),prior=latestOrders[key],before={};
+ for(const line of prior?.lines||[]){
+  const n=String(line.name||''),q=Number(line.kg)||0;
+  if(n&&q>0)before[n]=round((before[n]||0)+q);
+ }
+ const delta=[...new Set([...Object.keys(before),...Object.keys(updated)])]
+  .map(name=>({name,kg:round((updated[name]||0)-(before[name]||0))}))
+  .filter(x=>Math.abs(x.kg)>0.00001);
+ if(!delta.length)return say('Ordine già aggiornato: nessuna differenza di magazzino.',false);
+ const missing=delta.filter(x=>x.kg>Number(latestStock[x.name]||0)+0.000001);
+ if(missing.length)return say('Scorte insufficienti: '+missing.map(x=>x.name+' ('+fmt(x.kg)+' kg richiesti, '+fmt(latestStock[x.name]||0)+' disponibili)').join('; ')+'.',true);
+ const details=delta.map(x=>x.name+': '+(x.kg>0?'−':'+')+fmt(Math.abs(x.kg))+' kg').join('\n');
+ if(!confirm((prior?'Rettificare':'Scaricare')+' magazzino per ordine '+key+'?\n\n'+details+'\n\nSolo queste differenze saranno applicate.'))return;
+ const finalOrders=get(K.orders,{}),finalStock=get(K.stock,{});
+ if(JSON.stringify(finalOrders[key]||null)!==JSON.stringify(prior||null))return say('Ordine modificato altrove: riaprilo e controlla.',true);
+ if(delta.some(x=>x.kg>Number(finalStock[x.name]||0)+0.000001))return say('Giacenze modificate altrove: riapri l’ordine.',true);
+ stock=finalStock;orders=finalOrders;
+ delta.forEach(x=>{
+  const old=Number(stock[x.name]||0);
+  stock[x.name]=round(old-x.kg);
+  addMove(prior?'Rettifica ordine':'Ordine consegnato',x.name,old,stock[x.name],prior?'Correzione di scarico già registrato':'Scarico consegna',key);
+ });
+ orders[key]={...prior,...verified,date:prior?.date||new Date().toISOString(),modifiedAt:new Date().toISOString(),lines:Object.entries(updated).map(([name,kg])=>({name,kg}))};
+ try{
+  write();verified=null;$('orderBox').hidden=true;
+  say('✅ '+(prior?'Rettifica':'Scarico')+' salvata per '+key+'. Nessun doppio scarico: applicate solo le differenze.');
+  render();
+ }catch(e){say('Impossibile salvare: '+e.message,true)}
 };
 $('exportBackup').onclick=()=>{
  const data={format:'AgroTritura-magazzino-1',created:new Date().toISOString(),stock,cfg,min,catalog,moves,orders};
