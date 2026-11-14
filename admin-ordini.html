@@ -434,6 +434,26 @@
           ? json.order
           : ((json.data?.order && typeof json.data.order === "object") ? json.data.order : {});
         const savedOrder = {...payload, ...responseOrder};
+        // Indice locale degli ordini confermati dal server, condiviso con Magazzino.
+        // Il token API e le credenziali NON vengono mai copiati nell'indice.
+        try {
+          const indexKey="at_orders_index_v1";
+          const index=JSON.parse(localStorage.getItem(indexKey)||"{}");
+          const orderCode=String(savedOrder.order_id||"").trim().toUpperCase();
+          if(orderCode){
+            const old=index[orderCode]||{};
+            index[orderCode]={
+              id:orderCode,
+              customer:String(savedOrder.customer||old.customer||""),
+              product:String(savedOrder.product||old.product||""),
+              quantity:String(savedOrder.quantity||old.quantity||""),
+              status:String(savedOrder.status||old.status||""),
+              updatedAt:new Date().toISOString()
+            };
+            localStorage.setItem(indexKey,JSON.stringify(index));
+          }
+        } catch (cacheError) { console.warn("Indice ordini locale non disponibile",cacheError); }
+
         const action = typeof json.action === "string" && json.action.trim()
           ? json.action.trim() : "ordine registrato";
         const updatedAt = responseOrder.updated_at || json.updated_at || json.data?.updated_at;
