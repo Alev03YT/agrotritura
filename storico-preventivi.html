@@ -1,9 +1,9 @@
 <!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>AgroTritura • Storico preventivi</title><style>
 :root{--g:#173f2a;--muted:#65756b;--line:#dee8e0;--bg:#f4f7f4}*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:#17231b}main{max-width:1180px;margin:auto;padding:22px}h1{color:var(--g);margin:0}h2{font-size:1.2rem;color:var(--g)}p{margin:6px 0 14px}.muted{color:var(--muted);font-size:13px}.card{background:#fff;padding:19px;border-radius:18px;border:1px solid var(--line);margin:14px 0;box-shadow:0 7px 25px #173f2a0a}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1;min-width:160px;background:#eef5ef;border-radius:13px;padding:12px 15px}.stat b{display:block;font-size:1.4rem;color:var(--g)}.tools{display:flex;flex-wrap:wrap;gap:9px;align-items:end}.tools label{flex:1;min-width:160px;font-size:13px;font-weight:750;color:var(--g)}input,select,button{font:inherit}input,select{display:block;width:100%;padding:10px;border:1px solid #c9d9cd;border-radius:10px;background:#fff;margin-top:4px}button,.linkBtn{border:0;padding:10px 13px;border-radius:11px;font-weight:750;cursor:pointer;background:#e9f2ec;color:var(--g);text-decoration:none;display:inline-block}.primary{background:var(--g);color:#fff}.danger{background:#f9e8e7;color:#a63430}.results{display:grid;gap:9px}.quote{border:1px solid var(--line);border-radius:13px;padding:13px;display:grid;grid-template-columns:115px 1fr 120px auto;gap:12px;align-items:center}.quote h3{margin:0;font-size:1rem;color:var(--g)}.quote small{color:var(--muted)}.total{font-weight:850;text-align:right}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:8px}.details{background:#f6f9f6;border-radius:13px;padding:15px;margin-top:13px;white-space:pre-wrap;overflow-wrap:anywhere}.note{padding:11px;border-radius:10px;background:#fff9e8;color:#6a531e}dialog{border:0;border-radius:17px;padding:22px;width:min(720px,95vw);max-height:85vh;box-shadow:0 18px 70px #0004}dialog::backdrop{background:#162b2070}.dialogHead{display:flex;align-items:start;justify-content:space-between;gap:10px}.dialogHead h2{margin:0}.dialogText{white-space:pre-wrap;background:#f4f7f4;padding:14px;border-radius:11px;max-height:48vh;overflow:auto;margin:15px 0}.buttonLine{display:flex;gap:8px;flex-wrap:wrap}@media(max-width:750px){main{padding:12px}.quote{grid-template-columns:1fr auto}.quote .date{grid-column:1/-1}.quote .actions{grid-column:1/-1}.total{text-align:right}.card{padding:13px}}</style></head>
 <body><main><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h1>📚 Storico preventivi</h1><p class="muted">Consulta, cerca e recupera i preventivi AgroTritura salvati.</p></div><a href="pannello.html" style="color:#173f2a;font-weight:750">← Control Center</a></div>
-<div class="note"><strong>Attenzione:</strong> questo archivio legge i preventivi conservati nel browser corrente. Recupera i salvataggi già fatti con il Generatore, e d'ora in avanti anche quelli prodotti con Preventivi Smart. Non può recuperare preventivi mai salvati, PDF esterni o dati di altri dispositivi senza importarli.</div>
+<div class="note"><strong>Archivio locale:</strong> mostra i preventivi salvati sul dispositivo attuale. Recupera i salvataggi già fatti con il Generatore, e d'ora in avanti anche quelli prodotti con Preventivi Smart. Non può recuperare preventivi mai salvati, PDF esterni o dati di altri dispositivi senza importarli.</div>
 <section class="card"><div class="stats"><div class="stat">Preventivi trovati<b id="total">—</b></div><div class="stat">Valore complessivo preventivato<b id="value">—</b></div><div class="stat">Preventivi Smart<b id="smart">—</b></div></div></section>
-<section class="card"><div class="tools"><label>Ricerca per cliente, prodotto o telefono<input id="search" placeholder="Cerca nello storico…"></label><label>Origine<select id="source"><option value="">Tutti</option><option value="generatore">Generatore preventivi</option><option value="smart">Preventivi Smart</option></select></label><label>Ordine<select id="sort"><option value="desc">Più recenti</option><option value="asc">Più vecchi</option><option value="value">Importo maggiore</option></select></label></div><div class="tools" style="margin-top:12px"><button id="exportCSV" class="primary">Esporta CSV</button><button id="exportJSON">Backup JSON</button><label style="flex:0 0 auto;padding:10px 13px;border-radius:11px;background:#e9f2ec;cursor:pointer;color:#173f2a">Importa backup<input style="display:none" type="file" id="importJSON" accept=".json,application/json"></label><a class="linkBtn" href="preventivi-admin.html">Nuovo preventivo</a></div></section>
+<section class="card"><div class="tools"><label>Ricerca per cliente, prodotto o telefono<input id="search" placeholder="Cerca nello storico…"></label><label>Origine<select id="source"><option value="">Tutti</option><option value="generatore">Generatore preventivi</option><option value="smart">Preventivi Smart</option></select></label><label>Ordine<select id="sort"><option value="desc">Più recenti</option><option value="asc">Più vecchi</option><option value="value">Importo maggiore</option></select></label></div><div class="tools" style="margin-top:12px"><button id="recoverLegacy" class="primary">🔎 Cerca vecchi preventivi nel browser</button><button id="exportCSV" class="primary">Esporta CSV</button><button id="exportJSON">Backup JSON</button><label style="flex:0 0 auto;padding:10px 13px;border-radius:11px;background:#e9f2ec;cursor:pointer;color:#173f2a">Importa backup<input style="display:none" type="file" id="importJSON" accept=".json,application/json"></label><a class="linkBtn" href="preventivi-admin.html">Nuovo preventivo</a></div></section>
 <section class="card"><h2>Elenco preventivi <small id="shown" class="muted"></small></h2><div id="rows" class="results"></div></section>
 <dialog id="dialog"><div class="dialogHead"><h2>Dettaglio preventivo</h2><button id="close" aria-label="Chiudi">✕</button></div><div id="dialogText" class="dialogText"></div><div class="buttonLine"><button id="copy" class="primary">Copia testo</button><button id="print">Stampa</button><button id="delete" class="danger">Elimina da questo browser</button></div></dialog></main>
 <script>
@@ -39,6 +39,55 @@ function download(name,text,type){const b=new Blob([text],{type}),url=URL.create
 $('exportCSV').onclick=()=>{const cells=[['Data','Fonte','Cliente','Telefono','Prodotto','Quantita kg','Totale EUR']];all().forEach(x=>cells.push([x.date,x.source,x.cliente,x.telefono,x.prodotto,x.kg,x.tot]));const csv=cells.map(row=>row.map(v=>{let s=String(v??'');if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'}).join(';')).join('\r\n');download('agrotritura-preventivi.csv','\ufeff'+csv,'text/csv;charset=utf-8')};
 $('exportJSON').onclick=()=>download('agrotritura-preventivi-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({format:'AgroTritura-preventivi-1',created:new Date().toISOString(),generatore:get(K1),smart:get(K2)},null,2),'application/json');
 $('importJSON').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{if(f.size>3000000)throw Error('File troppo grande.');const data=JSON.parse(await f.text());if(data.format!=='AgroTritura-preventivi-1'||!Array.isArray(data.generatore)||!Array.isArray(data.smart))throw Error('Backup non riconosciuto.');if(!confirm('Importare i preventivi dal backup e unirli a quelli esistenti?'))return;for(const [key,arr] of [[K1,data.generatore],[K2,data.smart]]){const existing=get(key),used=new Set(existing.map(x=>String(x.id)));for(const q of arr){if(!q||typeof q!=='object'||!q.id||used.has(String(q.id)))continue;existing.push(q);used.add(String(q.id));}localStorage.setItem(key,JSON.stringify(existing));}shownList();alert('Preventivi importati.')}catch(err){alert('Errore importazione: '+err.message)}finally{e.target.value=''}};
+
+/* Recupero guidato: scansiona solo le chiavi locali con nomi collegati ai preventivi.
+   Non tocca o cancella gli archivi precedenti. */
+$('recoverLegacy').onclick=()=>{
+ const sourceNames=[K1,K2];
+ const candidates=[];
+ const maybeArray=v=>{
+   if(Array.isArray(v))return v;
+   if(v&&typeof v==='object'){
+     for(const key of ['quotes','preventivi','history','storico','items','records','data']){
+       if(Array.isArray(v[key]))return v[key];
+     }
+   }
+   return [];
+ };
+ for(let i=0;i<localStorage.length;i++){
+   const key=localStorage.key(i);
+   if(!key||sourceNames.includes(key)||!/preventiv|quote|quotation|offert/i.test(key))continue;
+   let parsed;
+   try{parsed=JSON.parse(localStorage.getItem(key)||'null')}catch{continue}
+   const rows=maybeArray(parsed);
+   for(const raw of rows){
+     if(!raw||typeof raw!=='object'||Array.isArray(raw))continue;
+     const cliente=String(raw.cliente??raw.customer??raw.name??raw.nome??'').trim();
+     const prodotto=String(raw.prodotto??raw.product??raw.item??'').trim();
+     const tot=Number(raw.tot??raw.total??raw.totale??raw.amount);
+     if(!cliente&&!prodotto)continue;
+     if(!Number.isFinite(tot)||tot<0)continue;
+     candidates.push({...raw,cliente:cliente||'Cliente non specificato',prodotto:prodotto||'Prodotto da verificare',tot,
+       telefono:String(raw.telefono??raw.phone??''),kg:Number(raw.kg??raw.quantity??raw.quantita)||0,
+       date:String(raw.date??raw.created_at??raw.createdAt??new Date().toISOString()),archivioOrigine:key});
+   }
+ }
+ if(!candidates.length){alert('Non sono stati trovati archivi precedenti compatibili su questo browser. I preventivi non salvati o creati su altri dispositivi non sono recuperabili automaticamente.');return}
+ const preview=candidates.slice(0,6).map(x=>x.cliente+' · '+x.prodotto+' · '+euro(x.tot)).join('\n');
+ if(!confirm('Trovati '+candidates.length+' preventivi in altri archivi locali:\n'+preview+'\n\nImportarli nel tuo storico senza cancellare gli archivi originali?'))return;
+ const current=get(K1);
+ const signatures=new Set(current.map(x=>JSON.stringify([x.cliente,x.prodotto,x.tot,x.date,x.telefono])));
+ let added=0;
+ for(const x of candidates){
+   const sig=JSON.stringify([x.cliente,x.prodotto,x.tot,x.date,x.telefono]);
+   if(signatures.has(sig))continue;
+   signatures.add(sig);
+   current.push({...x,id:'rec-'+Date.now()+'-'+added});
+   added++;
+ }
+ try{localStorage.setItem(K1,JSON.stringify(current));shownList();alert('Importati '+added+' preventivi recuperati.')}catch(e){alert('Impossibile scrivere lo storico: '+e.message)}
+};
+
 window.addEventListener('storage',shownList);shownList();
 })();
 </script></body></html>
