@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-11-17T09:38:34.752019+01:00",
+  "updatedAt": "2026-11-18T16:50:33.184749+01:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
       "id": "mais-intero",
       "name": "Mais intero",
       "unit": "€/t",
-      "currentPrice": 319.5,
+      "currentPrice": 316.5,
       "previousPrice": 319.5,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
