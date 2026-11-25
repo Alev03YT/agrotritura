@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T02:44:27.396582+01:00",
+  "updatedAt": "2026-11-25T15:45:19.485417+01:00",
   "sourceNote": "Granaria Milano - ultimo listino pubblico",
   "items": [
     {
@@ -24,7 +24,7 @@
       "id": "avena-intera",
       "name": "Avena intera",
       "unit": "€/t",
-      "currentPrice": 279.5,
+      "currentPrice": 277.5,
       "previousPrice": 279.5,
       "source": "Granaria Milano",
       "notes": "Prezzo medio da ultimo listino pubblico"
